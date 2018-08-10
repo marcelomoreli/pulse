@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+    <sys_ui_section caption="" section_id="10e0758fdba3130089fb2fb7489619eb" sys_domain="global" table="x_wms_pulse_sn_application" version="3" view="">
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>name</element>
+            <position>0</position>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-07-31 14:02:16</sys_created_on>
+            <sys_id>bd71f5cfdba3130089fb2fb7489619e1</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_sn_application" sys_domain="global" view="Default view">10e0758fdba3130089fb2fb7489619eb</sys_ui_section>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-07-31 14:02:16</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>owner</element>
+            <position>1</position>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-07-31 14:02:16</sys_created_on>
+            <sys_id>3171f5cfdba3130089fb2fb7489619e2</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_sn_application" sys_domain="global" view="Default view">10e0758fdba3130089fb2fb7489619eb</sys_ui_section>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-07-31 14:02:16</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>active</element>
+            <position>2</position>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-07-31 14:02:16</sys_created_on>
+            <sys_id>b171f5cfdba3130089fb2fb7489619e2</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_sn_application" sys_domain="global" view="Default view">10e0758fdba3130089fb2fb7489619eb</sys_ui_section>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-07-31 14:02:16</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>auto_promote</element>
+            <position>3</position>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-08-08 14:50:15</sys_created_on>
+            <sys_id>6a298fa5dbbb130089fb2fb748961933</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_sn_application" sys_domain="global" view="Default view">10e0758fdba3130089fb2fb7489619eb</sys_ui_section>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-08-08 14:50:15</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>code_freeze</element>
+            <position>4</position>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-08-09 21:59:14</sys_created_on>
+            <sys_id>98f4b98edb3b530089fb2fb748961986</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_sn_application" sys_domain="global" view="Default view">10e0758fdba3130089fb2fb7489619eb</sys_ui_section>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-08-09 21:59:14</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_section action="INSERT_OR_UPDATE">
+            <caption/>
+            <header>false</header>
+            <name>x_wms_pulse_sn_application</name>
+            <roles/>
+            <sys_class_name>sys_ui_section</sys_class_name>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-07-31 13:59:42</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>10e0758fdba3130089fb2fb7489619eb</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>x_wms_pulse_sn_application</sys_name>
+            <sys_overrides/>
+            <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+            <sys_update_name>sys_ui_section_10e0758fdba3130089fb2fb7489619eb</sys_update_name>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-07-31 13:59:42</sys_updated_on>
+            <sys_user/>
+            <title>true</title>
+            <view display_value="Default view" name="NULL">Default view</view>
+            <view_name/>
+        </sys_ui_section>
+    </sys_ui_section>
+</record_update>

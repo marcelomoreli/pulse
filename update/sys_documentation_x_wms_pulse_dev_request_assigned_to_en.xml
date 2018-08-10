@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+    <sys_documentation element="assigned_to" label="Developer" language="en" table="x_wms_pulse_dev_request">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element>assigned_to</element>
+            <help/>
+            <hint/>
+            <label>Developer</label>
+            <language>en</language>
+            <name>x_wms_pulse_dev_request</name>
+            <plural>Developers</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-07-31 13:39:32</sys_created_on>
+            <sys_id>d22c250fdba3130089fb2fb748961981</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>Developer</sys_name>
+            <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+            <sys_update_name>sys_documentation_x_wms_pulse_dev_request_assigned_to_en</sys_update_name>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-07-31 13:39:32</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>

@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+    <sys_ui_section caption="" section_id="b719a14bdba3130089fb2fb74896194d" sys_domain="global" table="x_wms_pulse_dev_request" version="3" view="">
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>number</element>
+            <position>0</position>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-07-31 13:25:49</sys_created_on>
+            <sys_id>c429a14bdba3130089fb2fb74896194e</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">b719a14bdba3130089fb2fb74896194d</sys_ui_section>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-07-31 13:25:49</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>assigned_to</element>
+            <position>1</position>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-07-31 13:25:49</sys_created_on>
+            <sys_id>cc29a14bdba3130089fb2fb74896194e</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">b719a14bdba3130089fb2fb74896194d</sys_ui_section>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-07-31 13:25:49</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>cmdb_ci</element>
+            <position>2</position>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-07-31 13:25:49</sys_created_on>
+            <sys_id>4029a14bdba3130089fb2fb74896194f</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">b719a14bdba3130089fb2fb74896194d</sys_ui_section>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-07-31 13:25:49</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>active</element>
+            <position>3</position>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-07-31 13:25:49</sys_created_on>
+            <sys_id>c029a14bdba3130089fb2fb74896194f</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">b719a14bdba3130089fb2fb74896194d</sys_ui_section>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-07-31 13:25:49</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>.split</element>
+            <position>4</position>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-07-31 13:25:49</sys_created_on>
+            <sys_id>4429a14bdba3130089fb2fb74896194f</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">b719a14bdba3130089fb2fb74896194d</sys_ui_section>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-07-31 13:25:49</sys_updated_on>
+            <sys_user/>
+            <type>.split</type>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>priority</element>
+            <position>5</position>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-07-31 13:25:49</sys_created_on>
+            <sys_id>c429a14bdba3130089fb2fb74896194f</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">b719a14bdba3130089fb2fb74896194d</sys_ui_section>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-07-31 13:25:49</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>state</element>
+            <position>6</position>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-07-31 13:25:49</sys_created_on>
+            <sys_id>4829a14bdba3130089fb2fb74896194f</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">b719a14bdba3130089fb2fb74896194d</sys_ui_section>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-07-31 13:25:49</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>parent</element>
+            <position>7</position>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-07-31 13:25:49</sys_created_on>
+            <sys_id>c829a14bdba3130089fb2fb74896194f</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">b719a14bdba3130089fb2fb74896194d</sys_ui_section>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-07-31 13:25:49</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>.end_split</element>
+            <position>8</position>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-07-31 13:25:49</sys_created_on>
+            <sys_id>4c29a14bdba3130089fb2fb74896194f</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">b719a14bdba3130089fb2fb74896194d</sys_ui_section>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-07-31 13:25:49</sys_updated_on>
+            <sys_user/>
+            <type>.end_split</type>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>short_description</element>
+            <position>9</position>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-07-31 13:25:49</sys_created_on>
+            <sys_id>cc29a14bdba3130089fb2fb74896194f</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">b719a14bdba3130089fb2fb74896194d</sys_ui_section>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-07-31 13:25:49</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>description</element>
+            <position>10</position>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-07-31 13:25:49</sys_created_on>
+            <sys_id>4029a14bdba3130089fb2fb748961950</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">b719a14bdba3130089fb2fb74896194d</sys_ui_section>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-07-31 13:25:49</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>work_notes</element>
+            <position>11</position>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-07-31 13:25:49</sys_created_on>
+            <sys_id>8829a58bdba3130089fb2fb748961992</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">b719a14bdba3130089fb2fb74896194d</sys_ui_section>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-07-31 13:25:49</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>dev_instance</element>
+            <position>12</position>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-07-31 13:38:11</sys_created_on>
+            <sys_id>81fb610fdba3130089fb2fb748961942</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">b719a14bdba3130089fb2fb74896194d</sys_ui_section>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-07-31 13:38:11</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>current_instance</element>
+            <position>13</position>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-07-31 13:38:11</sys_created_on>
+            <sys_id>19fb610fdba3130089fb2fb74896194b</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">b719a14bdba3130089fb2fb74896194d</sys_ui_section>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-07-31 13:38:11</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>change_request</element>
+            <position>14</position>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-07-31 13:38:12</sys_created_on>
+            <sys_id>d9fb610fdba3130089fb2fb748961954</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">b719a14bdba3130089fb2fb74896194d</sys_ui_section>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-07-31 13:38:12</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>application_owner</element>
+            <position>15</position>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-07-31 13:38:12</sys_created_on>
+            <sys_id>11fb610fdba3130089fb2fb74896195e</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">b719a14bdba3130089fb2fb74896194d</sys_ui_section>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-07-31 13:38:12</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>knowledge_article</element>
+            <position>16</position>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-07-31 13:38:12</sys_created_on>
+            <sys_id>d5fb610fdba3130089fb2fb748961967</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">b719a14bdba3130089fb2fb74896194d</sys_ui_section>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-07-31 13:38:12</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>auto_promote</element>
+            <position>17</position>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2018-08-08 21:06:56</sys_created_on>
+            <sys_id>786f1035db7f130089fb2fb748961936</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">b719a14bdba3130089fb2fb74896194d</sys_ui_section>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2018-08-08 21:06:56</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>source_id</element>
+            <position>18</position>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-08-09 16:42:07</sys_created_on>
+            <sys_id>8f5ca0cadb77530089fb2fb7489619cd</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">b719a14bdba3130089fb2fb74896194d</sys_ui_section>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-08-09 16:42:07</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>source</element>
+            <position>19</position>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-08-09 16:42:07</sys_created_on>
+            <sys_id>0f5ca0cadb77530089fb2fb7489619d7</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">b719a14bdba3130089fb2fb74896194d</sys_ui_section>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-08-09 16:42:07</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>sync_to_source</element>
+            <position>20</position>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-08-09 16:42:07</sys_created_on>
+            <sys_id>5f5ca0cadb77530089fb2fb7489619ed</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">b719a14bdba3130089fb2fb74896194d</sys_ui_section>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-08-09 16:42:07</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_section action="INSERT_OR_UPDATE">
+            <caption/>
+            <header>false</header>
+            <name>x_wms_pulse_dev_request</name>
+            <roles/>
+            <sys_class_name>sys_ui_section</sys_class_name>
+            <sys_created_by>jgbox</sys_created_by>
+            <sys_created_on>2018-07-31 13:25:49</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>b719a14bdba3130089fb2fb74896194d</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>x_wms_pulse_dev_request</sys_name>
+            <sys_overrides/>
+            <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+            <sys_update_name>sys_ui_section_b719a14bdba3130089fb2fb74896194d</sys_update_name>
+            <sys_updated_by>jgbox</sys_updated_by>
+            <sys_updated_on>2018-07-31 13:25:49</sys_updated_on>
+            <sys_user/>
+            <title>true</title>
+            <view display_value="Default view" name="NULL">Default view</view>
+            <view_name/>
+        </sys_ui_section>
+    </sys_ui_section>
+</record_update>

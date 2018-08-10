@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_wms_pulse.DevRequestStates</api_name>
+        <client_callable>false</client_callable>
+        <description>Dev request state constants, use these constants when determining which state to use.&#13;
+&#13;
+Example - is the dev request in the "In Development" state:&#13;
+var devGr = new GlideRecord("x_wms_pulse.dev_request");&#13;
+if (devGr.get("[sys_id]") &amp;&amp; devGr.state == DevRequestStates.IN_DEVELOPMENT)&#13;
+    // do something when the dev request is in development&#13;
+&#13;
+Example 2 - change an dev request state to "Done"&#13;
+var devGr = new GlideRecord("x_wms_pulse.dev_request");&#13;
+if (devGr.get("[sys_id]"))&#13;
+    devGr.state = DevRequestStates.DONE&#13;
+devGr.update();</description>
+        <name>DevRequestStates</name>
+        <script><![CDATA[var DevRequestStates = Class.create();
+
+DevRequestStates.NEW                  = "10";
+DevRequestStates.IN_DEVELOPMENT       = "11";
+DevRequestStates.IN_REVIEW            = "20";
+DevRequestStates.REVIEW_ACTIONS       = "21";
+DevRequestStates.PROMOTING            = "30";
+DevRequestStates.COMMITTING           = "31";
+DevRequestStates.READY_FOR_TESTING    = "32";
+DevRequestStates.TEST_FAILED          = "40";
+DevRequestStates.TEST_PASSED          = "41";
+DevRequestStates.AWAITING_REMEDIATION = "42";
+DevRequestStates.GENERATING_CHANGE    = "50";
+DevRequestStates.SCHEDULED            = "51";
+DevRequestStates.CLOSING_CHANGE       = "52";
+DevRequestStates.RESTORING            = "60";
+DevRequestStates.MOVING_TO_IGNORE     = "70";
+DevRequestStates.ON_HOLD              = "71";
+DevRequestStates.DONE                 = "80";
+DevRequestStates.DISCARDED            = "81";
+DevRequestStates.AUTOMATION_FAILURE   = "100";
+DevRequestStates.PREVIEW_PROBLEMS     = "101";
+
+
+DevRequestStates.prototype = {
+	initialize: function() {
+	},
+	
+	type: 'DevRequestStates'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2018-08-07 16:55:49</sys_created_on>
+        <sys_id>ccdad69ddb33130089fb2fb7489619ea</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>DevRequestStates</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sys_script_include_ccdad69ddb33130089fb2fb7489619ea</sys_update_name>
+        <sys_updated_by>jgbox</sys_updated_by>
+        <sys_updated_on>2018-08-10 02:24:37</sys_updated_on>
+    </sys_script_include>
+</record_update>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_user_role">
+    <sys_user_role action="INSERT_OR_UPDATE">
+        <assignable_by/>
+        <can_delegate>true</can_delegate>
+        <description>Admins have full access to work with and configure the application.</description>
+        <elevated_privilege>false</elevated_privilege>
+        <encryption_context/>
+        <grantable>true</grantable>
+        <includes_roles/>
+        <name>x_wms_pulse.sn_admin</name>
+        <scoped_admin>false</scoped_admin>
+        <suffix>sn_admin</suffix>
+        <sys_class_name>sys_user_role</sys_class_name>
+        <sys_created_by>jgbox</sys_created_by>
+        <sys_created_on>2018-07-31 10:05:54</sys_created_on>
+        <sys_id>235b3403db63130089fb2fb748961979</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>x_wms_pulse.sn_admin</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sys_user_role_235b3403db63130089fb2fb748961979</sys_update_name>
+        <sys_updated_by>jgbox</sys_updated_by>
+        <sys_updated_on>2018-08-10 02:22:26</sys_updated_on>
+    </sys_user_role>
+</record_update>

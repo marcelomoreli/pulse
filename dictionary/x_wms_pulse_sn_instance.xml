@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element label="ServiceNow Instance" max_length="40" name="x_wms_pulse_sn_instance" type="collection">
+        <element label="Active" max_length="40" name="active" type="boolean"/>
+        <element label="Auto promote" max_length="40" name="auto_promote" type="boolean"/>
+        <element label="Code freeze" max_length="40" name="code_freeze" type="boolean"/>
+        <element label="Name" mandatory="true" max_length="100" name="name" type="string"/>
+        <element label="Parent" max_length="32" name="parent" reference="x_wms_pulse_sn_instance" type="reference"/>
+        <element label="Password" max_length="255" name="password" type="password2"/>
+        <element choice="3" label="Type" mandatory="true" max_length="40" name="type" type="choice">
+            <choice>
+                <element label="Development" sequence="100" value="dev"/>
+                <element label="Test" sequence="200" value="test"/>
+                <element label="Production" sequence="300" value="prod"/>
+            </choice>
+        </element>
+        <element label="URL" mandatory="true" max_length="1024" name="url" type="url"/>
+        <element default="40" label="User" max_length="40" name="user" type="string"/>
+        <index name="index">
+            <element name="parent"/>
+        </index>
+    </element>
+</database>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_security_acl_role">
+    <sys_security_acl_role action="INSERT_OR_UPDATE">
+        <sys_class_name>sys_security_acl_role</sys_class_name>
+        <sys_created_by>jgbox</sys_created_by>
+        <sys_created_on>2018-07-31 10:18:03</sys_created_on>
+        <sys_id>612e7483db63130089fb2fb748961904</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_wms_pulse_sn_scope.x_wms_pulse.sn_admin</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_security_acl display_value="x_wms_pulse_sn_scope">292e7083db63130089fb2fb7489619e5</sys_security_acl>
+        <sys_update_name>sys_security_acl_role_612e7483db63130089fb2fb748961904</sys_update_name>
+        <sys_updated_by>jgbox</sys_updated_by>
+        <sys_updated_on>2018-07-31 10:18:03</sys_updated_on>
+        <sys_user_role display_value="x_wms_pulse.sn_admin" name="x_wms_pulse.sn_admin">235b3403db63130089fb2fb748961979</sys_user_role>
+        <transaction_id/>
+    </sys_security_acl_role>
+</record_update>

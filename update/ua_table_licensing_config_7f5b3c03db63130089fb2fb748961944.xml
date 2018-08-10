@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="ua_table_licensing_config">
+    <ua_table_licensing_config action="INSERT_OR_UPDATE">
+        <is_fulfillment>false</is_fulfillment>
+        <license_condition/>
+        <license_model>none</license_model>
+        <license_roles/>
+        <name>x_wms_pulse_dev_request</name>
+        <op_delete>true</op_delete>
+        <op_insert>true</op_insert>
+        <op_update>true</op_update>
+        <owner_condition/>
+        <sys_class_name>ua_table_licensing_config</sys_class_name>
+        <sys_created_by>jgbox</sys_created_by>
+        <sys_created_on>2018-07-31 10:05:55</sys_created_on>
+        <sys_id>7f5b3c03db63130089fb2fb748961944</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_wms_pulse_dev_request</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>ua_table_licensing_config_7f5b3c03db63130089fb2fb748961944</sys_update_name>
+        <sys_updated_by>jgbox</sys_updated_by>
+        <sys_updated_on>2018-07-31 10:05:55</sys_updated_on>
+    </ua_table_licensing_config>
+</record_update>
