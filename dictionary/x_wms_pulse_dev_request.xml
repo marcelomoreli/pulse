@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database>
-    <element extends="task" label="ServiceNow Development Request" max_length="40" name="x_wms_pulse_dev_request" type="collection">
+    <element audit="true" extends="task" label="ServiceNow Development Request" max_length="40" name="x_wms_pulse_dev_request" sizeclass="1" type="collection">
         <element label="Application" max_length="32" name="application" reference="x_wms_pulse_sn_application" type="reference"/>
         <element label="Application owner" max_length="32" name="application_owner" reference="sys_user" type="reference"/>
         <element label="Auto Promote" max_length="40" name="auto_promote" type="boolean"/>
@@ -8,6 +8,7 @@
         <element label="Current instance" max_length="32" name="current_instance" reference="x_wms_pulse_sn_instance" type="reference"/>
         <element label="Dev instance" max_length="32" name="dev_instance" reference="x_wms_pulse_sn_instance" type="reference"/>
         <element label="Knowledge article" max_length="32" name="knowledge_article" reference="kb_knowledge" type="reference"/>
+        <element label="Scope" max_length="32" name="scope" reference="x_wms_pulse_sn_scope" type="reference"/>
         <element label="Source" max_length="40" name="source" type="string"/>
         <element label="Source ID" max_length="40" name="source_id" type="string"/>
         <element label="Sync to source" max_length="40" name="sync_to_source" type="boolean"/>

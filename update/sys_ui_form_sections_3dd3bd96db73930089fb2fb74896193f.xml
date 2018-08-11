@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+    <sys_ui_form_sections form_id="3dd3bd96db73930089fb2fb74896193f" sys_domain="global" table="x_wms_pulse_dev_request" version="3">
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>0</position>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2018-08-10 16:32:53</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>71d3bd96db73930089fb2fb748961942</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_wms_pulse_dev_request" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">3dd3bd96db73930089fb2fb74896193f</sys_ui_form>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">b719a14bdba3130089fb2fb74896194d</sys_ui_section>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2018-08-10 16:32:53</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>1</position>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2018-08-10 16:32:53</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>7dd3bd96db73930089fb2fb748961942</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_wms_pulse_dev_request" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">3dd3bd96db73930089fb2fb74896193f</sys_ui_form>
+            <sys_ui_section caption="Notes" display_value="Notes" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">79d3bd96db73930089fb2fb74896193d</sys_ui_section>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2018-08-10 16:32:53</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>2</position>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2018-08-10 16:32:54</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>bdd3bd96db73930089fb2fb7489619ce</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_wms_pulse_dev_request" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">3dd3bd96db73930089fb2fb74896193f</sys_ui_form>
+            <sys_ui_section caption="Process" display_value="Process" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">f5d3bd96db73930089fb2fb74896193e</sys_ui_section>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2018-08-10 16:32:54</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>3</position>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2018-08-10 16:32:54</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>b5d3bd96db73930089fb2fb7489619d2</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_wms_pulse_dev_request" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">3dd3bd96db73930089fb2fb74896193f</sys_ui_form>
+            <sys_ui_section caption="System" display_value="System" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">fdd3bd96db73930089fb2fb74896193e</sys_ui_section>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2018-08-10 16:32:54</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form action="INSERT_OR_UPDATE">
+            <name>x_wms_pulse_dev_request</name>
+            <roles/>
+            <sys_class_name>sys_ui_form</sys_class_name>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2018-08-10 16:32:53</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>3dd3bd96db73930089fb2fb74896193f</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>x_wms_pulse_dev_request</sys_name>
+            <sys_overrides/>
+            <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+            <sys_update_name>sys_ui_form_sections_3dd3bd96db73930089fb2fb74896193f</sys_update_name>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2018-08-10 16:32:53</sys_updated_on>
+            <sys_user/>
+            <view display_value="Default view" name="NULL">Default view</view>
+            <view_name/>
+        </sys_ui_form>
+    </sys_ui_form_sections>
+</record_update>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update sys_domain="global" table="sys_ui_action">
+    <sys_ui_action action="INSERT_OR_UPDATE">
+        <action_name/>
+        <active>true</active>
+        <client>false</client>
+        <comments/>
+        <condition>!current.isNewRecord() &amp;&amp; (new global.Workflow().hasWorkflow(current))</condition>
+        <form_action>true</form_action>
+        <form_button>false</form_button>
+        <form_context_menu>false</form_context_menu>
+        <form_link>true</form_link>
+        <form_style/>
+        <hint/>
+        <list_action>false</list_action>
+        <list_banner_button>false</list_banner_button>
+        <list_button>false</list_button>
+        <list_choice>false</list_choice>
+        <list_context_menu>false</list_context_menu>
+        <list_link>false</list_link>
+        <list_save_with_form_button>false</list_save_with_form_button>
+        <list_style/>
+        <name>Restart Workflow</name>
+        <onclick/>
+        <order>100</order>
+        <script><![CDATA[restartWorkflowContext();
+
+function restartWorkflowContext() {
+	action.setRedirectURL(current);
+	var oldWorkflow = new global.Workflow();
+	oldWorkflow.cancel(current);
+	
+	var newWorkflow = new global.Workflow();
+	newWorkflow.startFlow(new global.Workflow().getWorkflowFromName('Development Request Lifecycle'), current, '');
+	gs.addInfoMessage('Workflow restarted');
+}]]></script>
+        <show_insert>true</show_insert>
+        <show_multiple_update>false</show_multiple_update>
+        <show_query>false</show_query>
+        <show_update>true</show_update>
+        <sys_class_name>sys_ui_action</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2018-08-10 14:56:51</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>3edd195adb33930089fb2fb7489619ae</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>Restart Workflow</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sys_ui_action_3edd195adb33930089fb2fb7489619ae</sys_update_name>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2018-08-10 15:00:06</sys_updated_on>
+        <table>x_wms_pulse_dev_request</table>
+        <ui11_compatible>true</ui11_compatible>
+        <ui16_compatible>false</ui16_compatible>
+    </sys_ui_action>
+</record_update>

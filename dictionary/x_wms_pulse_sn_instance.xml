@@ -15,7 +15,7 @@
             </choice>
         </element>
         <element label="URL" mandatory="true" max_length="1024" name="url" type="url"/>
-        <element default="40" label="User" max_length="40" name="user" type="string"/>
+        <element label="User" max_length="40" name="user" type="string"/>
         <index name="index">
             <element name="parent"/>
         </index>
