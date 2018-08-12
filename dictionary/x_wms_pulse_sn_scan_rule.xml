@@ -3,7 +3,7 @@
     <element label="ServiceNow Scan Rule" max_length="40" name="x_wms_pulse_sn_scan_rule" type="collection">
         <element label="Active" max_length="40" name="active" type="boolean"/>
         <element label="Applies to" max_length="80" name="applies_to" type="table_name"/>
-        <element label="Condition" max_length="4000" name="condition" type="conditions"/>
+        <element dependent="applies_to" dependent_on_field="applies_to" label="Condition" max_length="4000" name="condition" type="conditions" use_dependent_field="true"/>
         <element choice="1" label="Impact level" max_length="40" name="impact_level" type="choice">
             <choice/>
         </element>
