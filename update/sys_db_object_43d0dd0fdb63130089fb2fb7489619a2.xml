@@ -4,6 +4,7 @@
         <access/>
         <actions_access>true</actions_access>
         <alter_access>true</alter_access>
+        <caller_access/>
         <client_scripts_access>true</client_scripts_access>
         <configuration_access>false</configuration_access>
         <create_access>true</create_access>

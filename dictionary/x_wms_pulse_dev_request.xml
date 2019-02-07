@@ -16,6 +16,6 @@
             <choice/>
         </element>
         <element label="Update set JSON" max_length="1000" name="update_set_json" type="string"/>
-        <element label="Update set name" max_length="80" name="update_set_name" type="string"/>
+        <element attributes="ref_contributions=x_wms_pulse_go_to_update_set" label="Update set name" max_length="80" name="update_set_name" type="string"/>
     </element>
 </database>

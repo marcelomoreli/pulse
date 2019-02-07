@@ -26,7 +26,7 @@
         <script><![CDATA[runBackup();
 
 function runBackup() {
-	var utils = new UpdateSetUtils();
+	var utils = new x_wms_pulse.PulseUtils();
 	var response = utils.backupDevelopment(current);
 	if (response && response.success) {
 		gs.addInfoMessage(response.message);
@@ -47,7 +47,7 @@ function runBackup() {
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>f63372cedbbb530089fb2fb748961984</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>3</sys_mod_count>
         <sys_name>On Hold and Back Up</sys_name>
         <sys_overrides/>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
@@ -55,7 +55,7 @@ function runBackup() {
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_ui_action_f63372cedbbb530089fb2fb748961984</sys_update_name>
         <sys_updated_by>jgbox</sys_updated_by>
-        <sys_updated_on>2018-08-10 02:41:34</sys_updated_on>
+        <sys_updated_on>2018-09-15 18:20:21</sys_updated_on>
         <table>x_wms_pulse_dev_request</table>
         <ui11_compatible>true</ui11_compatible>
         <ui16_compatible>false</ui16_compatible>
