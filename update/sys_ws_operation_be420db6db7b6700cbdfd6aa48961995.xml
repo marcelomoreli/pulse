@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ws_operation">
+    <sys_ws_operation action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <consumes>application/json,application/xml,text/xml</consumes>
+        <consumes_customized>false</consumes_customized>
+        <default_operation_uri/>
+        <enforce_acl>cf9d01d3e73003009d6247e603f6a990</enforce_acl>
+        <http_method>POST</http_method>
+        <name>Preview Update Set</name>
+        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
+	if (!request.getHeader('Authorization')) {
+		response.setStatus(401);
+		response.setContentType('/application/json');
+		response.setBody({ 'error' : 'Authentication expired'});
+	}
+	
+	var setID = request.pathParams.sys_id;
+	var updateSetUtils = new x_wms_pulse.PulseUtils();
+	var answer = updateSetUtils.previewUpdateSet(setID);
+	
+	if (answer.success) {
+		response.setStatus(200);
+	} else {
+		response.setStatus(400);
+	}
+	response.setContentType('application/json');
+	response.setBody(answer);
+})(request, response);]]></operation_script>
+        <operation_uri>/api/x_wms_pulse/pulse/updateset/preview/{sys_id}</operation_uri>
+        <produces>application/json,application/xml,text/xml</produces>
+        <produces_customized>false</produces_customized>
+        <relative_path>/updateset/preview/{sys_id}</relative_path>
+        <request_example/>
+        <requires_acl_authorization>true</requires_acl_authorization>
+        <requires_authentication>true</requires_authentication>
+        <requires_snc_internal_role>true</requires_snc_internal_role>
+        <short_description/>
+        <sys_class_name>sys_ws_operation</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-02-26 22:24:33</sys_created_on>
+        <sys_id>be420db6db7b6700cbdfd6aa48961995</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Preview Update Set</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sys_ws_operation_be420db6db7b6700cbdfd6aa48961995</sys_update_name>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2019-02-26 22:24:33</sys_updated_on>
+        <web_service_definition display_value="Pulse">1db74d9adbff530089fb2fb7489619c5</web_service_definition>
+        <web_service_version/>
+    </sys_ws_operation>
+</record_update>

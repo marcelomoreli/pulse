@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sys_properties_category">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties_category">
     <sys_properties_category action="INSERT_OR_UPDATE">
         <name>Pulse Properties</name>
         <sys_class_name>sys_properties_category</sys_class_name>

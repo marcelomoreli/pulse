@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update>
+<?xml version="1.0" encoding="UTF-8"?><record_update>
     <sys_choice action="INSERT_OR_UPDATE" field="state" table="x_wms_pulse_dev_request" version="3">
         <sys_choice action="INSERT_OR_UPDATE">
             <dependent_value/>
@@ -38,6 +37,25 @@
             <sys_updated_by>mmoreli</sys_updated_by>
             <sys_updated_on>2018-08-07 16:26:33</sys_updated_on>
             <value>11</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>state</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Testing Preview</label>
+            <language>en</language>
+            <name>x_wms_pulse_dev_request</name>
+            <sequence>15</sequence>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-02-21 16:34:56</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>b4520e09db7b6300cbdfd6aa489619df</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-02-21 16:34:56</sys_updated_on>
+            <value>15</value>
         </sys_choice>
         <sys_choice action="INSERT_OR_UPDATE">
             <dependent_value/>

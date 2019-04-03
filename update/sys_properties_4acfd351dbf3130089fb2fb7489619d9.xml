@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sys_properties">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
     <sys_properties action="INSERT_OR_UPDATE">
         <choices>debug, info,notice,warning,err,crit</choices>
         <description>Logs can be at the level of debug, info, notice, warning, err, or crit</description>

@@ -1,28 +1,181 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sys_script_include">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
     <sys_script_include action="INSERT_OR_UPDATE">
         <access>public</access>
         <active>true</active>
-        <api_name>x_wms_pulse.PulseUtils</api_name>
+        <api_name>x_wms_pulse.PulseUtilsImpl</api_name>
         <caller_access/>
         <client_callable>false</client_callable>
         <description/>
-        <name>PulseUtils</name>
-        <script><![CDATA[var PulseUtils = Class.create();
-PulseUtils.prototype = {
+        <name>PulseUtilsImpl</name>
+        <script><![CDATA[var PulseUtilsImpl = Class.create();
+PulseUtilsImpl.prototype = {
     PULSE_LOG_LEVEL : 'x_wms_pulse.log_level',
 
     initialize: function() {
         this.l = new global.GSLog(this.PULSE_LOG_LEVEL, this.type);
         this.production_instance = gs.getProperty('x_wms_pulse.production_instance');
         this.currInstance = gs.getProperty('instance_name');
+        this.pulseGlobal = new global.PulseGlobal();
     },
 
+    // BEFORE updating to review, it will try to PRE-preview the update set to find preview problems
+    prePreviewUpdateSet: function(devRequest) {
+        this.l.logDebug('Starting sendToPrePreviewUpdateSet[' + devRequest.number + ']');
+        var answer = {
+            success : false,
+            message : ''
+        };
+        //if (!this.isProduction()) {
+            var prodGR = new GlideRecord('x_wms_pulse_sn_instance');
+            prodGR.addQuery('name', this.production_instance);
+            prodGR.query();
+
+            if (prodGR.next()) {
+                if (prodGR.active) {
+                    if (prodGR.getValue('type') == 'prod') {
+                        // At this point we need to:
+                        // 1 - Find what is supposed to be the target environment
+                        // 2 - Call the API to Retrieve the update set on the target environment
+                        // 3 - Call the API to Preview the update set on the target environment
+                        // 4 - Return back the preview problems (if any)
+
+
+                        
+                        var answerAPI = this.callAPI(env, '/api/now/table/' + tbl + '?sysparm_query=' + field + '=' + setID, 'get', null);
+
+                        var r = new sn_ws.RESTMessageV2();
+                        r.setEndpoint(prodGR.getValue('url') + '/api/x_wms_pulse/pulse/updateset/prepreview/' + this.currInstance + '/' + setID);
+                        r.setBasicAuth(prodGR.getValue('user'), prodGR.password.getDecryptedValue());
+                        r.setHttpMethod('get');
+                        var response = r.execute();
+                        var responseBody = response.getBody();
+                        this.l.logDebug('Answer:' + responseBody);
+                        var httpStatus = response.getStatusCode();
+                        if (responseBody != '') {
+                            var responseObj = JSON.parse(responseBody);
+                            if (responseObj.result && responseObj.result.success) {
+                                answer.sucess = true;
+                            }
+                            answer.message = responseObj.result.message;
+                        } else {
+                            answer.message = 'Empty response from call';
+                        }
+                    } else {
+                        answer.message = 'Production is set as ' + prodGR.getValue('type') + '. Please talk to your administrator';
+                    }
+                } else {
+                    answer.message = 'Production is disabled. Please talk to your administrator';
+                }
+            } else {
+                answer.message = 'Production is not defined. Please talk to your administrator';
+            }
+        //} else {
+        //    answer.message = 'You cannot perform this action in Production! Only in Sub-Dev environments.';
+        //}
+        this.l.logDebug('Answer from backupDevelopment: ' + JSON.stringify(answer));
+        return answer;
+    },
+
+    sendToPrePreviewUpdateSet: function(setID) {
+        this.l.logDebug('Starting prePreviewUpdateSet[' + setID + ']');
+        var answer = {
+            success : false,
+            message : ''
+        };
+        //if (!this.isProduction()) {
+            var prodGR = new GlideRecord('x_wms_pulse_sn_instance');
+            prodGR.addQuery('name', this.production_instance);
+            prodGR.query();
+
+            if (prodGR.next()) {
+                if (prodGR.active) {
+                    if (prodGR.getValue('type') == 'prod') {
+                        var r = new sn_ws.RESTMessageV2();
+                        r.setEndpoint(prodGR.getValue('url') + '/api/x_wms_pulse/pulse/updateset/moveprepreview/' + this.currInstance + '/' + setID);
+                        r.setBasicAuth(prodGR.getValue('user'), prodGR.password.getDecryptedValue());
+                        r.setHttpMethod('post');
+                        r.setRequestBody(JSON.stringify(this.codeScan(setID)));
+                        var response = r.execute();
+                        var responseBody = response.getBody();
+                        this.l.logDebug('Answer:' + responseBody);
+                        var httpStatus = response.getStatusCode();
+                        if (responseBody != '') {
+                            var responseObj = JSON.parse(responseBody);
+                            if (responseObj.result && responseObj.result.success) {
+                                answer.sucess = true;
+                            }
+                            answer.message = responseObj.result.message;
+                        } else {
+                            answer.message = 'Empty response from call';
+                        }
+                    } else {
+                        answer.message = 'Production is set as ' + prodGR.getValue('type') + '. Please talk to your administrator';
+                    }
+                } else {
+                    answer.message = 'Production is disabled. Please talk to your administrator';
+                }
+            } else {
+                answer.message = 'Production is not defined. Please talk to your administrator';
+            }
+        //} else {
+        //    answer.message = 'You cannot perform this action in Production! Only in Sub-Dev environments.';
+        //}
+        this.l.logDebug('Answer from backupDevelopment: ' + JSON.stringify(answer));
+        return answer;
+    },
+
+    moveToPrePreviewUpdateSet: function(instance, setID) {
+        this.l.logDebug('Starting moveToPrePreviewUpdateSet environment[' + instance + '] setID[' + setID + ']');
+        var answer = {
+            success : false,
+            message : ''
+        };
+
+        if (this.isProduction()) {
+            // Check enviroment the request is from
+            var env = new GlideRecord('x_wms_pulse_sn_instance');
+            env.addQuery('name', environment);
+            env.query();
+            if (env.next()) {
+                if (env.active) {
+                    // So, environment is good!
+                    // Let's try to find the work for this item;
+                    var devRequest = new GlideRecord('x_wms_pulse_dev_request');
+                    devRequest.addEncodedQuery('update_set_jsonLIKE' +  setID);
+                    devRequest.query();
+                    if (devRequest.next()) {
+                        if (devRequest.getValue('state') == DevRequestStates.IN_DEVELOPMENT) {
+                            if (devRequest.getValue('dev_instance') == env.getValue('sys_id')) {
+                                devRequest.setValue('state', DevRequestStates.TESTING_PREVIEW);
+                                devRequest.update();
+                                this.l.logDebug('Moved to Testing Preview.');
+                                answer.success = true;
+                                answer.message = 'Update set will Test preview now. Please wait!';
+                            } else {
+                                answer.message = 'Development Request environment does not match: ' + devRequest.getDisplayValue('dev_instance');
+                            }
+                        } else {
+                            answer.message = 'Development Request can only be reviewed if current state is "In Development". Wrong State: ' + devRequest.getDisplayValue('state');
+                        }
+                    } else {
+                        answer.message = 'Development Request not found for this update set: ' + setID;
+                    }
+                } else {
+                    answer.message = 'Environment is inactive x_wms_pulse_sn_instance: ' + environment;
+                }
+            } else {
+                answer.message = 'Environment not found on x_wms_pulse_sn_instance: ' + environment;
+            }
+        } else {
+            answer.message = 'This function should only be used in PROD. Environment is not prod: ' + environment;
+        }
+        this.l.logDebug('Answer from moveToReview: ' + JSON.stringify(answer));
+        return answer;
+    },
 
     // Given a update set sys_id, grab the retrieved update set and preview.
     previewUpdateSet: function(setID) {
         this.l.logDebug('Starting previewUpdateSet[' + setID + ']');
-        var pulseGlobal = new global.PulseGlobal();
         var answer = {
             success : false,
             message : '',
@@ -40,9 +193,9 @@ PulseUtils.prototype = {
             if (set.getValue('state') != 'loaded' && set.getValue('state') != 'previewed') {
                 answer.message = 'Current state is not valid for previewing records: ' + set.getDisplayValue('state');
             } else {
-                pulseGlobal.setValue(this.l, 'sys_remote_update_set', localID, 'state', 'previewing');
-                pulseGlobal.previewUpdateSet(this.l, localID);
-                pulseGlobal.setValue(this.l, 'sys_remote_update_set', localID, 'state', 'previewed');
+                this.pulseGlobal.setValue(this.l, 'sys_remote_update_set', localID, 'state', 'previewing');
+                this.pulseGlobal.previewUpdateSet(this.l, localID);
+                this.pulseGlobal.setValue(this.l, 'sys_remote_update_set', localID, 'state', 'previewed');
 
                 // Get how many errors on preview
                 var previewRecords = new GlideRecord('sys_update_preview_problem');
@@ -83,7 +236,6 @@ PulseUtils.prototype = {
     // If the update set is already committed, grab the update set sys_id for the local copy.
     commitUpdateSet: function(setID) {
         this.l.logDebug('Starting commitUpdateSet[' + setID + ']');
-        var pulseGlobal = new global.PulseGlobal();
         var answer = {
             success : false,
             local_sys_id : '',
@@ -121,7 +273,7 @@ PulseUtils.prototype = {
                         answer.message = 'Current state is not valid for committing records: ' + remoteUpdateSet.getDisplayValue('state');
                     }
                 } else {
-                    var commitObj = pulseGlobal.commitUpdateSet(remoteUpdateSet);
+                    var commitObj = this.pulseGlobal.commitUpdateSet(remoteUpdateSet);
                     var lus_sysid = commitObj.lus_sysid;
                     var progressID = commitObj.progressID;
                     var remoteUpdateCheck = new GlideRecord('sys_remote_update_set');
@@ -212,7 +364,6 @@ PulseUtils.prototype = {
     // Creates a local update set
     createUpdateSet: function(name, scope, description) {
         this.l.logDebug('Starting createUpdateSet[ name[' + name + '] scope[' + scope + '] description[' + description + '] ]');
-        var pulseGlobal = new global.PulseGlobal();
         var answer = {
             success : false,
             message : '',
@@ -230,7 +381,7 @@ PulseUtils.prototype = {
             checkSet.query();
 
             if (!checkSet.next()) {
-                var newSetID = pulseGlobal.createUpdateSet(this.l, name, scope, description);
+                var newSetID = this.pulseGlobal.createUpdateSet(this.l, name, scope, description);
                 answer.updateSetID = newSetID;
                 if (answer.updateSetID.length == 32) {
                     answer.success = true;
@@ -372,31 +523,33 @@ PulseUtils.prototype = {
     },
 
     // Send to Review - Calls external system (PROD) to send update set to review
+    // BEFORE updating to review, it will try to PRE-preview the update set to find preview problems
     sendToReview: function(setID) {
         this.l.logDebug('Starting sendToReview[' + setID + ']');
         var answer = {
             success : false,
             message : ''
         };
-        if (!this.isProduction()) {
+        //if (!this.isProduction()) {
             var prodGR = new GlideRecord('x_wms_pulse_sn_instance');
-            prodGR.addQuery('u_name', this.production_instance);
+            prodGR.addQuery('name', this.production_instance);
             prodGR.query();
 
             if (prodGR.next()) {
-                if (prodGR.u_active) {
+                if (prodGR.active) {
                     if (prodGR.getValue('type') == 'prod') {
                         var r = new sn_ws.RESTMessageV2();
-                        r.setEndpoint(prodGR.getValue('url') + gs.getProperty('update_set_utils.api_url') + '/updateset/review/' + this.currInstance + '/' + setID);
-                        r.setBasicAuth(prodGR.getValue('user'), environment.password.getDecryptedValue());
+                        r.setEndpoint(prodGR.getValue('url') + '/api/x_wms_pulse/pulse/updateset/review/' + this.currInstance + '/' + setID);
+                        r.setBasicAuth(prodGR.getValue('user'), prodGR.password.getDecryptedValue());
                         r.setHttpMethod('post');
                         r.setRequestBody(JSON.stringify(this.codeScan(setID)));
                         var response = r.execute();
                         var responseBody = response.getBody();
+                        this.l.logDebug('Answer:' + responseBody);
                         var httpStatus = response.getStatusCode();
                         if (responseBody != '') {
                             var responseObj = JSON.parse(responseBody);
-                            if (responseObj.result.success) {
+                            if (responseObj.result && responseObj.result.success) {
                                 answer.sucess = true;
                             }
                             answer.message = responseObj.result.message;
@@ -412,9 +565,9 @@ PulseUtils.prototype = {
             } else {
                 answer.message = 'Production is not defined. Please talk to your administrator';
             }
-        } else {
-            answer.message = 'You cannot perform this action in Production! Only in Sub-Dev environments.';
-        }
+        //} else {
+        //    answer.message = 'You cannot perform this action in Production! Only in Sub-Dev environments.';
+        //}
         this.l.logDebug('Answer from backupDevelopment: ' + JSON.stringify(answer));
         return answer;
     },
@@ -428,10 +581,7 @@ PulseUtils.prototype = {
             message : ''
         };
 
-        findings = findings || '';
-        if (findings != '') {
-            findings = JSON.stringify(findings) + '';
-        }
+        findings = findings || [];
 
         if (this.isProduction()) {
             // Check enviroment the request is from
@@ -447,8 +597,33 @@ PulseUtils.prototype = {
                     devRequest.query();
                     if (devRequest.next()) {
                         if (devRequest.getValue('state') == DevRequestStates.IN_DEVELOPMENT) {
-                            if (devRequest.dev_instance.getValue('sys_id') == env.getValue('sys_id')) {
+                            if (devRequest.getValue('dev_instance') == env.getValue('sys_id')) {
                                 devRequest.setValue('state', DevRequestStates.IN_REVIEW);
+                                devRequest.setValue('review_requested_on', (new GlideDateTime()));
+                                // Set previous findings as History
+                                var currFindings = new GlideRecord('x_wms_pulse_sn_scan_finding');
+                                currFindings.addQuery('dev_request', devRequest.getValue('sys_id'));
+                                currFindings.addQuery('state', 'current');
+                                currFindings.query();
+                                while (currFindings.next()) {
+                                    currFindings.setValue('state', 'history');
+                                    currFindings.update();
+                                }
+                                
+                                // Insert Findings
+                                for (var x = 0; x < findings.length; x++) {
+                                    var newFinding = new GlideRecord('x_wms_pulse_sn_scan_finding');
+                                    newFinding.initialize();
+                                    newFinding.setValue('dev_request', devRequest.getValue('sys_id'));
+                                    newFinding.setValue('state', 'current');
+                                    newFinding.setValue('rule', findings[x].rule_id);
+                                    newFinding.setValue('table', findings[x].record_table);
+                                    newFinding.setValue('table_sys_id', findings[x].record_sys_id);
+                                    newFinding.setValue('recommendation', findings[x].recommendation);
+                                    newFinding.setValue('update_xml_sys_id', findings[x].update_xml_sys_id);
+                                    newFinding.insert();
+                                }
+
                                 /*devRequest.u_findings = findings;
                                 if (findings == '[{"type":"Info","criticality":"None","recommendation":"This update set does not need code review since there is no code involved.","record_sys_id":"record]","record_table":"[No"}]') {
                                     devRequest.u_code_reviewed = true;
@@ -457,6 +632,9 @@ PulseUtils.prototype = {
                                 // TODO - FINDINGS STUFF
                                 devRequest.update();
                                 this.l.logDebug('Review Requested.');
+
+
+
                                 answer.success = true;
                                 answer.message = 'Update set sent to review. Thanks!';
 
@@ -614,8 +792,7 @@ PulseUtils.prototype = {
             errorMessage : '',
             message : ''
         };
-        var pulseGlobal = new global.PulseGlobal();
-        pulseGlobal.setValue(this.l, 'sys_update_set', setID, 'state', 'ignore');
+        this.pulseGlobal.setValue(this.l, 'sys_update_set', setID, 'state', 'ignore');
         answer.success = true;
         answer.message = 'Update set ignored.';
 
@@ -630,8 +807,7 @@ PulseUtils.prototype = {
             success : false,
             message : ''
         };
-        var pulseGlobal = new global.PulseGlobal();
-        var updated = pulseGlobal.setValue(this.l, 'sys_update_set', setID, 'state', 'in progress');
+        var updated = this.pulseGlobal.setValue(this.l, 'sys_update_set', setID, 'state', 'in progress');
         if (updated) {
             answer.success = true;
             answer.message = 'Update set moved back to In Progress.';
@@ -835,7 +1011,7 @@ PulseUtils.prototype = {
             scanMessage += '<thead><tr>\n';
             scanMessage += '    <th scope="col">#</th>\n';
             scanMessage += '    <th scope="col">Type</th>\n';
-            scanMessage += '    <th scope="col">Criticality</th>\n';
+            scanMessage += '    <th scope="col">Level</th>\n';
             scanMessage += '    <th scope="col">Record</th>\n';
             scanMessage += '    <th scope="col">Recommendation</th>\n';
             scanMessage += '</thead></tr>\n';
@@ -843,8 +1019,8 @@ PulseUtils.prototype = {
             for (var f = 0; f < result.length ; f++) {
                 scanMessage += '  <tr>\n';
                 scanMessage += '    <th scope="row">' + (f+1) + '</th>\n';
-                scanMessage += '    <td>' + result[f].type + '</td>\n';
-                scanMessage += '    <td>' + result[f].criticality + '</td>\n';
+                scanMessage += '    <td>' + result[f].impact_type + '</td>\n';
+                scanMessage += '    <td>' + result[f].impact_level + '</td>\n';
                 scanMessage += '    <td><a target="_blank" href="/nav_to.do?uri=' + result[f].record_table + '.do?sys_id=' + result[f].record_sys_id + '">' + result[f].record_table + '_' + result[f].record_sys_id + '</a></td>\n';
                 scanMessage += '    <td>' + result[f].recommendation + '</td>\n';
                 scanMessage += '  </tr>\n';
@@ -855,124 +1031,7 @@ PulseUtils.prototype = {
     },
 
     codeScan: function(setID) {
-        this.l.logDebug('Starting codeScan [ ' + setID + ']');
-        // findings is our array to keep track of all results
-        var findings = [];
-        var finding;
-        var setContents = new GlideRecord('sys_update_xml');
-        setContents.addQuery('update_set', setID);
-        setContents.query();
-
-        while (setContents.next()) {
-            var xmlDoc = new XMLDocument2();
-            xmlDoc.parseXML(setContents.payload);
-            var recUpdateNode = xmlDoc.getNode('/record_update');
-            var itemTable = recUpdateNode.getAttribute('table');
-            if (!itemTable) {
-                itemTable = recUpdateNode.getFirstChild().getNodeName();
-            }
-            var itemSysID = xmlDoc.getNodeText('/record_update/' + itemTable + '/' + itemTable + '/sys_id');
-            if (!itemSysID) {
-              itemSysID = xmlDoc.getNodeText('/record_update/' + itemTable + '/sys_id');
-            }
-            this.l.logDebug('Code scanning [' + itemTable + ':' + itemSysID + ']');
-            // Check existance of item
-            if (itemTable && itemSysID) {
-                var grItem = new GlideRecord(itemTable);
-                grItem.addQuery('sys_id', itemSysID);
-                grItem.query();
-
-                if (grItem.next()) {
-                    var checkVersion = new GlideRecord('sys_update_version');
-                    checkVersion.addQuery('name', setContents.name);
-                    checkVersion.addQuery('state', 'current');
-                    checkVersion.query();
-
-                    if (checkVersion.next()) {
-                        if (checkVersion.source != setID) {
-                            this.l.logDebug('Version in this update set is not the latest!');
-                            finding = {};
-                            finding.type = 'Consistency';
-                            finding.criticality = 'High';
-                            finding.record_sys_id = itemSysID + '';
-                            finding.record_table = itemTable + '';
-                            finding.recommendation = 'Version in this update set is not the latest. Please check! Latest on [' + checkVersion.source.getDisplayValue() + ']';
-                            findings.push(finding);
-                        } else {
-                            this.l.logDebug('Version test: Ok');
-                        }
-                    } else {
-                        this.l.logDebug('Version not found.');
-                    }
-
-                    var checks = new GlideRecord('u_sn_code_check');
-                    checks.addQuery('u_active', true);
-                    checks.addQuery('u_applies_to', itemTable);
-                    checks.query();
-                    while (checks.next()) {
-                        var match = GlideFilter.checkRecord(grItem, checks.u_condition);
-                        if (match) {
-                            if (checks.u_advanced) {
-                                // Run Scripts
-                                var evaluator = new GlideScopedEvaluator();
-                                evaluator.evaluateScript(checks, 'u_script', {current : grItem, update_set_item : setContents, setID : setID, result : null});
-                                var result = evaluator.getVariable('result');
-                                try {
-                                    var results = JSON.parse(result);
-                                    for (var x = 0; x < results.length ; x++) {
-                                        if (results[x] && results[x].type && results[x].criticality && results[x].record_table && results[x].record_sys_id && results[x].recommendation) {
-                                            findings.push(results[x]);
-                                        } else {
-                                            this.l.logDebug('Missing something on return:' + results[x]);
-                                        }
-                                    }
-                                } catch (e) {
-                                    this.l.logDebug('Error on Check [' + checks.getValue('sys_id') + ']: ' + e);
-                                }
-                            } else {
-                                finding = {};
-                                finding.type = checks.u_impact_type.getDisplayValue() + '';
-                                finding.criticality = checks.u_criticality.getDisplayValue() + '';
-                                finding.record_sys_id = itemSysID + '';
-                                finding.record_table = itemTable + '';
-                                finding.recommendation = checks.u_recommendation + '';
-                                if (setContents.action == 'DELETE') {
-                                    finding.recommendation = '[DELETE] ' + finding.recommendation;
-                                }
-                                findings.push(finding);
-                            }
-                        }
-                    }
-                } else {
-                    this.l.logDebug('Item Not Found!');
-                }
-            }
-        }
-
-        var globalChecks = new GlideRecord('u_sn_code_check');
-        globalChecks.addQuery('u_active', true);
-        globalChecks.addQuery('u_applies_to', '');
-        globalChecks.query();
-        while (globalChecks.next()) {
-            this.l.logDebug('Running Global Check: ' + globalChecks.u_short_description);
-            var globalEvaluator = new GlideScopedEvaluator();
-            globalEvaluator.evaluateScript(globalChecks, 'u_script', {current : null, update_set_item : null, setID : setID, result : null});
-            var resultFromScript = globalEvaluator.getVariable('result');
-            try {
-                var resultList = JSON.parse(resultFromScript);
-                for (var y = 0; y < resultList.length ; y++) {
-                    if (resultList[y] && resultList[y].type && resultList[y].criticality && resultList[y].record_table && resultList[y].record_sys_id && resultList[y].recommendation) {
-                        findings.push(resultList[y]);
-                    } else {
-                        this.l.logDebug('Missing something on return on Global Checks:' + resultList[y]);
-                    }
-                }
-            } catch (e) {
-                this.l.logDebug('Error on Check [' + checks.getValue('sys_id') + ']: ' + e);
-            }
-        }
-
-        return findings;
+        return this.pulseGlobal.codeScan(this.l, setID);
     },
 
     // Restores a backed up development
@@ -1576,20 +1635,20 @@ PulseUtils.prototype = {
         }
     },
 
-    type: 'PulseUtils'
+    type: 'PulseUtilsImpl'
 };
 ]]></script>
         <sys_class_name>sys_script_include</sys_class_name>
         <sys_created_by>mmoreli</sys_created_by>
         <sys_created_on>2018-08-07 21:43:44</sys_created_on>
         <sys_id>910e5311dbf3130089fb2fb748961988</sys_id>
-        <sys_mod_count>66</sys_mod_count>
-        <sys_name>PulseUtils</sys_name>
+        <sys_mod_count>88</sys_mod_count>
+        <sys_name>PulseUtilsImpl</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_script_include_910e5311dbf3130089fb2fb748961988</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-02-06 23:21:34</sys_updated_on>
+        <sys_updated_on>2019-03-27 23:44:47</sys_updated_on>
     </sys_script_include>
 </record_update>

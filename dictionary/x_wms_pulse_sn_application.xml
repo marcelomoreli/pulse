@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<database>
+<?xml version="1.0" encoding="UTF-8"?><database>
     <element label="ServiceNow Application" max_length="40" name="x_wms_pulse_sn_application" type="collection">
         <element label="Active" max_length="40" name="active" type="boolean"/>
         <element label="Auto Promote" max_length="40" name="auto_promote" type="boolean"/>

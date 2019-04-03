@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update>
+<?xml version="1.0" encoding="UTF-8"?><record_update>
     <sys_documentation element="" label="Pulse M2m Sn App Instance" language="en" table="x_wms_pulse_m2m_sn_app_instance">
         <sys_documentation action="INSERT_OR_UPDATE">
             <element/>

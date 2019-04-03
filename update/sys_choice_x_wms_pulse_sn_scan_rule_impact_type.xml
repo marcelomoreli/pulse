@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_choice action="INSERT_OR_UPDATE" field="impact_type" table="x_wms_pulse_sn_scan_rule" version="3">
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>impact_type</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Performance</label>
+            <language>en</language>
+            <name>x_wms_pulse_sn_scan_rule</name>
+            <sequence>1</sequence>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-02-07 21:56:29</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>c585876cdb236300cbdfd6aa48961912</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-02-07 21:56:29</sys_updated_on>
+            <value>performance</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>impact_type</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Best Practices</label>
+            <language>en</language>
+            <name>x_wms_pulse_sn_scan_rule</name>
+            <sequence>2</sequence>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-02-07 21:56:41</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>39b5cb2cdb236300cbdfd6aa4896195c</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-02-07 21:56:41</sys_updated_on>
+            <value>best_practices</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>impact_type</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Security</label>
+            <language>en</language>
+            <name>x_wms_pulse_sn_scan_rule</name>
+            <sequence>3</sequence>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-02-07 21:56:55</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>09c5cb2cdb236300cbdfd6aa48961960</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-02-07 21:56:55</sys_updated_on>
+            <value>security</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>impact_type</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Info</label>
+            <language>en</language>
+            <name>x_wms_pulse_sn_scan_rule</name>
+            <sequence>4</sequence>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-02-07 21:57:03</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>03c5c76cdb236300cbdfd6aa48961968</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-02-07 21:57:03</sys_updated_on>
+            <value>info</value>
+        </sys_choice>
+        <sys_choice_set action="INSERT_OR_UPDATE">
+            <element>impact_type</element>
+            <name>x_wms_pulse_sn_scan_rule</name>
+            <sys_class_name>sys_choice_set</sys_class_name>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-02-07 21:56:29</sys_created_on>
+            <sys_id>baa50f2cdb236300cbdfd6aa489619fa</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>impact_type</sys_name>
+            <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+            <sys_update_name>sys_choice_x_wms_pulse_sn_scan_rule_impact_type</sys_update_name>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-02-07 21:56:29</sys_updated_on>
+        </sys_choice_set>
+    </sys_choice>
+</record_update>

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update>
+<?xml version="1.0" encoding="UTF-8"?><record_update>
     <sys_ui_section caption="" section_id="aeb979c3dbe3130089fb2fb748961921" sys_domain="global" table="x_wms_pulse_sn_scope" version="3" view="">
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>name</element>

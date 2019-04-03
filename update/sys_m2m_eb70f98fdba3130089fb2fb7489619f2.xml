@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sys_m2m">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_m2m">
     <sys_m2m action="INSERT_OR_UPDATE">
         <from_table>x_wms_pulse_sn_application</from_table>
         <m2m_from_field>sn_application</m2m_from_field>

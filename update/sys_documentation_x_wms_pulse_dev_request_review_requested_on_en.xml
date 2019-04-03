@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_documentation element="review_requested_on" label="Review Requested" language="en" table="x_wms_pulse_dev_request">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element>review_requested_on</element>
+            <help/>
+            <hint/>
+            <label>Review Requested</label>
+            <language>en</language>
+            <name>x_wms_pulse_dev_request</name>
+            <plural>Review Requested</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-02-12 19:30:40</sys_created_on>
+            <sys_id>5f34145edbaf2300cbdfd6aa4896198c</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>Review Requested</sys_name>
+            <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+            <sys_update_name>sys_documentation_x_wms_pulse_dev_request_review_requested_on_en</sys_update_name>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-02-12 19:30:40</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>

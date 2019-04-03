@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<database>
+<?xml version="1.0" encoding="UTF-8"?><database>
     <element label="ServiceNow Scope" max_length="40" name="x_wms_pulse_sn_scope" type="collection">
         <element default="true" label="Active" max_length="40" name="active" type="boolean"/>
         <element label="Name" mandatory="true" max_length="100" name="name" type="string"/>
