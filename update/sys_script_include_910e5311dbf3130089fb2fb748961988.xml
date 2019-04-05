@@ -51,9 +51,9 @@ PulseUtilsImpl.prototype = {
                                     /*
                                     *    START OF LOAD
                                     */
-
+                                    usObj = JSON.parse(devRequest.getValue('update_set_json'));
                                     this.l.logDebug('Loading update set (root_sys_id): ' + devRequest.root_sys_id + ' in ' + targetEnv.name);
-                                    path = '/api/x_wms_pulse/pulse/retrieve/' + currEnv.name + '/' + devRequest.root_sys_id;
+                                    path = '/api/x_wms_pulse/pulse/updateset/retrieve/' + currEnv.name + '/' + usObj[currEnv.getValue('name')].local;
                                     operation = 'get';
                                     body = '';
 
@@ -64,9 +64,15 @@ PulseUtilsImpl.prototype = {
                                     }
 
                                     if (answer && answer.success) {
+                                        if (!usObj[targetEnv.name]) {
+                                            usObj[targetEnv.name] = {
+                                                local: '',
+                                                retrieved: '',
+                                            };
+                                        }
                                         usObj[targetEnv.name].retrieved = answer.remote_sys_id;
-                                        current.update_set_json = JSON.stringify(usObj);
-                                        current.comments = 'Update set ' + usObj[srcType].local + ' loaded in ' + env.u_name + ' as ' + answer.remote_sys_id;
+                                        devRequest.update_set_json = JSON.stringify(usObj);
+                                        devRequest.comments = 'Update set ' + usObj[currEnv.getValue('name')].local + ' loaded in ' + targetEnv.name + ' as ' + answer.remote_sys_id;
                                     
 
                                     /*
@@ -75,8 +81,8 @@ PulseUtilsImpl.prototype = {
 
 
                                         var r = new sn_ws.RESTMessageV2();
-                                        r.setEndpoint(targetEnv.getValue('url') + '/api/x_wms_pulse/pulse/updateset/prepreview/' + this.currInstance + '/' + devRequest.root_sys_id);
-                                        this.l.logDebug('Endpoint: ' + targetEnv.getValue('url') + '/api/x_wms_pulse/pulse/updateset/prepreview/' + this.currInstance + '/' + devRequest.root_sys_id);
+                                        r.setEndpoint(targetEnv.getValue('url') + '/api/x_wms_pulse/pulse/updateset/preview/' + this.currInstance + '/' + devRequest.root_sys_id);
+                                        this.l.logDebug('Endpoint: ' + targetEnv.getValue('url') + '/api/x_wms_pulse/pulse/updateset/preview/' + this.currInstance + '/' + devRequest.root_sys_id);
                                         r.setBasicAuth(targetEnv.getValue('user'), targetEnv.password.getDecryptedValue());
                                         r.setHttpMethod('get');
                                         var response = r.execute();
@@ -225,7 +231,7 @@ PulseUtilsImpl.prototype = {
             info : []
         };
 
-        this.pulseGlobal.previewUpdateSet(this.l, answer, instance, rootSetID);
+        this.pulseGlobal.retrieveUpdateSet(this.l, answer, instance, rootSetID);
         this.l.logDebug('Answer from retrieveUpdateSet: ' + JSON.stringify(answer));
         return answer;
     },
@@ -1700,13 +1706,13 @@ PulseUtilsImpl.prototype = {
         <sys_created_by>mmoreli</sys_created_by>
         <sys_created_on>2018-08-07 21:43:44</sys_created_on>
         <sys_id>910e5311dbf3130089fb2fb748961988</sys_id>
-        <sys_mod_count>101</sys_mod_count>
+        <sys_mod_count>108</sys_mod_count>
         <sys_name>PulseUtilsImpl</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_script_include_910e5311dbf3130089fb2fb748961988</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-04-05 15:51:00</sys_updated_on>
+        <sys_updated_on>2019-04-05 16:51:34</sys_updated_on>
     </sys_script_include>
 </record_update>
