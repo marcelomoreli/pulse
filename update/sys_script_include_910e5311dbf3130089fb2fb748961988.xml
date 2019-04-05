@@ -53,7 +53,7 @@ PulseUtilsImpl.prototype = {
                                     */
 
                                     this.l.logDebug('Loading update set (root_sys_id): ' + devRequest.root_sys_id + ' in ' + targetEnv.name);
-                                    path = '/api/wms/update_set_utils/retrieve/' + currEnv.name + '/' + devRequest.root_sys_id;
+                                    path = '/api/x_wms_pulse/pulse/retrieve/' + currEnv.name + '/' + devRequest.root_sys_id;
                                     operation = 'get';
                                     body = '';
 
@@ -213,6 +213,20 @@ PulseUtilsImpl.prototype = {
             answer.message = 'This function should only be used in PROD. Environment is not prod: ' + environment;
         }
         this.l.logDebug('Answer from moveToReview: ' + JSON.stringify(answer));
+        return answer;
+    },
+
+    // Given a update set u_root_sys_id, retrieve update set.
+    retrieveUpdateSet: function(instance, rootSetID) {
+        this.l.logDebug('Starting retrieveUpdateSet[' + rootSetID + ']');
+        var answer = {
+            success : false,
+            remote_sys_id : '',
+            info : []
+        };
+
+        this.pulseGlobal.previewUpdateSet(this.l, answer, instance, rootSetID);
+        this.l.logDebug('Answer from retrieveUpdateSet: ' + JSON.stringify(answer));
         return answer;
     },
 
@@ -1686,13 +1700,13 @@ PulseUtilsImpl.prototype = {
         <sys_created_by>mmoreli</sys_created_by>
         <sys_created_on>2018-08-07 21:43:44</sys_created_on>
         <sys_id>910e5311dbf3130089fb2fb748961988</sys_id>
-        <sys_mod_count>99</sys_mod_count>
+        <sys_mod_count>101</sys_mod_count>
         <sys_name>PulseUtilsImpl</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_script_include_910e5311dbf3130089fb2fb748961988</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-04-05 14:56:54</sys_updated_on>
+        <sys_updated_on>2019-04-05 15:51:00</sys_updated_on>
     </sys_script_include>
 </record_update>
