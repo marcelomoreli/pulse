@@ -6,9 +6,8 @@
         <default_operation_uri/>
         <enforce_acl>cf9d01d3e73003009d6247e603f6a990</enforce_acl>
         <http_method>GET</http_method>
-        <name>Test Preview</name>
+        <name>Retrieve Update Set</name>
         <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
-	
 	if (!request.getHeader('Authorization')) {
 		response.setStatus(401);
 		response.setContentType('/application/json');
@@ -18,8 +17,7 @@
 	var setID = request.pathParams.sys_id;
 	var instance = request.pathParams.instance;
 	var updateSetUtils = new x_wms_pulse.PulseUtils();
-	updateSetUtils.setDebug(true); // Debugging
-	var answer = updateSetUtils.moveToPrePreviewUpdateSet(instance, setID);
+	var answer = updateSetUtils.retrieveUpdateSet(instance, setID);
 	
 	if (answer.success) {
 		response.setStatus(200);
@@ -28,12 +26,12 @@
 	}
 	response.setContentType('application/json');
 	response.setBody(answer);
-
+	
 })(request, response);]]></operation_script>
-        <operation_uri>/api/x_wms_pulse/pulse/updateset/moveprepreview/{instance}/{sys_id}</operation_uri>
+        <operation_uri>/api/x_wms_pulse/pulse/updateset/retrieve/{instance}/{sys_id}</operation_uri>
         <produces>application/json,application/xml,text/xml</produces>
         <produces_customized>false</produces_customized>
-        <relative_path>/updateset/moveprepreview/{instance}/{sys_id}</relative_path>
+        <relative_path>/updateset/retrieve/{instance}/{sys_id}</relative_path>
         <request_example/>
         <requires_acl_authorization>true</requires_acl_authorization>
         <requires_authentication>true</requires_authentication>
@@ -41,16 +39,16 @@
         <short_description/>
         <sys_class_name>sys_ws_operation</sys_class_name>
         <sys_created_by>mmoreli</sys_created_by>
-        <sys_created_on>2019-02-26 21:55:25</sys_created_on>
-        <sys_id>08abf0f6db7b6700cbdfd6aa489619ea</sys_id>
-        <sys_mod_count>2</sys_mod_count>
-        <sys_name>Test Preview</sys_name>
+        <sys_created_on>2019-04-05 15:00:49</sys_created_on>
+        <sys_id>ad298fbedb203300cbdfd6aa489619cd</sys_id>
+        <sys_mod_count>5</sys_mod_count>
+        <sys_name>Retrieve Update Set</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy/>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
-        <sys_update_name>sys_ws_operation_08abf0f6db7b6700cbdfd6aa489619ea</sys_update_name>
+        <sys_update_name>sys_ws_operation_ad298fbedb203300cbdfd6aa489619cd</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-04-03 21:05:38</sys_updated_on>
+        <sys_updated_on>2019-04-05 16:51:45</sys_updated_on>
         <web_service_definition display_value="Pulse">1db74d9adbff530089fb2fb7489619c5</web_service_definition>
         <web_service_version/>
     </sys_ws_operation>

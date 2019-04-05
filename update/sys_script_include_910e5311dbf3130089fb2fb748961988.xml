@@ -38,27 +38,77 @@ PulseUtilsImpl.prototype = {
                         // 2 - Call the API to Retrieve the update set on the target environment
                         // 3 - Call the API to Preview the update set on the target environment
                         // 4 - Return back the preview problems (if any)
+                        var currEnv = new GlideRecord('x_wms_pulse_sn_instance');
+                        currEnv.addQuery('sys_id', devRequest.current_instance);
+                        currEnv.query();
+                        if (currEnv.next()) {
+                            if (currEnv.parent != '') {
+                                var targetEnv = new GlideRecord('x_wms_pulse_sn_instance');
+                                targetEnv.addQuery('sys_id', currEnv.parent);
+                                targetEnv.query();
+                                if (targetEnv.next()) {
+
+                                    /*
+                                    *    START OF LOAD
+                                    */
+                                    usObj = JSON.parse(devRequest.getValue('update_set_json'));
+                                    this.l.logDebug('Loading update set (root_sys_id): ' + devRequest.root_sys_id + ' in ' + targetEnv.name);
+                                    path = '/api/x_wms_pulse/pulse/updateset/retrieve/' + currEnv.name + '/' + usObj[currEnv.getValue('name')].local;
+                                    operation = 'get';
+                                    body = '';
+
+                                    try {
+                                        answer = this.callAPI(targetEnv.sys_id, path, operation, body);
+                                    } catch (err) {
+                                        answer.message = 'Error retrieving update set! ' + err;
+                                    }
+
+                                    if (answer && answer.success) {
+                                        if (!usObj[targetEnv.name]) {
+                                            usObj[targetEnv.name] = {
+                                                local: '',
+                                                retrieved: '',
+                                            };
+                                        }
+                                        usObj[targetEnv.name].retrieved = answer.remote_sys_id;
+                                        devRequest.update_set_json = JSON.stringify(usObj);
+                                        devRequest.comments = 'Update set ' + usObj[currEnv.getValue('name')].local + ' loaded in ' + targetEnv.name + ' as ' + answer.remote_sys_id;
+                                        devRequest.update();
+
+                                    /*
+                                    *    END OF LOAD - START of PREVIEW
+                                    */
 
 
-                        
-                        var answerAPI = this.callAPI(env, '/api/now/table/' + tbl + '?sysparm_query=' + field + '=' + setID, 'get', null);
-
-                        var r = new sn_ws.RESTMessageV2();
-                        r.setEndpoint(prodGR.getValue('url') + '/api/x_wms_pulse/pulse/updateset/prepreview/' + this.currInstance + '/' + setID);
-                        r.setBasicAuth(prodGR.getValue('user'), prodGR.password.getDecryptedValue());
-                        r.setHttpMethod('get');
-                        var response = r.execute();
-                        var responseBody = response.getBody();
-                        this.l.logDebug('Answer:' + responseBody);
-                        var httpStatus = response.getStatusCode();
-                        if (responseBody != '') {
-                            var responseObj = JSON.parse(responseBody);
-                            if (responseObj.result && responseObj.result.success) {
-                                answer.sucess = true;
+                                        var r = new sn_ws.RESTMessageV2();
+                                        r.setEndpoint(targetEnv.getValue('url') + '/api/x_wms_pulse/pulse/updateset/preview/' + answer.remote_sys_id);
+                                        this.l.logDebug('Endpoint: ' + targetEnv.getValue('url') + '/api/x_wms_pulse/pulse/updateset/preview/' + answer.remote_sys_id);
+                                        r.setBasicAuth(targetEnv.getValue('user'), targetEnv.password.getDecryptedValue());
+                                        r.setHttpMethod('post');
+                                        var response = r.execute();
+                                        var responseBody = response.getBody();
+                                        this.l.logDebug('Answer:' + responseBody);
+                                        var httpStatus = response.getStatusCode();
+                                        if (responseBody != '') {
+                                            var responseObj = JSON.parse(responseBody);
+                                            if (responseObj.result && responseObj.result.success) {
+                                                answer.success = true;
+                                            }
+                                            answer.message = responseObj.result.message;
+                                        } else {
+                                            answer.message = 'Empty response from call';
+                                        }
+                                    } else {
+                                        answer.message = 'Failure on retrieving update set';
+                                    }
+                                } else {
+                                    answer.message = 'Target environment not found.';
+                                }
+                            } else {
+                                answer.message = 'Current environment doesn\'t have a parent.';
                             }
-                            answer.message = responseObj.result.message;
                         } else {
-                            answer.message = 'Empty response from call';
+                            answer.message = 'Current environment not found.';
                         }
                     } else {
                         answer.message = 'Production is set as ' + prodGR.getValue('type') + '. Please talk to your administrator';
@@ -93,8 +143,7 @@ PulseUtilsImpl.prototype = {
                         var r = new sn_ws.RESTMessageV2();
                         r.setEndpoint(prodGR.getValue('url') + '/api/x_wms_pulse/pulse/updateset/moveprepreview/' + this.currInstance + '/' + setID);
                         r.setBasicAuth(prodGR.getValue('user'), prodGR.password.getDecryptedValue());
-                        r.setHttpMethod('post');
-                        r.setRequestBody(JSON.stringify(this.codeScan(setID)));
+                        r.setHttpMethod('get');
                         var response = r.execute();
                         var responseBody = response.getBody();
                         this.l.logDebug('Answer:' + responseBody);
@@ -102,7 +151,7 @@ PulseUtilsImpl.prototype = {
                         if (responseBody != '') {
                             var responseObj = JSON.parse(responseBody);
                             if (responseObj.result && responseObj.result.success) {
-                                answer.sucess = true;
+                                answer.success = true;
                             }
                             answer.message = responseObj.result.message;
                         } else {
@@ -134,7 +183,7 @@ PulseUtilsImpl.prototype = {
         if (this.isProduction()) {
             // Check enviroment the request is from
             var env = new GlideRecord('x_wms_pulse_sn_instance');
-            env.addQuery('name', environment);
+            env.addQuery('name', instance);
             env.query();
             if (env.next()) {
                 if (env.active) {
@@ -173,9 +222,23 @@ PulseUtilsImpl.prototype = {
         return answer;
     },
 
+    // Given a update set u_root_sys_id, retrieve update set.
+    retrieveUpdateSet: function(instance, rootSetID) {
+        this.l.logDebug('Starting retrieveUpdateSet[' + rootSetID + ']');
+        var answer = {
+            success : false,
+            remote_sys_id : '',
+            info : []
+        };
+
+        this.pulseGlobal.retrieveUpdateSet(this.l, answer, instance, rootSetID);
+        this.l.logDebug('Answer from retrieveUpdateSet: ' + JSON.stringify(answer));
+        return answer;
+    },
+
     // Given a update set sys_id, grab the retrieved update set and preview.
-    previewUpdateSet: function(setID) {
-        this.l.logDebug('Starting previewUpdateSet[' + setID + ']');
+    previewUpdateSet: function(localID) {
+        this.l.logDebug('Starting previewUpdateSet[' + localID + ']');
         var answer = {
             success : false,
             message : '',
@@ -185,11 +248,10 @@ PulseUtilsImpl.prototype = {
 
         // Grab the update set to be previewed
         var set = new GlideRecord('sys_remote_update_set');
-        set.addQuery('remote_sys_id', setID);
+        set.addQuery('sys_id', localID);
         set.query();
 
         if (set.next()) {
-            var localID = set.getValue('sys_id');
             if (set.getValue('state') != 'loaded' && set.getValue('state') != 'previewed') {
                 answer.message = 'Current state is not valid for previewing records: ' + set.getDisplayValue('state');
             } else {
@@ -226,7 +288,7 @@ PulseUtilsImpl.prototype = {
                 }
             }
         } else {
-            answer.message = 'Update Set not found: ' + setID;
+            answer.message = 'Update Set not found: ' + localID;
         }
         this.l.logDebug('Answer from previewUpdateSet: ' + JSON.stringify(answer));
         return answer;
@@ -339,6 +401,7 @@ PulseUtilsImpl.prototype = {
                     devRequest.setValue('state', DevRequestStates.IN_DEVELOPMENT);
                     usObj[devRequest.getDisplayValue('dev_instance')].local = answerAPI.updateSetID + '';
                     devRequest.update_set_json = JSON.stringify(usObj);
+                    devRequest.root_sys_id = answerAPI.updateSetID + '';
                     devRequest.current_instance = devRequest.dev_instance;
                     answer.success = true;
                     if (answerAPI.message) {
@@ -550,7 +613,7 @@ PulseUtilsImpl.prototype = {
                         if (responseBody != '') {
                             var responseObj = JSON.parse(responseBody);
                             if (responseObj.result && responseObj.result.success) {
-                                answer.sucess = true;
+                                answer.success = true;
                             }
                             answer.message = responseObj.result.message;
                         } else {
@@ -775,7 +838,7 @@ PulseUtilsImpl.prototype = {
         } else {
             answer.message = 'Schedule not found.';
         }
-        answer.sucess = true;
+        answer.success = true;
         if (devRequest.getValue('state') == DevRequestStates.SCHEDULED) {
             devRequest.setValue('state', DevRequestStates.TEST_PASSED);
             devRequest.update();
@@ -1064,7 +1127,7 @@ PulseUtilsImpl.prototype = {
                         if (uSetObj) {
                             usObj = this.insertUpdateSet(uSetObj.sys_remote_update_set, devRequest.dev_instance, answer);
                             this.l.logDebug('usObj [' + JSON.stringify(usObj) + ']');
-                            // If it is sucess, means we found a local update set already
+                            // If it is success, means we found a local update set already
                             if (!answer.success) {
                                 var usObjSysId = usObj.sys_id;
                                 var usObjRemoteSysId = usObj.remote_sys_id + '';
@@ -1642,13 +1705,13 @@ PulseUtilsImpl.prototype = {
         <sys_created_by>mmoreli</sys_created_by>
         <sys_created_on>2018-08-07 21:43:44</sys_created_on>
         <sys_id>910e5311dbf3130089fb2fb748961988</sys_id>
-        <sys_mod_count>88</sys_mod_count>
+        <sys_mod_count>113</sys_mod_count>
         <sys_name>PulseUtilsImpl</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_script_include_910e5311dbf3130089fb2fb748961988</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-03-27 23:44:47</sys_updated_on>
+        <sys_updated_on>2019-04-05 19:05:22</sys_updated_on>
     </sys_script_include>
 </record_update>

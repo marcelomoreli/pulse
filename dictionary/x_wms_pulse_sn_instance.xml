@@ -5,7 +5,7 @@
         <element label="Auto promote" max_length="40" name="auto_promote" type="boolean"/>
         <element label="Code freeze" max_length="40" name="code_freeze" type="boolean"/>
         <element label="Name" mandatory="true" max_length="100" name="name" type="string"/>
-        <element label="Parent" max_length="32" name="parent" reference="x_wms_pulse_sn_instance" type="reference"/>
+        <element label="Parent" max_length="32" name="parent" reference="x_wms_pulse_sn_instance" reference_qual="active=true^EQ" reference_qual_condition="active=true^EQ" type="glide_list"/>
         <element label="Password" max_length="255" name="password" type="password2"/>
         <element label="Technical Approval Groups" max_length="4000" name="tech_approval_groups" reference="sys_user_group" type="glide_list"/>
         <element choice="3" label="Type" mandatory="true" max_length="40" name="type" type="choice">
