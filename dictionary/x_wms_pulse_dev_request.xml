@@ -8,6 +8,7 @@
         <element label="Dev instance" max_length="32" name="dev_instance" reference="x_wms_pulse_sn_instance" type="reference"/>
         <element label="Knowledge article" max_length="32" name="knowledge_article" reference="kb_knowledge" type="reference"/>
         <element label="Review Requested" max_length="40" name="review_requested_on" type="glide_date_time"/>
+        <element label="Root Sys ID" max_length="32" name="root_sys_id" type="string"/>
         <element label="Scope" max_length="32" name="scope" reference="x_wms_pulse_sn_scope" type="reference"/>
         <element label="Source" max_length="40" name="source" type="string"/>
         <element label="Source ID" max_length="40" name="source_id" type="string"/>

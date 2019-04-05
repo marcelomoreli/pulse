@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ws_operation">
+    <sys_ws_operation action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <consumes>application/json,application/xml,text/xml</consumes>
+        <consumes_customized>false</consumes_customized>
+        <default_operation_uri/>
+        <enforce_acl>cf9d01d3e73003009d6247e603f6a990</enforce_acl>
+        <http_method>GET</http_method>
+        <name>Retrieve Update Set</name>
+        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
+	var resp = {
+		success : false,
+		remote_sys_id : '',
+		info : []
+	};
+	var updateSetId = request.pathParams.sys_id;
+	var instance = request.pathParams.instance;
+	resp.updateSetId = updateSetId;
+	if (updateSetId != '') {
+		if (instance != '') {
+			resp.info.push('Checking if update set exists');
+			var remoteSets = new GlideRecord('sys_remote_update_set');
+			remoteSets.addEncodedQuery('sys_class_name=sys_remote_update_set^u_root_sys_id=' + updateSetId);
+			remoteSets.query();
+			
+			if (remoteSets.next()) {
+				resp.info.push('We already have a update set with the given Root ID');
+				if (remoteSets.state == 'loaded' || remoteSets.state == 'loading' || remoteSets.state == 'previewed') {
+					resp.info.push('The update set can be deleted, its state is ' + remoteSets.state);
+					// Means we can delete it
+					remoteSets.deleteRecord();
+				} else {
+					resp.error = 'The update set could not be loaded. There is already an update set on state ' + remoteSets.state;
+				}
+			} else {
+				resp.info.push('This update set is new, its not present on this instance.');
+				// First time we have this update set
+			}
+			
+			resp.info.push('Loading the update set...');
+			// Get the instance
+			var instanceGR = new GlideRecord('sys_update_set_source');
+			instanceGR.addEncodedQuery('urlLIKE://' + instance + '.service-now.com^active=true');
+			instanceGR.query();
+			
+			if (instanceGR.next()) {
+				resp.info.push('Got the remote instance: ' + instanceGR.sys_id);
+				
+				var requestWS = new sn_ws.RESTMessageV2();
+				requestWS.setEndpoint(instanceGR.url + '/api/now/table/sys_update_set/' + updateSetId);
+				requestWS.setHttpMethod('GET');
+				
+				var user = instanceGR.username;
+				var encrypter = new GlideEncrypter();
+				var password = encrypter.decrypt(instanceGR.password);
+				
+				requestWS.setBasicAuth(user,password);
+				requestWS.setRequestHeader("Accept","application/json");
+				
+				var responseWS = requestWS.execute();
+				var respBody = responseWS.getBody();
+				
+				var updtXML = JSON.parse(respBody);
+				
+				if (typeof updtXML.result != 'undefined' && typeof updtXML.result.sys_id != 'undefined' &&  updtXML.result.sys_id != '') {
+					var uptXMLObj = updtXML.result;
+					
+					
+					var retrievedUpdateSet = new GlideRecord('sys_remote_update_set');
+					retrievedUpdateSet.initialize();
+					
+					retrievedUpdateSet.description = uptXMLObj.description;
+					retrievedUpdateSet.name = uptXMLObj.name;
+					retrievedUpdateSet.release_date = uptXMLObj.release_date;
+					retrievedUpdateSet.remote_sys_id = uptXMLObj.sys_id;
+					retrievedUpdateSet.application = uptXMLObj.application.value;
+					retrievedUpdateSet.origin_sys_id = uptXMLObj.origin_sys_id;
+					retrievedUpdateSet.u_root_sys_id = uptXMLObj.u_root_sys_id;
+					retrievedUpdateSet.update_source = instanceGR.sys_id;
+					
+					var scopeGr = new GlideRecord('sys_scope');
+					scopeGr.get(uptXMLObj.application.value);
+					if (scopeGr.isValid()) {
+						retrievedUpdateSet.application_name = scopeGr.name;
+						retrievedUpdateSet.application_scope = scopeGr.scope;
+						retrievedUpdateSet.application_version = scopeGr.version;
+					}
+					
+					retrievedUpdateSet.state = "loading";
+					
+					var sysidRemote = retrievedUpdateSet.insert();
+					resp.remote_sys_id = sysidRemote;
+					resp.info.push('Created:' + sysidRemote);
+					
+					resp.info.push('Getting all the updates now..');
+					
+					
+					var requestWSXML = new sn_ws.RESTMessageV2();
+					requestWSXML.setEndpoint(instanceGR.url + '/api/now/table/sys_update_xml?sysparm_query=update_set%3D' + updateSetId + '&sysparm_display_value=false');
+					requestWSXML.setHttpMethod('GET');
+					requestWSXML.setBasicAuth(user,password);
+					requestWSXML.setRequestHeader("Accept","application/json");
+					
+					var responseWSXML = requestWSXML.execute();
+					var respBodyXML = responseWSXML.getBody();
+					
+					var updtXMLItens = JSON.parse(respBodyXML);
+					for (var x = 0; x < updtXMLItens.result.length; x++) {
+						var inObj = updtXMLItens.result[x];
+						resp.info.push('Item:' + inObj.target_name);
+						var newXMLRec = new GlideRecord('sys_update_xml');
+						newXMLRec.initialize();
+						newXMLRec.update_set = '';
+						newXMLRec.comments = inObj.comments;
+						newXMLRec.target_name = inObj.target_name;
+						newXMLRec.sys_mod_count = inObj.sys_mod_count;
+						newXMLRec.replace_on_upgrade = inObj.replace_on_upgrade;
+						newXMLRec.sys_updated_on = inObj.sys_updated_on;
+						newXMLRec.sys_tags = inObj.sys_tags;
+						newXMLRec.type = inObj.type;
+						newXMLRec.view = inObj.view;
+						newXMLRec.sys_updated_by = inObj.sys_updated_by;
+						newXMLRec.application = inObj.application.value;
+						newXMLRec.payload = inObj.payload;
+						newXMLRec.sys_created_on = inObj.sys_created_on;
+						newXMLRec.name = inObj.name;
+						newXMLRec.remote_update_set = sysidRemote;
+						newXMLRec.action = inObj.action;
+						newXMLRec.update_domain = inObj.update_domain.value;
+						newXMLRec.category = inObj.category;
+						newXMLRec.sys_created_by = inObj.sys_created_by;
+						newXMLRec.table = inObj.table;
+						newXMLRec.autoSysFields(false);
+						newXMLRec.insert();
+					}
+					
+					retrievedUpdateSet.state = 'loaded';
+					retrievedUpdateSet.update();
+					resp.info.push('Load completed!');
+					resp.success = true;
+				} else {
+					resp.error = 'No update set found.';
+				}	
+			} else {
+				resp.error = 'Instance not found on this instance as a remote source.';
+			}
+		} else {
+			resp.error = 'Instance of the update set not sent.';
+		}
+	} else {
+		resp.error = 'sys_id of the update set not sent.';
+	}
+	response.setBody(resp);
+	
+})(request, response);]]></operation_script>
+        <operation_uri>/api/x_wms_pulse/pulse/retrieve/{instance}/{sys_id}</operation_uri>
+        <produces>application/json,application/xml,text/xml</produces>
+        <produces_customized>false</produces_customized>
+        <relative_path>/retrieve/{instance}/{sys_id}</relative_path>
+        <request_example/>
+        <requires_acl_authorization>true</requires_acl_authorization>
+        <requires_authentication>true</requires_authentication>
+        <requires_snc_internal_role>true</requires_snc_internal_role>
+        <short_description/>
+        <sys_class_name>sys_ws_operation</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-04-05 15:00:49</sys_created_on>
+        <sys_id>ad298fbedb203300cbdfd6aa489619cd</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Retrieve Update Set</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sys_ws_operation_ad298fbedb203300cbdfd6aa489619cd</sys_update_name>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2019-04-05 15:03:56</sys_updated_on>
+        <web_service_definition display_value="Pulse">1db74d9adbff530089fb2fb7489619c5</web_service_definition>
+        <web_service_version/>
+    </sys_ws_operation>
+</record_update>
