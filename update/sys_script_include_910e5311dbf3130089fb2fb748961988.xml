@@ -73,7 +73,7 @@ PulseUtilsImpl.prototype = {
                                         usObj[targetEnv.name].retrieved = answer.remote_sys_id;
                                         devRequest.update_set_json = JSON.stringify(usObj);
                                         devRequest.comments = 'Update set ' + usObj[currEnv.getValue('name')].local + ' loaded in ' + targetEnv.name + ' as ' + answer.remote_sys_id;
-                                    
+                                        devRequest.update();
 
                                     /*
                                     *    END OF LOAD - START of PREVIEW
@@ -81,10 +81,10 @@ PulseUtilsImpl.prototype = {
 
 
                                         var r = new sn_ws.RESTMessageV2();
-                                        r.setEndpoint(targetEnv.getValue('url') + '/api/x_wms_pulse/pulse/updateset/preview/' + this.currInstance + '/' + devRequest.root_sys_id);
-                                        this.l.logDebug('Endpoint: ' + targetEnv.getValue('url') + '/api/x_wms_pulse/pulse/updateset/preview/' + this.currInstance + '/' + devRequest.root_sys_id);
+                                        r.setEndpoint(targetEnv.getValue('url') + '/api/x_wms_pulse/pulse/updateset/preview/' + answer.remote_sys_id);
+                                        this.l.logDebug('Endpoint: ' + targetEnv.getValue('url') + '/api/x_wms_pulse/pulse/updateset/preview/' + answer.remote_sys_id);
                                         r.setBasicAuth(targetEnv.getValue('user'), targetEnv.password.getDecryptedValue());
-                                        r.setHttpMethod('get');
+                                        r.setHttpMethod('post');
                                         var response = r.execute();
                                         var responseBody = response.getBody();
                                         this.l.logDebug('Answer:' + responseBody);
@@ -237,8 +237,8 @@ PulseUtilsImpl.prototype = {
     },
 
     // Given a update set sys_id, grab the retrieved update set and preview.
-    previewUpdateSet: function(setID) {
-        this.l.logDebug('Starting previewUpdateSet[' + setID + ']');
+    previewUpdateSet: function(localID) {
+        this.l.logDebug('Starting previewUpdateSet[' + localID + ']');
         var answer = {
             success : false,
             message : '',
@@ -248,11 +248,10 @@ PulseUtilsImpl.prototype = {
 
         // Grab the update set to be previewed
         var set = new GlideRecord('sys_remote_update_set');
-        set.addQuery('remote_sys_id', setID);
+        set.addQuery('sys_id', localID);
         set.query();
 
         if (set.next()) {
-            var localID = set.getValue('sys_id');
             if (set.getValue('state') != 'loaded' && set.getValue('state') != 'previewed') {
                 answer.message = 'Current state is not valid for previewing records: ' + set.getDisplayValue('state');
             } else {
@@ -289,7 +288,7 @@ PulseUtilsImpl.prototype = {
                 }
             }
         } else {
-            answer.message = 'Update Set not found: ' + setID;
+            answer.message = 'Update Set not found: ' + localID;
         }
         this.l.logDebug('Answer from previewUpdateSet: ' + JSON.stringify(answer));
         return answer;
@@ -1706,13 +1705,13 @@ PulseUtilsImpl.prototype = {
         <sys_created_by>mmoreli</sys_created_by>
         <sys_created_on>2018-08-07 21:43:44</sys_created_on>
         <sys_id>910e5311dbf3130089fb2fb748961988</sys_id>
-        <sys_mod_count>108</sys_mod_count>
+        <sys_mod_count>113</sys_mod_count>
         <sys_name>PulseUtilsImpl</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_script_include_910e5311dbf3130089fb2fb748961988</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-04-05 16:51:34</sys_updated_on>
+        <sys_updated_on>2019-04-05 19:05:22</sys_updated_on>
     </sys_script_include>
 </record_update>
