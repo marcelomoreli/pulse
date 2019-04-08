@@ -19,12 +19,17 @@ PulseUtilsImpl.prototype = {
     },
 
     // BEFORE updating to review, it will try to PRE-preview the update set to find preview problems
+    // This function should run in PROD to call target environment to retrieve / preview an update set
     prePreviewUpdateSet: function(devRequest) {
         this.l.logDebug('Starting sendToPrePreviewUpdateSet[' + devRequest.number + ']');
         var answer = {
             success : false,
-            message : ''
+            message : '',
+            previewProblemsCount : 0
         };
+
+        var usObj = JSON.parse(devRequest.getValue('update_set_json'));
+
         //if (!this.isProduction()) {
             var prodGR = new GlideRecord('x_wms_pulse_sn_instance');
             prodGR.addQuery('name', this.production_instance);
@@ -51,7 +56,7 @@ PulseUtilsImpl.prototype = {
                                     /*
                                     *    START OF LOAD
                                     */
-                                    usObj = JSON.parse(devRequest.getValue('update_set_json'));
+                                    
                                     this.l.logDebug('Loading update set (root_sys_id): ' + devRequest.root_sys_id + ' in ' + targetEnv.name);
                                     path = '/api/x_wms_pulse/pulse/updateset/retrieve/' + currEnv.name + '/' + usObj[currEnv.getValue('name')].local;
                                     operation = 'get';
@@ -75,10 +80,9 @@ PulseUtilsImpl.prototype = {
                                         devRequest.comments = 'Update set ' + usObj[currEnv.getValue('name')].local + ' loaded in ' + targetEnv.name + ' as ' + answer.remote_sys_id;
                                         devRequest.update();
 
-                                    /*
-                                    *    END OF LOAD - START of PREVIEW
-                                    */
-
+                                        /*
+                                        *    END OF LOAD - START of PREVIEW
+                                        */
 
                                         var r = new sn_ws.RESTMessageV2();
                                         r.setEndpoint(targetEnv.getValue('url') + '/api/x_wms_pulse/pulse/updateset/preview/' + answer.remote_sys_id);
@@ -91,12 +95,50 @@ PulseUtilsImpl.prototype = {
                                         var httpStatus = response.getStatusCode();
                                         if (responseBody != '') {
                                             var responseObj = JSON.parse(responseBody);
-                                            if (responseObj.result && responseObj.result.success) {
-                                                answer.success = true;
+                                            if (responseObj.result) {
+                                                // If we already have issues for this update set on this instace, set it to "Previous"
+                                                var prevIssues = new GlideRecord('x_wms_pulse_preview_problem');
+                                                prevIssues.addQuery('remote_update_set', answer.remote_update_set);
+                                                prevIssues.addQuery('version', 'current');
+                                                prevIssues.query();
+
+                                                while (prevIssues.next()) {
+                                                    prevIssues.setValue('version', 'previous');
+                                                    prevIssues.update();
+                                                }
+
+                                                if (responseObj.result.success) {
+                                                    answer.success = true;
+                                                } else {
+                                                    // Some preview problems
+                                                    answer.previewProblemsCount = parseInt(responseObj.result.previewProblemsCount);
+                                                    answer.message = responseObj.result.message;
+                                                    answer.previewProblems = responseObj.result.previewProblems;
+                                                    // Insert the preview problems into PROD instance (this instance)
+                                                    for (var issueN in responseObj.result.previewProblems) {
+                                                        var issue = responseObj.result.previewProblems[issueN];
+                                                        var newIssue = new GlideRecord('x_wms_pulse_preview_problem');
+                                                        newIssue.setValue('problem_sys_id', issue.sys_id);
+                                                        newIssue.setValue('type', issue.type);
+                                                        newIssue.setValue('remote_update', issue.remote_update);
+                                                        newIssue.setValue('description', issue.description);
+                                                        newIssue.setValue('available_actions', issue.available_actions);
+                                                        newIssue.setValue('status', issue.status);
+                                                        newIssue.setValue('missing_item_table', issue.missing_item_table);
+                                                        newIssue.setValue('missing_item', issue.missing_item);
+                                                        newIssue.setValue('remote_update_set', answer.remote_update_set);
+                                                        newIssue.setValue('dev_request', devRequest.sys_id);
+                                                        newIssue.setValue('instance', targetEnv.sys_id);
+                                                        newIssue.insert();
+                                                    }
+                                                }
+                                            } else {
+                                                // Invalid response
+                                                answer.message = 'Empty response from preview call';
                                             }
                                             answer.message = responseObj.result.message;
                                         } else {
-                                            answer.message = 'Empty response from call';
+                                            answer.message = 'Empty response from retrieve call';
                                         }
                                     } else {
                                         answer.message = 'Failure on retrieving update set';
@@ -122,10 +164,79 @@ PulseUtilsImpl.prototype = {
         //} else {
         //    answer.message = 'You cannot perform this action in Production! Only in Sub-Dev environments.';
         //}
-        this.l.logDebug('Answer from backupDevelopment: ' + JSON.stringify(answer));
+
+        // Put the answer back into the u_status on the Update set on the Dev Environment!
+        this.updateSetStatus(devRequest.current_instance.sys_id, usObj[devRequest.current_instance.name].local, JSON.stringify(answer));
+
+        // Update the Dev Request to the correct state
+        // If we have preview problems, state is DevRequestStates.IN_REVIEW_PROBLEMS, if not, DevRequestStates.IN_REVIEW
+        var targetState = DevRequestStates.IN_REVIEW;
+        if (answer.previewProblemsCount > 0) {
+            targetState = DevRequestStates.AWAITING_JUSTIFICATION;
+        }
+        if (devRequest.state == DevRequestStates.IN_DEVELOPMENT || DevRequestStates.IN_REVIEW_PROBLEMS) {
+            devRequest.setValue('state', targetState);
+            devRequest.setValue('review_requested_on', (new GlideDateTime()));
+            devRequest.update();
+        }
+
+        this.l.logDebug('Answer from prePreviewUpdateSet: ' + JSON.stringify(answer));
         return answer;
     },
 
+    // Function called in PROD to call another instance (DEV) to update the u_status of a local update set
+    updateSetStatus: function(instance, setID, body) {
+        this.l.logDebug('Starting updateSetStatus[' + setID + ']');
+        var answer = {
+            success : false,
+            message : ''
+        };
+
+        var targetGR = new GlideRecord('x_wms_pulse_sn_instance');
+        targetGR.addQuery('sys_id', instance);
+        targetGR.query();
+
+        if (targetGR.next()) {
+            if (targetGR.active) {
+                var r = new sn_ws.RESTMessageV2();
+                r.setEndpoint(targetGR.getValue('url') + '/api/x_wms_pulse/pulse/updateset/setstatus/' + setID);
+                r.setBasicAuth(targetGR.getValue('user'), targetGR.password.getDecryptedValue());
+                r.setRequestBody(body);
+                r.setHttpMethod('post');
+                var response = r.execute();
+                var responseBody = response.getBody();
+                this.l.logDebug('Answer:' + responseBody);
+                var httpStatus = response.getStatusCode();
+                if (responseBody != '') {
+                    var responseObj = JSON.parse(responseBody);
+                    if (responseObj.result && responseObj.result.success) {
+                        answer.success = true;
+                    }
+                    answer.message = responseObj.result.message;
+                } else {
+                    answer.message = 'Empty response from call';
+                }
+            } else {
+                answer.message = 'Dev is disabled. Please talk to your administrator';
+            }
+        } else {
+            answer.message = 'Dev is not defined. Please talk to your administrator';
+        }
+
+        this.l.logDebug('Answer from updateSetStatus: ' + JSON.stringify(answer));
+        return answer;
+    },
+
+    // Function called from Scripted rest api on Dev environment to update u_status on local update set
+    setUpdateSetStatus: function(setID, status) {
+        var answer = {
+            success : false,
+        };
+        answer.success = this.pulseGlobal.setValue(this.l, 'sys_update_set', setID, 'u_status', status);
+        return answer;
+    },
+
+    // Function called from DEV environment calling PROD to tell an update set is ready to be pre-previewed
     sendToPrePreviewUpdateSet: function(setID) {
         this.l.logDebug('Starting prePreviewUpdateSet[' + setID + ']');
         var answer = {
@@ -143,7 +254,8 @@ PulseUtilsImpl.prototype = {
                         var r = new sn_ws.RESTMessageV2();
                         r.setEndpoint(prodGR.getValue('url') + '/api/x_wms_pulse/pulse/updateset/moveprepreview/' + this.currInstance + '/' + setID);
                         r.setBasicAuth(prodGR.getValue('user'), prodGR.password.getDecryptedValue());
-                        r.setHttpMethod('get');
+                        r.setHttpMethod('post');
+                        r.setRequestBody(JSON.stringify(this.codeScan(setID)));
                         var response = r.execute();
                         var responseBody = response.getBody();
                         this.l.logDebug('Answer:' + responseBody);
@@ -169,16 +281,19 @@ PulseUtilsImpl.prototype = {
         //} else {
         //    answer.message = 'You cannot perform this action in Production! Only in Sub-Dev environments.';
         //}
-        this.l.logDebug('Answer from backupDevelopment: ' + JSON.stringify(answer));
+        this.l.logDebug('Answer from sendToPrePreviewUpdateSet: ' + JSON.stringify(answer));
         return answer;
     },
 
-    moveToPrePreviewUpdateSet: function(instance, setID) {
+    // Function called in PROD from a scripted rest API to move the Dev Request to Testing Preview
+    moveToPrePreviewUpdateSet: function(instance, setID, findings) {
         this.l.logDebug('Starting moveToPrePreviewUpdateSet environment[' + instance + '] setID[' + setID + ']');
         var answer = {
             success : false,
             message : ''
         };
+
+
 
         if (this.isProduction()) {
             // Check enviroment the request is from
@@ -189,6 +304,9 @@ PulseUtilsImpl.prototype = {
                 if (env.active) {
                     // So, environment is good!
                     // Let's try to find the work for this item;
+                    findings = findings || [];
+                    this.handleFindings(instance, setID, findings);
+
                     var devRequest = new GlideRecord('x_wms_pulse_dev_request');
                     devRequest.addEncodedQuery('update_set_jsonLIKE' +  setID);
                     devRequest.query();
@@ -242,6 +360,7 @@ PulseUtilsImpl.prototype = {
         var answer = {
             success : false,
             message : '',
+            remote_update_set : localID,
             previewProblemsCount : 0,
             previewProblems : [],
         };
@@ -360,7 +479,7 @@ PulseUtilsImpl.prototype = {
         return answer;
     },
 
-    // Creates an Update Set in the Remote system
+    // This function is called in PROD to call the Scripted rest API on the target environment to get an update set created
     createRemoteUpdateSet: function(devRequest) {
         this.l.logDebug('Starting createRemoteUpdateSet[' + devRequest.getValue('number') + ']');
         var answer = {
@@ -424,7 +543,7 @@ PulseUtilsImpl.prototype = {
         return answer;
     },
 
-    // Creates a local update set
+    // Creates a local update set (called from the scripted rest API)
     createUpdateSet: function(name, scope, description) {
         this.l.logDebug('Starting createUpdateSet[ name[' + name + '] scope[' + scope + '] description[' + description + '] ]');
         var answer = {
@@ -464,6 +583,7 @@ PulseUtilsImpl.prototype = {
         return answer;
     },
 
+    // Generic function to call API
     callAPI: function(env, path, operation, body) {
         this.l.logDebug('Starting callAPI[' + env + ',' + path + ',' + operation + ',' + body + ']');
         var answer = {
@@ -508,6 +628,8 @@ PulseUtilsImpl.prototype = {
         }
     },
 
+
+    // Function called to create an update set XML based on the current content on the lower environment
     backupDevelopment: function(devRequest) {
         this.l.logDebug('Starting backupDevelopment[' + devRequest.getValue('number') + ']');
         var answer = {
@@ -587,6 +709,7 @@ PulseUtilsImpl.prototype = {
 
     // Send to Review - Calls external system (PROD) to send update set to review
     // BEFORE updating to review, it will try to PRE-preview the update set to find preview problems
+    /* Deprecated?
     sendToReview: function(setID) {
         this.l.logDebug('Starting sendToReview[' + setID + ']');
         var answer = {
@@ -631,13 +754,14 @@ PulseUtilsImpl.prototype = {
         //} else {
         //    answer.message = 'You cannot perform this action in Production! Only in Sub-Dev environments.';
         //}
-        this.l.logDebug('Answer from backupDevelopment: ' + JSON.stringify(answer));
+        this.l.logDebug('Answer from sendToReview: ' + JSON.stringify(answer));
         return answer;
     },
+    */
 
     // Moves record to review in this environment
     // This should only be done in PROD
-    moveToReview: function(environment, setID, findings) {
+    handleFindings: function(environment, setID, findings) {
         this.l.logDebug('Starting moveToReview environment[' + environment + '] setID[' + setID + ']');
         var answer = {
             success : false,
@@ -661,8 +785,8 @@ PulseUtilsImpl.prototype = {
                     if (devRequest.next()) {
                         if (devRequest.getValue('state') == DevRequestStates.IN_DEVELOPMENT) {
                             if (devRequest.getValue('dev_instance') == env.getValue('sys_id')) {
-                                devRequest.setValue('state', DevRequestStates.IN_REVIEW);
-                                devRequest.setValue('review_requested_on', (new GlideDateTime()));
+                                //devRequest.setValue('state', DevRequestStates.IN_REVIEW);
+                                //devRequest.setValue('review_requested_on', (new GlideDateTime()));
                                 // Set previous findings as History
                                 var currFindings = new GlideRecord('x_wms_pulse_sn_scan_finding');
                                 currFindings.addQuery('dev_request', devRequest.getValue('sys_id'));
@@ -693,13 +817,13 @@ PulseUtilsImpl.prototype = {
                                 }
                                 */
                                 // TODO - FINDINGS STUFF
-                                devRequest.update();
-                                this.l.logDebug('Review Requested.');
+                                //devRequest.update();
+                                //this.l.logDebug('Review Requested.');
 
 
 
                                 answer.success = true;
-                                answer.message = 'Update set sent to review. Thanks!';
+                                answer.message = 'Findings included!';
 
                                 // TODO - Notification piece - to be moved to the wf
                                 /*
@@ -1286,7 +1410,6 @@ PulseUtilsImpl.prototype = {
         };
 
         var answerAPI = this.callAPI(env, '/api/now/table/' + tbl + '?sysparm_query=' + field + '=' + setID, 'get', null);
-        //var answerAPI = this.callAPI('89802e13db73130089fb2fb7489619b1', '/api/now/table/sys_update_set?sysparm_query=sys_id=30afb9a3db3b130089fb2fb74896197d', 'get', null);
 
         if (answerAPI[0] && answerAPI[0][field] == setID) {
             answer.success = true;
@@ -1705,13 +1828,13 @@ PulseUtilsImpl.prototype = {
         <sys_created_by>mmoreli</sys_created_by>
         <sys_created_on>2018-08-07 21:43:44</sys_created_on>
         <sys_id>910e5311dbf3130089fb2fb748961988</sys_id>
-        <sys_mod_count>113</sys_mod_count>
+        <sys_mod_count>123</sys_mod_count>
         <sys_name>PulseUtilsImpl</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_script_include_910e5311dbf3130089fb2fb748961988</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-04-05 19:05:22</sys_updated_on>
+        <sys_updated_on>2019-04-08 19:27:10</sys_updated_on>
     </sys_script_include>
 </record_update>
