@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?><database>
     <element label="Pulse M2m Sn App Instance" max_length="40" name="x_wms_pulse_m2m_sn_app_instance" type="collection">
+        <element label="Additional Approvers" max_length="640" name="additional_approvers" reference="sys_user_group" reference_qual="typeLIKEadc80a74dbf87300cbdfd6aa4896193b^EQ" reference_qual_condition="typeLIKEadc80a74dbf87300cbdfd6aa4896193b^EQ" type="glide_list"/>
+        <element label="Auto Approve" max_length="40" name="auto_approve" type="boolean"/>
         <element label="ServiceNow Application" max_length="32" name="sn_application" reference="x_wms_pulse_sn_application" type="reference"/>
         <element label="ServiceNow Instance" max_length="32" name="sn_instance" reference="x_wms_pulse_sn_instance" type="reference"/>
+        <element label="Technical Approvers" max_length="640" name="tech_approvers" reference="sys_user_group" reference_qual="typeLIKEadc80a74dbf87300cbdfd6aa4896193b^EQ" reference_qual_condition="typeLIKEadc80a74dbf87300cbdfd6aa4896193b^EQ" type="glide_list"/>
         <index name="index">
             <element name="sn_application"/>
         </index>

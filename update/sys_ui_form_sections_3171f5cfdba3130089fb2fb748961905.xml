@@ -24,7 +24,7 @@
             <sys_mod_count>0</sys_mod_count>
             <sys_overrides/>
             <sys_ui_form display_value="x_wms_pulse_sn_application" name="x_wms_pulse_sn_application" sys_domain="global" view="Default view">3171f5cfdba3130089fb2fb748961905</sys_ui_form>
-            <sys_ui_section caption="New Section" display_value="New Section" name="x_wms_pulse_sn_application" sys_domain="global" view="Default view">f171f5cfdba3130089fb2fb748961904</sys_ui_section>
+            <sys_ui_section caption="System" display_value="System" name="x_wms_pulse_sn_application" sys_domain="global" view="Default view">f171f5cfdba3130089fb2fb748961904</sys_ui_section>
             <sys_updated_by>jgbox</sys_updated_by>
             <sys_updated_on>2018-07-31 14:02:16</sys_updated_on>
         </sys_ui_form_section>

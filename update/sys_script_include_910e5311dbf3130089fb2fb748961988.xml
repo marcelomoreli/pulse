@@ -98,7 +98,7 @@ PulseUtilsImpl.prototype = {
                                             if (responseObj.result) {
                                                 // If we already have issues for this update set on this instace, set it to "Previous"
                                                 var prevIssues = new GlideRecord('x_wms_pulse_preview_problem');
-                                                prevIssues.addQuery('remote_update_set', answer.remote_update_set);
+                                                prevIssues.addQuery('remote_update_set', answer.remote_sys_id);
                                                 prevIssues.addQuery('version', 'current');
                                                 prevIssues.query();
 
@@ -126,9 +126,10 @@ PulseUtilsImpl.prototype = {
                                                         newIssue.setValue('status', issue.status);
                                                         newIssue.setValue('missing_item_table', issue.missing_item_table);
                                                         newIssue.setValue('missing_item', issue.missing_item);
-                                                        newIssue.setValue('remote_update_set', answer.remote_update_set);
+                                                        newIssue.setValue('remote_update_set', answer.remote_sys_id);
                                                         newIssue.setValue('dev_request', devRequest.sys_id);
                                                         newIssue.setValue('instance', targetEnv.sys_id);
+                                                        newIssue.setValue('version', 'current');
                                                         newIssue.insert();
                                                     }
                                                 }
@@ -236,6 +237,35 @@ PulseUtilsImpl.prototype = {
         return answer;
     },
 
+    // Function called from Workflow to set the dev request to the next state after approved
+    approveDevRequest: function(devRequest) {
+        var answer = {
+            success : false,
+        };
+
+        if (devRequest.getValue('state') == DevRequestStates.IN_REVIEW || devRequest.getValue('state') == DevRequestStates.IN_REVIEW_PROBLEMS) {
+            var targetEnv = devRequest.current_instance.parent.toString().split(',')[0];
+            var grAppInstance = new GlideRecord('x_wms_pulse_m2m_sn_app_instance');
+            grAppInstance.addQuery('sn_instance', targetEnv);
+            grAppInstance.addQuery('sn_application', current.application);
+            grAppInstance.query();
+
+            if (grAppInstance.next()) {
+                if (grAppInstance.auto_approve && devRequest.auto_approve) {
+                    devRequest.setValue('state', DevRequestStates.PROMOTING);
+                } else {
+                    devRequest.setValue('state', DevRequestStates.PENDING_SCHEDULE);
+                }
+            } else {
+                answer.message = 'Instance doesn\'t have configuration for the next environment: ';
+            }
+        } else {
+            answer.message = 'Development Request in wrong state: ' + devRequest.getValue('state');
+        }
+
+        return answer;
+    },
+
     // Function called from DEV environment calling PROD to tell an update set is ready to be pre-previewed
     sendToPrePreviewUpdateSet: function(setID) {
         this.l.logDebug('Starting prePreviewUpdateSet[' + setID + ']');
@@ -293,8 +323,6 @@ PulseUtilsImpl.prototype = {
             message : ''
         };
 
-
-
         if (this.isProduction()) {
             // Check enviroment the request is from
             var env = new GlideRecord('x_wms_pulse_sn_instance');
@@ -311,7 +339,7 @@ PulseUtilsImpl.prototype = {
                     devRequest.addEncodedQuery('update_set_jsonLIKE' +  setID);
                     devRequest.query();
                     if (devRequest.next()) {
-                        if (devRequest.getValue('state') == DevRequestStates.IN_DEVELOPMENT) {
+                        if (devRequest.getValue('state') == DevRequestStates.IN_DEVELOPMENT || devRequest.getValue('state') == DevRequestStates.AWAITING_JUSTIFICATION || devRequest.getValue('state') == DevRequestStates.IN_REVIEW_PROBLEMS) {
                             if (devRequest.getValue('dev_instance') == env.getValue('sys_id')) {
                                 devRequest.setValue('state', DevRequestStates.TESTING_PREVIEW);
                                 devRequest.update();
@@ -1828,13 +1856,13 @@ PulseUtilsImpl.prototype = {
         <sys_created_by>mmoreli</sys_created_by>
         <sys_created_on>2018-08-07 21:43:44</sys_created_on>
         <sys_id>910e5311dbf3130089fb2fb748961988</sys_id>
-        <sys_mod_count>123</sys_mod_count>
+        <sys_mod_count>127</sys_mod_count>
         <sys_name>PulseUtilsImpl</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_script_include_910e5311dbf3130089fb2fb748961988</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-04-08 19:27:10</sys_updated_on>
+        <sys_updated_on>2019-04-11 17:56:55</sys_updated_on>
     </sys_script_include>
 </record_update>
