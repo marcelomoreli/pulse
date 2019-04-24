@@ -27,6 +27,9 @@
             <element name="instance"/>
         </index>
         <index name="index2">
+            <element name="problem_sys_id"/>
+        </index>
+        <index name="index3">
             <element name="dev_request"/>
         </index>
     </element>

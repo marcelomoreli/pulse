@@ -14,7 +14,10 @@
         <element label="Source ID" max_length="40" name="source_id" type="string"/>
         <element label="Sync to source" max_length="40" name="sync_to_source" type="boolean"/>
         <element choice="1" label="Type" max_length="40" name="type" type="choice">
-            <choice/>
+            <choice>
+                <element inactive_on_update="false" label="New Feature" value="feature"/>
+                <element inactive_on_update="false" label="Production Bug Fix" value="bug_fix"/>
+            </choice>
         </element>
         <element label="Update set JSON" max_length="1000" name="update_set_json" type="string"/>
         <element attributes="ref_contributions=x_wms_pulse_go_to_update_set" label="Update set name" max_length="80" name="update_set_name" type="string"/>
