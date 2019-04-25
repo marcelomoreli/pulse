@@ -98,7 +98,8 @@ PulseUtilsImpl.prototype = {
                                             if (responseObj.result) {
                                                 // If we already have issues for this update set on this instace, set it to "Previous"
                                                 var prevIssues = new GlideRecord('x_wms_pulse_preview_problem');
-                                                prevIssues.addQuery('remote_update_set', answer.remote_sys_id);
+                                                prevIssues.addQuery('dev_request', devRequest.sys_id);
+                                                prevIssues.addQuery('instance', targetEnv.sys_id);
                                                 prevIssues.addQuery('version', 'current');
                                                 prevIssues.query();
 
@@ -197,7 +198,8 @@ PulseUtilsImpl.prototype = {
         };
 
         var usObj = JSON.parse(devRequest.getValue('update_set_json'));
-
+        var responseObj;
+        
         //if (!this.isProduction()) {
             var prodGR = new GlideRecord('x_wms_pulse_sn_instance');
             prodGR.addQuery('name', this.production_instance);
@@ -266,7 +268,8 @@ PulseUtilsImpl.prototype = {
                                             if (responseObj.result) {
                                                 // If we already have issues for this update set on this instace, set it to "Previous"
                                                 var prevIssues = new GlideRecord('x_wms_pulse_preview_problem');
-                                                prevIssues.addQuery('remote_update_set', answer.remote_sys_id);
+                                                prevIssues.addQuery('dev_request', devRequest.sys_id);
+                                                prevIssues.addQuery('instance', targetEnv.sys_id);
                                                 prevIssues.addQuery('version', 'current');
                                                 prevIssues.query();
 
@@ -285,13 +288,25 @@ PulseUtilsImpl.prototype = {
                                                     // Insert the preview problems into PROD instance (this instance)
                                                     for (var issueN in responseObj.result.previewProblems) {
                                                         var issue = responseObj.result.previewProblems[issueN];
+                                                        // Calculate last action on this preview problem
+                                                        var status = '';
+                                                        var latestSameIssue = new GlideRecord('x_wms_pulse_preview_problem');
+                                                        latestSameIssue.addQuery('dev_request', devRequest.sys_id);
+                                                        latestSameIssue.addQuery('remote_update', issue.remote_update);
+                                                        latestSameIssue.addQuery('description', issue.description);
+                                                        latestSameIssue.addQuery('status', '!=', '');
+                                                        latestSameIssue.orderByDesc('sys_updated_on');
+                                                        if (latestSameIssue.next()) {
+                                                            status = latestSameIssue.status;
+                                                        }
+                                                        
                                                         var newIssue = new GlideRecord('x_wms_pulse_preview_problem');
                                                         newIssue.setValue('problem_sys_id', issue.sys_id);
                                                         newIssue.setValue('type', issue.type);
                                                         newIssue.setValue('remote_update', issue.remote_update);
                                                         newIssue.setValue('description', issue.description);
                                                         newIssue.setValue('available_actions', issue.available_actions);
-                                                        newIssue.setValue('status', issue.status);
+                                                        newIssue.setValue('status', issue.status == '' ? status : issue.status);
                                                         newIssue.setValue('missing_item_table', issue.missing_item_table);
                                                         newIssue.setValue('missing_item', issue.missing_item);
                                                         newIssue.setValue('remote_update_set', answer.remote_sys_id);
@@ -300,6 +315,8 @@ PulseUtilsImpl.prototype = {
                                                         newIssue.setValue('version', 'current');
                                                         newIssue.insert();
                                                     }
+
+                                                    this.syncPreviewIssues(devRequest);
                                                 }
                                             } else {
                                                 // Invalid response
@@ -310,7 +327,10 @@ PulseUtilsImpl.prototype = {
                                             answer.message = 'Empty response from retrieve call';
                                         }
                                     } else {
-                                        answer.message = 'Failure on retrieving update set';
+                                        answer.message = 'Failure on retrieving update set.';
+                                        if (answer.error) {
+                                            answer.message += ' ' + answer.error;
+                                        }
                                     }
                                 } else {
                                     answer.message = 'Target environment not found.';
@@ -351,6 +371,28 @@ PulseUtilsImpl.prototype = {
 
         this.l.logDebug('Answer from prePreviewUpdateSet: ' + JSON.stringify(answer));
         return answer;
+    },
+
+    // Sync the preview problem resolutions from the Dev request to the target instance
+    syncPreviewIssues: function(devRequest) {
+        this.l.logDebug('Starting syncPreviewIssues[' + devRequest.number + ']');
+        var targetEnv;
+        var body = {
+        };
+
+        var previewIssues = new GlideRecord('x_wms_pulse_preview_problem');
+        previewIssues.addQuery('dev_request', devRequest.sys_id);
+        previewIssues.addQuery('version', 'current');
+        previewIssues.addQuery('status', '!=', '');
+        previewIssues.query();
+
+        while (previewIssues.next()) {
+            if (!targetEnv) {
+                targetEnv = previewIssues.instance;
+            }
+            body[previewIssues.problem_sys_id + ''] = previewIssues.status + '';
+        }
+        this.l.logDebug('Preview resolution matrix:' + JSON.stringify(body));
     },
 
     // Function called in PROD to call another instance (DEV) to update the u_status of a local update set
@@ -402,6 +444,20 @@ PulseUtilsImpl.prototype = {
             success : false,
         };
         answer.success = this.pulseGlobal.setValue(this.l, 'sys_update_set', setID, 'u_status', status);
+        return answer;
+    },
+
+    // Function called from the Scripted rest api to apply preview problem status
+    fixPreviewProblems: function(setID, previewResolutions) {
+        this.l.logDebug('Running fixPreviewProblems');
+        var answer = {
+            success : true,
+        };
+
+        for (var prevIssue in previewResolutions) {
+            this.l.logDebug('Changing status of preview problem [' + prevIssue + '] to [' + previewResolutions[prevIssue] + ']');
+            this.pulseGlobal.setValue(this.l, 'sys_update_set', prevIssue, 'status', previewResolutions[prevIssue]);
+        }
         return answer;
     },
 
@@ -2082,13 +2138,13 @@ PulseUtilsImpl.prototype = {
         <sys_created_by>mmoreli</sys_created_by>
         <sys_created_on>2018-08-07 21:43:44</sys_created_on>
         <sys_id>910e5311dbf3130089fb2fb748961988</sys_id>
-        <sys_mod_count>137</sys_mod_count>
+        <sys_mod_count>143</sys_mod_count>
         <sys_name>PulseUtilsImpl</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_script_include_910e5311dbf3130089fb2fb748961988</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-04-24 12:57:54</sys_updated_on>
+        <sys_updated_on>2019-04-25 14:28:28</sys_updated_on>
     </sys_script_include>
 </record_update>

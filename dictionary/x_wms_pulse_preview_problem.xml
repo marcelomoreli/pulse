@@ -10,7 +10,12 @@
         <element label="Problem Sys ID" max_length="32" name="problem_sys_id" type="string"/>
         <element display="true" label="Remote Update" max_length="150" name="remote_update" type="string"/>
         <element label="Remote Update Set" max_length="32" name="remote_update_set" type="string"/>
-        <element label="Status" max_length="40" name="status" type="string"/>
+        <element choice="1" label="Status" max_length="40" name="status" type="string">
+            <choice>
+                <element inactive_on_update="false" label="Ignored" value="ignored"/>
+                <element inactive_on_update="false" label="Skipped" value="skipped"/>
+            </choice>
+        </element>
         <element choice="1" label="Type" max_length="40" name="type" type="choice">
             <choice>
                 <element inactive_on_update="false" label="Error" value="error"/>
