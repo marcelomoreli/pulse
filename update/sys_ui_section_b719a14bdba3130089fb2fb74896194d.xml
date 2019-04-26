@@ -224,6 +224,20 @@
             <sys_user/>
             <type/>
         </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>previous_state</element>
+            <position>16</position>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-04-26 15:42:18</sys_created_on>
+            <sys_id>c60c5baddb85f300cbdfd6aa489619e9</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">b719a14bdba3130089fb2fb74896194d</sys_ui_section>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-04-26 15:42:18</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
         <sys_ui_section action="INSERT_OR_UPDATE">
             <caption/>
             <header>false</header>

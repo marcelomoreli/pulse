@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_script">
+    <sys_script action="INSERT_OR_UPDATE">
+        <abort_action>false</abort_action>
+        <access>package_private</access>
+        <action_delete>false</action_delete>
+        <action_insert>true</action_insert>
+        <action_query>false</action_query>
+        <action_update>true</action_update>
+        <active>true</active>
+        <add_message>false</add_message>
+        <advanced>true</advanced>
+        <change_fields>false</change_fields>
+        <client_callable>false</client_callable>
+        <collection>x_wms_pulse_dev_request</collection>
+        <condition>(previous.state == DevRequestStates.IN_REVIEW || previous.state == DevRequestStates.IN_REVIEW_PROBLEMS) &amp;&amp; current.state != previous.state</condition>
+        <description/>
+        <execute_function>false</execute_function>
+        <filter_condition/>
+        <is_rest>false</is_rest>
+        <message/>
+        <name>Cancel Approval WF</name>
+        <order>100</order>
+        <priority>100</priority>
+        <rest_method/>
+        <rest_method_text/>
+        <rest_service/>
+        <rest_service_text/>
+        <rest_variables/>
+        <role_conditions/>
+        <script><![CDATA[(function executeRule(current, previous /*null when async*/) {
+	// Whenever the DEV Request was in approval but manually changed to something else - cancel all approvals
+	// Complementing the condition in the script section since it's too long
+	
+	// These are all the possible states after coming from an Approval
+	if (current.state != DevRequestStates.PROMOTING && 
+		current.state != DevRequestStates.PENDING_SCHEDULE && 
+		current.state != DevRequestStates.REVIEW_ACTIONS) {
+		var wf = new global.Workflow();
+		wf.cancel(current);
+	}
+})(current, previous);]]></script>
+        <sys_class_name>sys_script</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-04-26 15:35:13</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>29e89be9db85f300cbdfd6aa489619b9</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Cancel Approval WF</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sys_script_29e89be9db85f300cbdfd6aa489619b9</sys_update_name>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2019-04-26 15:35:13</sys_updated_on>
+        <template/>
+        <when>before</when>
+    </sys_script>
+    <sys_translated_text action="delete_multiple" query="documentkey=29e89be9db85f300cbdfd6aa489619b9"/>
+</record_update>
