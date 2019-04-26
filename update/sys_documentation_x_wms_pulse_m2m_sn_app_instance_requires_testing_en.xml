@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_documentation element="requires_testing" label="Requires Testing" language="en" table="x_wms_pulse_m2m_sn_app_instance">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element>requires_testing</element>
+            <help/>
+            <hint/>
+            <label>Requires Testing</label>
+            <language>en</language>
+            <name>x_wms_pulse_m2m_sn_app_instance</name>
+            <plural>Requires Testings</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-04-26 20:00:46</sys_created_on>
+            <sys_id>0c379039db49f300cbdfd6aa4896198b</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>Requires Testing</sys_name>
+            <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+            <sys_update_name>sys_documentation_x_wms_pulse_m2m_sn_app_instance_requires_testing_en</sys_update_name>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-04-26 20:00:46</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>
