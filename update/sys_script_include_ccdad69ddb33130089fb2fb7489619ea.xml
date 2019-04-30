@@ -34,6 +34,7 @@ DevRequestStates.READY_FOR_TESTING      = "32";
 DevRequestStates.TEST_FAILED            = "40";
 DevRequestStates.TEST_PASSED            = "41";
 DevRequestStates.AWAITING_REMEDIATION   = "42";
+DevRequestStates.AWAITING_PARENT        = "43";
 DevRequestStates.GENERATING_CHANGE      = "50";
 DevRequestStates.SCHEDULED              = "51";
 DevRequestStates.CLOSING_CHANGE         = "52";
@@ -58,13 +59,13 @@ DevRequestStates.prototype = {
         <sys_created_by>mmoreli</sys_created_by>
         <sys_created_on>2018-08-07 16:55:49</sys_created_on>
         <sys_id>ccdad69ddb33130089fb2fb7489619ea</sys_id>
-        <sys_mod_count>9</sys_mod_count>
+        <sys_mod_count>10</sys_mod_count>
         <sys_name>DevRequestStates</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_script_include_ccdad69ddb33130089fb2fb7489619ea</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-04-11 17:55:31</sys_updated_on>
+        <sys_updated_on>2019-04-29 18:31:07</sys_updated_on>
     </sys_script_include>
 </record_update>
