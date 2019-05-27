@@ -140,6 +140,20 @@
             <sys_user/>
             <type/>
         </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>code_freeze</element>
+            <position>10</position>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-05-01 13:46:57</sys_created_on>
+            <sys_id>70917cd7db49f700cbdfd6aa48961961</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_m2m_sn_app_instance" sys_domain="global" view="Default view">c6388e34dbf87300cbdfd6aa4896191b</sys_ui_section>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-05-01 13:46:57</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
         <sys_ui_section action="INSERT_OR_UPDATE">
             <caption/>
             <header>false</header>

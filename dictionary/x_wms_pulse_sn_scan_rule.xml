@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><database>
-    <element label="ServiceNow Scan Rule" max_length="40" name="x_wms_pulse_sn_scan_rule" type="collection">
+    <element attributes="update_synch=true" extends="sys_metadata" label="ServiceNow Scan Rule" max_length="40" name="x_wms_pulse_sn_scan_rule" type="collection">
         <element default="true" label="Active" max_length="40" name="active" type="boolean"/>
         <element label="Advanced" max_length="40" name="advanced" type="boolean"/>
         <element label="Applies to" max_length="80" name="applies_to" type="table_name"/>

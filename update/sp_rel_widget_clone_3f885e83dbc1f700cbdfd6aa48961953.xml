@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_rel_widget_clone">
+    <sp_rel_widget_clone action="INSERT_OR_UPDATE">
+        <child display_value="Pulse Documentation Menu">f3885e83dbc1f700cbdfd6aa48961951</child>
+        <cloned>2019-05-01 02:38:24</cloned>
+        <last_validated>2019-05-01 02:38:24</last_validated>
+        <parent display_value="SC Categories">4c03cba0cb11020000f8d856634c9ce1</parent>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;sp_widget&gt;&lt;category&gt;sc&lt;/category&gt;&lt;client_script&gt;&lt;![CDATA[function($scope, $location, $timeout, $window, $document, $rootScope, spUtil,spAriaUtil) {
+	var c = this;
+	$scope.hideCategoryWidgetInXS = (c.options.hide_xs == 'true');
+	if (c.data.categoryId) {
+		if (!$scope.hideCategoryWidgetInXS)
+			$scope.hideCategoryWidgetInXS = true;
+	} else {
+		if ($scope.hideCategoryWidgetInXS)
+			$scope.hideCategoryWidgetInXS = false;
+	}
+	
+	spUtil.getPreference('glide.ui.accessibility', function(value) {
+		if (value == "true")
+			$scope.tabindex = 0;
+		else
+			$scope.tabindex = -1;
+	});
+
+	$scope.displayChildren = function($event, category) {
+		$event.stopPropagation();
+		category.showChildren = !category.showChildren;
+		if (category.showChildren) {
+			spAriaUtil.sendLiveMessage(category.title + ' '+ c.data.messages.expanded);
+		} 
+		else {
+			spAriaUtil.sendLiveMessage(category.title + ' ' +c.data.messages.collapsed);
+		}
+	};
+	
+	$scope.toggleSubCategories =  function(val) {
+		toggleSubCategories(c.data.categoriesList, val);
+	};
+	
+	function toggleSubCategories(categories, val) {
+		categories.forEach(function(category) {
+			category.showChildren = val;
+			if (category.subcategories &amp;&amp; category.subcategories.length &gt; 0) {
+				toggleSubCategories(category.subcategories, val);
+			}
+		});
+	}
+	
+	$scope.loadMore =  function() {
+		c.data.getMore = true;
+		c.data.loadAllMsg = c.data.pleaseWait;
+		c.data.categoriesCount = c.data.categoriesCount;
+		c.server.update();
+	};
+	
+	$scope.categorySelected = function(category) {
+			$timeout(function() {
+				$location.search('sys_id', category.sys_id);
+				$location.search('id', c.data.page ||'sc_category');
+			});
+	};
+	var listenerForBrowseCategories = $scope.$on("$sp.service_catelog.show.categories_widget", function() {
+		$scope.hideCategoryWidgetInXS = false;
+	});
+	
+	$scope.hideBrowseCategory = function () {
+		$scope.hideCategoryWidgetInXS = true;
+		$rootScope.$broadcast("$sp.service_catelog.show.items_widget");
+	}
+	
+	$scope.$on("$destroy", function() {
+		listenerForBrowseCategories();
+	});
+}]]&gt;&lt;/client_script&gt;&lt;controller_as&gt;c&lt;/controller_as&gt;&lt;css&gt;.category-widget {
+	border: 1px solid $panel-inner-border;
+  
+  .category-list {
+    .fa {
+      margin-right: 5px;
+    }
+    .l-h-1_6x {
+      line-height: 1.6em;
+    }
+    a {
+			width: 88%;
+	    display: inline-block;
+    }
+    .list-group {
+      margin-bottom: 0;
+    }
+    .list-group-item {
+      padding: 0;
+      border: 0;
+    }
+    .group-item {
+      padding: 10px 15px;
+    }
+    .group-item-default {
+      &amp;amp;:hover, &amp;amp;:focus {
+        background-color: darken($panel-default-heading-bg, 2%);
+      }
+    }
+    .group-item-primary {
+      &amp;amp;:hover, &amp;amp;:focus {
+        background-color: lighten($panel-primary-heading-bg, 40%);
+      }
+    }
+    .group-item-success {
+      &amp;amp;:hover {
+        background-color: lighten($panel-success-heading-bg, 3%)
+      }
+    }
+    .group-item-info {
+      &amp;amp;:hover, &amp;amp;:focus {
+        background-color: lighten($panel-info-heading-bg, 3%)
+      }
+    }
+    .group-item-warning {
+      &amp;amp;:hover, &amp;amp;:focus {
+        background-color: $panel-warning-heading-bg
+      }
+    }
+    .group-item-danger {
+      &amp;amp;:hover, &amp;amp;:focus {
+        background-color: lighten($panel-danger-heading-bg, 3%)
+      }
+    }
+    
+    .sub-category-list {
+      .list-group-item {
+        background-color: inherit;
+      }
+    }
+    
+    .list-bg-default {
+        border-left: 15px solid $panel-default-heading-bg;
+      }
+      .list-bg-primary {
+        border-left: 15px solid lighten($panel-primary-heading-bg, 43%);
+      }
+      .list-bg-success {
+        border-left: 15px solid lighten($panel-success-heading-bg, 6%);
+      }
+      .list-bg-info {
+        border-left: 15px solid lighten($panel-info-heading-bg, 6%);
+      }
+      .list-bg-warning {
+        border-left: 15px solid lighten($panel-warning-heading-bg, 3%);
+      }
+      .list-bg-danger {
+        border-left: 15px solid lighten($panel-danger-heading-bg, 6%);
+      }
+    
+    .list-bg-default {
+      background-color: $panel-default-heading-bg;
+    }
+    .list-bg-primary {
+      background-color: lighten($panel-primary-heading-bg, 43%);
+    }
+    .list-bg-success {
+      background-color: lighten($panel-success-heading-bg, 6%);
+    }
+    .list-bg-info {
+      background-color: lighten($panel-info-heading-bg, 6%);
+    }
+    .list-bg-warning {
+      background-color: lighten($panel-warning-heading-bg, 3%);
+    }
+    .list-bg-danger {
+      background-color: lighten($panel-danger-heading-bg, 6%);
+    }
+  }
+}
+.panel-primary .badge {
+  background-color: $panel-primary-heading-bg;
+  color: white;
+}
+.panel-default .badge {
+  background-color: $panel-default-text;
+  color: white
+}
+.panel-success .badge {
+  background-color:  $panel-success-text;
+  color: white;
+}
+.panel-info .badge {
+  background-color: $panel-info-text;
+  color: white;
+}
+.panel-warning .badge {
+  background-color: $panel-warning-text;
+  color: white;
+}
+.panel-danger .badge {
+  background-color: $panel-danger-text;
+  color: white;
+}
+.category-list .badge {
+  text-align: right;
+}
+.text-default {
+  color: $text-muted;
+}
+&lt;/css&gt;&lt;data_table&gt;sp_instance&lt;/data_table&gt;&lt;demo_data&gt;{"options" :&amp;#13;
+   {&amp;#13;
+      "hide_xs" : false&amp;#13;
+   }&amp;#13;
+}&lt;/demo_data&gt;&lt;description/&gt;&lt;docs/&gt;&lt;field_list&gt;color&lt;/field_list&gt;&lt;has_preview&gt;true&lt;/has_preview&gt;&lt;id/&gt;&lt;internal&gt;false&lt;/internal&gt;&lt;link/&gt;&lt;name&gt;SC Categories&lt;/name&gt;&lt;option_schema&gt;[{"name":"hide_xs","default_value":false,"section":"Behavior","label":"Hide at XS","type":"boolean"},{"name":"omit_badges","section":"Behavior","label":"Omit badges (may impact performance for large items in categories)","type":"boolean"},{"name":"check_can_view","default_value":"true","section":"Behavior","label":"Check canView per item","type":"boolean"},{"hint":"Choose between a flattened and a nested category structure (Nested may impact performance for large items in categories)","name":"category_layout","section":"Presentation","label":"Category Layout","type":"choice","choices":[{"label":"Flat","value":"Flat"},{"label":"Nested","value":"Nested"}]},{"displayValue":"Page","name":"page","section":"Data","label":"page","type":"reference","value":"sp_page","ed":{"reference":"sp_page"}},{"hint":"Number of categories to load on page load","name":"number_of_categories_to_load","section":"Data","default_value":"15","label":"Number of categories to load","type":"integer"}]&lt;/option_schema&gt;&lt;public&gt;false&lt;/public&gt;&lt;roles/&gt;&lt;script&gt;&lt;![CDATA[(function() {
+  /* populate the 'data' object */
+  /* e.g., data.table = $sp.getValue('table'); */
+	// implement resource here
+	data.categoriesList = [];
+	data.showMoreMsg = gs.getMessage("Show More");
+	data.pleaseWait = gs.getMessage("Please wait... fetching categories");
+	var categoryId = JSUtil.nil($sp.getParameter('sys_id')) ? "" : $sp.getParameter('sys_id') + "";
+	var catalogID = $sp.getValue('sc_catalog') + "";
+	var viewType = '';
+	var checkCanView = false;
+	var nestedLayout = (options.category_layout !== "Flat");
+	var dynamicCategory = false;
+	var catalog = new sn_sc.Catalog(catalogID);
+	var msg = data.messages = {};
+	msg.expanded = gs.getMessage("Expanded");
+	msg.collapsed = gs.getMessage("Collapsed");
+	
+	if (!catalog.canView()) {
+		return;
+	}
+	
+	data.largeDataSet = gs.getProperty("glide.sc.largeSet.optimization.enable", "false");
+	if (data.largeDataSet == 'true')
+		 nestedLayout = false;
+	
+	if (options.page) {
+		var page = new GlideRecord('sp_page');
+		if (page.get(options.page))
+			data.page = page.id + '';
+	}
+	checkCanView = (options.check_can_view == 'true');
+	
+	var categoriesGr = new GlideRecord('sc_category');
+	categoriesGr.addQuery("sc_catalog", catalogID);
+	if (!dynamicCategory)
+		categoriesGr.addQuery("sys_class_name", "sc_category");
+	categoriesGr.addActiveQuery();
+	categoriesGr.orderBy('order');
+	categoriesGr.orderBy('title');
+	if (nestedLayout)
+		categoriesGr.addNullQuery("parent");
+	categoriesGr.query();
+
+	var loadCategories = options.number_of_categories_to_load || 15;
+	if (input &amp;&amp; input.getMore)
+		loadCategories = loadCategories + parseInt(input.categoriesCount);
+	var count = 0;
+	while (categoriesGr.next()) {
+		var categoryJS = new sn_sc.CatCategory(categoriesGr.getUniqueValue() + '');
+		if (!categoryJS.canView())
+			continue;
+		
+		var categoryDetails = getCategory(categoryJS, 0);
+		categoryDetails.sys_id = categoriesGr.getUniqueValue();
+		data.categoriesList.push(categoryDetails);
+		if (categoryDetails.totalCount &gt; 0)
+			count++;
+			
+		if(count &gt;= loadCategories) {
+				break;
+			}
+	}
+
+	if (categoriesGr.hasNext())
+		data.showMore = true;
+	else
+		data.showMore = false;
+	
+	data.categoriesCount = count;
+	data.loadAllMsg = gs.getMessage("Showing {0} categories", [count + ""]);
+	data.categoryId = categoryId;
+	
+	function getCategory(categoryJS, level) {
+		var categoryDetails = {};
+		var showChildren = false;
+		if (!categoryJS) {
+			return categoryDetails;
+		}
+		categoryDetails.title = categoryJS.getTitle();
+		categoryDetails.level = level;
+		categoryDetails.description = categoryJS.getDescription();
+		categoryDetails.full_description = categoryJS.getFullDescription();
+		categoryDetails.icon = categoryJS.getIconSRC();
+		categoryDetails.header_icon = categoryJS.getHeaderIconSRC();
+		categoryDetails.homepage_image = categoryJS.getHomepageImageSRC();
+		categoryDetails.sys_id = categoryJS.getID();
+		categoryDetails.showChildren = (categoryDetails.sys_id === categoryId);
+		
+		if (data.largeDataSet != 'true') {
+			if (checkCanView)
+					categoryDetails.count = categoryDetails.totalCount = categoryJS.getViewableItemsCount(true);
+				else
+					categoryDetails.count = categoryDetails.totalCount = categoryJS.getItemsCount(true);
+		}
+		else {
+			categoryDetails.count = 1;
+		}
+		
+		var subCategoryCounts = 0;
+		if (nestedLayout) {
+			var subcategories = categoryJS.getViewableSubCategories();
+			
+			if (subcategories.length == 0) {
+				categoryDetails.subcategories = [];
+			} 
+			else {
+					categoryDetails.subcategories = [];
+					subcategories.forEach(function(subCategory) {
+						var subCategoryJS = new sn_sc.CatCategory(subCategory.sys_id + '');
+						var category = getCategory(subCategoryJS, level + 1);
+						categoryDetails.totalCount = categoryDetails.totalCount + category.totalCount;
+						categoryDetails.subcategories.push(category);
+						categoryDetails.showChildren = categoryDetails.showChildren || category.showChildren;
+					});
+				}
+		}
+		else {
+			categoryDetails.totalCount = categoryDetails.count;
+		}
+		return categoryDetails;
+	}
+})();]]&gt;&lt;/script&gt;&lt;servicenow&gt;true&lt;/servicenow&gt;&lt;sys_class_name&gt;sp_widget&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2015-07-14 00:18:49&lt;/sys_created_on&gt;&lt;sys_id&gt;4c03cba0cb11020000f8d856634c9ce1&lt;/sys_id&gt;&lt;sys_mod_count&gt;527&lt;/sys_mod_count&gt;&lt;sys_name&gt;SC Categories&lt;/sys_name&gt;&lt;sys_package display_value="Service Portal - Service Catalog" source="com.glide.service-portal.service-catalog"&gt;9a3ed9995d921300651727c3e282e8cc&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Global"&gt;global&lt;/sys_scope&gt;&lt;sys_update_name&gt;sp_widget_4c03cba0cb11020000f8d856634c9ce1&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2018-04-12 20:41:33&lt;/sys_updated_on&gt;&lt;template&gt;&lt;![CDATA[&lt;div ng-class="{'hidden-xs' : hideCategoryWidgetInXS}" class="panel panel-{{::options.color}} category-widget no-border"&gt;
+  &lt;div class="panel-heading"&gt;
+    &lt;h2 class="h4 panel-title"&gt;
+      &lt;span class="pull-right visible-xs" &gt;
+      	&lt;i class="fa fa-times-circle" ng-click="hideBrowseCategory()" aria-label="${Show Items}" tabindex="0"/&gt;
+      &lt;/span&gt;
+      &lt;span ng-if="::options.glyph"&gt;
+        &lt;fa name="{{::options.glyph}}" /&gt;
+      &lt;/span&gt;{{::options.title}}&lt;/h2&gt;
+  &lt;/div&gt;
+  &lt;ul class="list-group category-list" role="list" aria-label="${Categories}"&gt;
+    &lt;li role="listitem" 
+        class="list-group-item text-overflow-ellipsis" 
+        ng-if="category.totalCount &gt; 0" ng-include="'category-template.html'" 
+        ng-repeat="category in data.categoriesList track by category.sys_id"&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+  &lt;div class="panel-footer text-center" ng-if="data.showMore"&gt;
+    &lt;a href="javascript:void(0)" role="button" class="text-center" ng-click="loadMore()" &gt;{{::data.showMoreMsg}}&lt;/a&gt;
+    &lt;div class="text-muted text-center"&gt;
+      {{data.loadAllMsg}}
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script type="text/ng-template" id="category-template.html"&gt;
+  	&lt;div ng-click="categorySelected(category)" 
+    			ng-enabled="category.totalCount &gt; 0" 
+          tabindex="0" class="group-item group-item-{{::options.color}}"&gt;
+      &lt;i ng-if="::category.subcategories.length &gt; 0 &amp;&amp; category.totalCount &gt; category.count" 
+          class="l-h-1_6x pull-left fa" 
+          ng-class="{true: 'fa-minus-square-o', false: 'fa-plus-square-o'}[category.showChildren]" 
+          aria-label="{{category.showChildren? '${collapse category} ' + category.title : '${expand category} ' + category.title}}"
+          ng-click="displayChildren($event, category)"/&gt;&lt;/i&gt;
+      &lt;span class="badge pull-right pointer" ng-if="options.omit_badges != 'true' &amp;&amp; data.largeDataSet != 'true'"&gt;{{::category.totalCount}}&lt;/span&gt;
+      &lt;span class="block text-overflow-ellipsis category" 
+          sn-focus="category.sys_id == data.categoryId"
+          ng-class="{true: 'text-{{::options.color}}', false: ''}[category.sys_id == data.categoryId]" id="{{::category.sys_id}}"
+          title="{{::category.title}}"&gt;
+          {{::category.title}}
+          &lt;span class="sr-only"&gt;${items}&lt;/span&gt;
+      &lt;/span&gt;
+    &lt;/div&gt;
+  	&lt;ul class="list-group sub-category-list list-bg-{{::options.color}}" role="list" aria-label="{{category.title}} ${subcategories}" ng-if="category.showChildren &amp;&amp; category.subcategories.length &gt; 0" ng-class="{true: 'no-indent', false: ''}[category.level &gt; 2]"&gt;
+      &lt;li role="listitem" 
+      		class="list-group-item text-overflow-ellipsis" 
+          ng-include="'category-template.html'" 
+          ng-repeat="category in category.subcategories track by category.sys_id" 
+          ng-if="category.totalCount &gt; 0"&gt;
+      &lt;/li&gt;
+  	&lt;/ul&gt;
+&lt;/script&gt;]]&gt;&lt;/template&gt;&lt;/sp_widget&gt;</payload>
+        <sys_class_name>sp_rel_widget_clone</sys_class_name>
+        <sys_created_by>jgbox</sys_created_by>
+        <sys_created_on>2019-05-01 02:38:24</sys_created_on>
+        <sys_id>3f885e83dbc1f700cbdfd6aa48961953</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>f3885e83dbc1f700cbdfd6aa48961951</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sp_rel_widget_clone_3f885e83dbc1f700cbdfd6aa48961953</sys_update_name>
+        <sys_updated_by>jgbox</sys_updated_by>
+        <sys_updated_on>2019-05-01 02:38:24</sys_updated_on>
+    </sp_rel_widget_clone>
+</record_update>

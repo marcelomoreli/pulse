@@ -3,77 +3,122 @@
         <sys_ui_list_element action="INSERT_OR_UPDATE">
             <average_value>false</average_value>
             <element>sys_created_on</element>
-            <list_id display_value="x_wms_pulse_m2m_sn_app_instance" element="NULL" name="x_wms_pulse_m2m_sn_app_instance" parent="x_wms_pulse_sn_instance" relationship="NULL" sys_domain="global" view="Default view">f0180274dbf87300cbdfd6aa48961946</list_id>
+            <list_id display_value="x_wms_pulse_m2m_sn_app_instance" element="NULL" name="x_wms_pulse_m2m_sn_app_instance" parent="x_wms_pulse_sn_instance" relationship="NULL" sys_domain="global" view="Default view">6174348fdb8db700cbdfd6aa489619b0</list_id>
             <max_value>false</max_value>
             <min_value>false</min_value>
             <position>0</position>
             <sum>false</sum>
             <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2019-04-11 15:24:21</sys_created_on>
-            <sys_id>3c180274dbf87300cbdfd6aa48961946</sys_id>
+            <sys_created_on>2019-04-30 19:21:04</sys_created_on>
+            <sys_id>2174788fdb8db700cbdfd6aa48961942</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2019-04-11 15:24:21</sys_updated_on>
+            <sys_updated_on>2019-04-30 19:21:04</sys_updated_on>
         </sys_ui_list_element>
         <sys_ui_list_element action="INSERT_OR_UPDATE">
             <average_value>false</average_value>
             <element>sn_application</element>
-            <list_id display_value="x_wms_pulse_m2m_sn_app_instance" element="NULL" name="x_wms_pulse_m2m_sn_app_instance" parent="x_wms_pulse_sn_instance" relationship="NULL" sys_domain="global" view="Default view">f0180274dbf87300cbdfd6aa48961946</list_id>
+            <list_id display_value="x_wms_pulse_m2m_sn_app_instance" element="NULL" name="x_wms_pulse_m2m_sn_app_instance" parent="x_wms_pulse_sn_instance" relationship="NULL" sys_domain="global" view="Default view">6174348fdb8db700cbdfd6aa489619b0</list_id>
             <max_value>false</max_value>
             <min_value>false</min_value>
             <position>1</position>
             <sum>false</sum>
             <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2019-04-11 15:24:21</sys_created_on>
-            <sys_id>bc180274dbf87300cbdfd6aa48961946</sys_id>
+            <sys_created_on>2019-04-30 19:21:04</sys_created_on>
+            <sys_id>a574788fdb8db700cbdfd6aa48961942</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2019-04-11 15:24:21</sys_updated_on>
+            <sys_updated_on>2019-04-30 19:21:04</sys_updated_on>
         </sys_ui_list_element>
         <sys_ui_list_element action="INSERT_OR_UPDATE">
             <average_value>false</average_value>
             <element>sn_instance</element>
-            <list_id display_value="x_wms_pulse_m2m_sn_app_instance" element="NULL" name="x_wms_pulse_m2m_sn_app_instance" parent="x_wms_pulse_sn_instance" relationship="NULL" sys_domain="global" view="Default view">f0180274dbf87300cbdfd6aa48961946</list_id>
+            <list_id display_value="x_wms_pulse_m2m_sn_app_instance" element="NULL" name="x_wms_pulse_m2m_sn_app_instance" parent="x_wms_pulse_sn_instance" relationship="NULL" sys_domain="global" view="Default view">6174348fdb8db700cbdfd6aa489619b0</list_id>
             <max_value>false</max_value>
             <min_value>false</min_value>
             <position>2</position>
             <sum>false</sum>
             <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2019-04-11 15:24:21</sys_created_on>
-            <sys_id>30180274dbf87300cbdfd6aa48961947</sys_id>
+            <sys_created_on>2019-04-30 19:21:04</sys_created_on>
+            <sys_id>2974788fdb8db700cbdfd6aa48961942</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2019-04-11 15:24:21</sys_updated_on>
+            <sys_updated_on>2019-04-30 19:21:04</sys_updated_on>
         </sys_ui_list_element>
         <sys_ui_list_element action="INSERT_OR_UPDATE">
             <average_value>false</average_value>
             <element>tech_approvers</element>
-            <list_id display_value="x_wms_pulse_m2m_sn_app_instance" element="NULL" name="x_wms_pulse_m2m_sn_app_instance" parent="x_wms_pulse_sn_instance" relationship="NULL" sys_domain="global" view="Default view">f0180274dbf87300cbdfd6aa48961946</list_id>
+            <list_id display_value="x_wms_pulse_m2m_sn_app_instance" element="NULL" name="x_wms_pulse_m2m_sn_app_instance" parent="x_wms_pulse_sn_instance" relationship="NULL" sys_domain="global" view="Default view">6174348fdb8db700cbdfd6aa489619b0</list_id>
             <max_value>false</max_value>
             <min_value>false</min_value>
             <position>3</position>
             <sum>false</sum>
             <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2019-04-11 15:24:21</sys_created_on>
-            <sys_id>b0180274dbf87300cbdfd6aa48961947</sys_id>
+            <sys_created_on>2019-04-30 19:21:04</sys_created_on>
+            <sys_id>a974788fdb8db700cbdfd6aa48961942</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2019-04-11 15:24:21</sys_updated_on>
+            <sys_updated_on>2019-04-30 19:21:04</sys_updated_on>
         </sys_ui_list_element>
         <sys_ui_list_element action="INSERT_OR_UPDATE">
             <average_value>false</average_value>
             <element>additional_approvers</element>
-            <list_id display_value="x_wms_pulse_m2m_sn_app_instance" element="NULL" name="x_wms_pulse_m2m_sn_app_instance" parent="x_wms_pulse_sn_instance" relationship="NULL" sys_domain="global" view="Default view">f0180274dbf87300cbdfd6aa48961946</list_id>
+            <list_id display_value="x_wms_pulse_m2m_sn_app_instance" element="NULL" name="x_wms_pulse_m2m_sn_app_instance" parent="x_wms_pulse_sn_instance" relationship="NULL" sys_domain="global" view="Default view">6174348fdb8db700cbdfd6aa489619b0</list_id>
             <max_value>false</max_value>
             <min_value>false</min_value>
             <position>4</position>
             <sum>false</sum>
             <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2019-04-11 15:24:21</sys_created_on>
-            <sys_id>34180274dbf87300cbdfd6aa48961947</sys_id>
+            <sys_created_on>2019-04-30 19:21:04</sys_created_on>
+            <sys_id>2d74788fdb8db700cbdfd6aa48961942</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2019-04-11 15:24:21</sys_updated_on>
+            <sys_updated_on>2019-04-30 19:21:04</sys_updated_on>
+        </sys_ui_list_element>
+        <sys_ui_list_element action="INSERT_OR_UPDATE">
+            <average_value>false</average_value>
+            <element>auto_approve</element>
+            <list_id display_value="x_wms_pulse_m2m_sn_app_instance" element="NULL" name="x_wms_pulse_m2m_sn_app_instance" parent="x_wms_pulse_sn_instance" relationship="NULL" sys_domain="global" view="Default view">6174348fdb8db700cbdfd6aa489619b0</list_id>
+            <max_value>false</max_value>
+            <min_value>false</min_value>
+            <position>5</position>
+            <sum>false</sum>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-04-30 19:21:04</sys_created_on>
+            <sys_id>ad74788fdb8db700cbdfd6aa48961942</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-04-30 19:21:04</sys_updated_on>
+        </sys_ui_list_element>
+        <sys_ui_list_element action="INSERT_OR_UPDATE">
+            <average_value>false</average_value>
+            <element>auto_promote</element>
+            <list_id display_value="x_wms_pulse_m2m_sn_app_instance" element="NULL" name="x_wms_pulse_m2m_sn_app_instance" parent="x_wms_pulse_sn_instance" relationship="NULL" sys_domain="global" view="Default view">6174348fdb8db700cbdfd6aa489619b0</list_id>
+            <max_value>false</max_value>
+            <min_value>false</min_value>
+            <position>6</position>
+            <sum>false</sum>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-04-30 19:21:04</sys_created_on>
+            <sys_id>2174788fdb8db700cbdfd6aa48961943</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-04-30 19:21:04</sys_updated_on>
+        </sys_ui_list_element>
+        <sys_ui_list_element action="INSERT_OR_UPDATE">
+            <average_value>false</average_value>
+            <element>requires_testing</element>
+            <list_id display_value="x_wms_pulse_m2m_sn_app_instance" element="NULL" name="x_wms_pulse_m2m_sn_app_instance" parent="x_wms_pulse_sn_instance" relationship="NULL" sys_domain="global" view="Default view">6174348fdb8db700cbdfd6aa489619b0</list_id>
+            <max_value>false</max_value>
+            <min_value>false</min_value>
+            <position>7</position>
+            <sum>false</sum>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-04-30 19:21:04</sys_created_on>
+            <sys_id>a174788fdb8db700cbdfd6aa48961943</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-04-30 19:21:04</sys_updated_on>
         </sys_ui_list_element>
         <sys_ui_list action="INSERT_OR_UPDATE">
             <average_value>false</average_value>
@@ -87,10 +132,10 @@
             <sum>false</sum>
             <sys_class_name>sys_ui_list</sys_class_name>
             <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2019-04-11 15:24:21</sys_created_on>
+            <sys_created_on>2019-04-30 19:21:04</sys_created_on>
             <sys_domain>global</sys_domain>
             <sys_domain_path>/</sys_domain_path>
-            <sys_id>f0180274dbf87300cbdfd6aa48961946</sys_id>
+            <sys_id>6174348fdb8db700cbdfd6aa489619b0</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_name>x_wms_pulse_m2m_sn_app_instance</sys_name>
             <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
@@ -98,7 +143,7 @@
             <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
             <sys_update_name>sys_ui_list_x_wms_pulse_m2m_sn_app_instance_x_wms_pulse_sn_instance_null</sys_update_name>
             <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2019-04-11 15:24:21</sys_updated_on>
+            <sys_updated_on>2019-04-30 19:21:04</sys_updated_on>
             <sys_user/>
             <view display_value="Default view" name="NULL">Default view</view>
             <view_name/>

@@ -22,7 +22,8 @@ PulseUtilsImpl.prototype = {
     // Basically calculates what to do on the state it got to
     handleStateChange: function(devRequest) {
         var state = devRequest.getValue('state');
-        this.l.logDebug('Starting handleStateChange[' + devRequest.number + ' - ' + devRequest.getDisplayValue('state') + ']');
+        this.l.logDebug('Starting handleStateChange[' + devRequest.number + ' - From ' + devRequest.getDisplayValue('previous_state') + ' to ' + devRequest.getDisplayValue('state') + ']');
+        
         var answer = {
             success : true,
             message : '',
@@ -31,32 +32,72 @@ PulseUtilsImpl.prototype = {
 
         switch (state) {
             case DevRequestStates.NEW:
+				// Creates an update set in the development instance
+				// Moves to In Development automatically after it's created
                 answer = this.remoteCreateUpdateSet(devRequest);
                 break;
             case DevRequestStates.IN_DEVELOPMENT:
                 // Do nothing - just wait the developer to finish his work.
+				// Once work is completed, Developer should click "Code Scan" on the update set form
+				// to check for findings from code scan and once they're cleared out, complete the update set and
+				// click "Send to Review"
                 break;
             case DevRequestStates.TESTING_PREVIEW:
+				// When the update set is sent to review by the developer, it will first try to preview the update set
+				// on the next environment (parent environment defined in Prod)
+				// If we have preview problems or findings from code scan
+				// it will move the dev request to awaiting justification
                 answer = this.remotePromoteUpdateSet(devRequest, true);
                 break;
             case DevRequestStates.AWAITING_JUSTIFICATION:
                 // Wait for developer to put justifications on the preview problems
+                // Once all of them have been addressed, move to "In Review" or "In Review (Problem)"
+                // depending if the dev request have preview problems or not
+                // It's also possible to send it back to the developer by moving to "Review Actions"
+                // so that he/she can fix something
                 break;
             case DevRequestStates.IN_REVIEW_PROBLEMS:
+                // Works exactly the same as "In Review", it's in a different state just to flag it
             case DevRequestStates.IN_REVIEW:
                 // Wait for the approval Workflow
+                // The workflow should identify what's the next step for the dev request
+                // It may or may not require approval
+                // The workflow will call one of the three functions accordingly:
+                // approveDevRequest: Approved
+                //  - Move to "Pending Schedule" if it is not "auto-promote"
+                //  - Move to "Promoting" if it is "auto-promote"
+                // rejectDevRequest: Approval was rejected
+                //  - Set the dev request to "Review Actions" with the reason for rejection
+                // skipApprovalDevRequest: Approvals were skipped - no approvers
+                //  - If we have a target instance:
+                //  -- If instance x application is flagged as "Auto-approve"
+                //  --- Move to "Pending Schedule" if it is not "auto-promote"
+                //  --- Move to "Promoting" if it is "auto-promote"
+                //  -- If instance x application is not flagged as "Auto-approve": Fail it (Automation failed)
+                //  - If we don't have a target instance:
+                //  -- Means it has reached the last enviornment. Move it to "Closing Change"
                 answer = this.restartApprovalWorkflow(devRequest);
                 break;
             case DevRequestStates.REVIEW_ACTIONS:
+                // Sends a notification to the developer and reopen the update set
+                // State is moved to "In Development" after update set is reopened
                 answer = this.remoteReopenUpdateSet(devRequest);
                 break;
             case DevRequestStates.PENDING_SCHEDULE:
                 // Wait for user to schedule the Dev Request
+                // Once a date-time is put in place, Dev request will move to "Generating Change"
                 break;
             case DevRequestStates.PROMOTING:
+                // Automation that previews the update set
+                // Right after it's previewed it moves to "Committing"
                 answer = this.remotePromoteUpdateSet(devRequest, false);
                 break;
             case DevRequestStates.COMMITTING:
+                // Automation that tries to commit an update set
+                // After commit is done, it will move to:
+                // - Ready for Testing: If the target instance (just promoted to) requires testing
+                // - Done: In case doesn't require testing and doesn't have another environment to go to
+                // - In Review: In case it does have another environment to go to and doesn't require testing on current environment
                 answer = this.remoteCommitUpdateSet(devRequest);
                 break;
             case DevRequestStates.READY_FOR_TESTING:
@@ -64,16 +105,27 @@ PulseUtilsImpl.prototype = {
                 break;
             case DevRequestStates.TEST_FAILED:
                 // When it's Test Failed, it's expected that the user created a remediation
+                // by creating the remediaton, the dev request moves to "Awaiting Remediation"
                 break;
             case DevRequestStates.TEST_PASSED:
-                // When it's test passed, we need to determine if it should be promoted or wait for schedule
-                answer = this.testPass(devRequest);
+                // When it's test passed, Send it to "In Review" so it calculates the next step
+                answer = this.localMoveToInReview(devRequest);
                 break;
             case DevRequestStates.AWAITING_REMEDIATION:
+                // This basically waits the child to be in the same environment as this one (and test passed if it requires testing)
+                // Once it happens, it moves to "In Review" to calculate next step (moved by child)
+                // and the child (remediation) will become Awaiting Parent
                 break;
             case DevRequestStates.AWAITING_PARENT:
+                // Dependency purposes
+                // Once the parent moves to another environment, move this one too
+                // State is updated by the parent
                 break;
             case DevRequestStates.GENERATING_CHANGE:
+                // Generate a change if it doesn't already have one and it needs it
+                // if it have one, check the time and update accordingly
+                // After the change is created/updated, move it to "Scheduled"
+                answer = this.generateChange(devRequest);
                 break;
             case DevRequestStates.SCHEDULED:
                 break;
@@ -119,7 +171,7 @@ PulseUtilsImpl.prototype = {
         }
 
         if (update) {
-            this.l.logDebug('handleStateChange running update. State[' + devRequest.getDisplayValue('state') + '] Previous State[' + devRequest.getDisplayValue('previous_state') + ']');
+            this.l.logDebug('handleStateChange running update. State[' + devRequest.getValue('state') + '] State Earlier[' + state + ']');
             devRequest.update();
         }
     },
@@ -518,7 +570,7 @@ PulseUtilsImpl.prototype = {
             var appInstanceConfig = this.getInstanceApplication(devRequest, targetEnv.sys_id);
             if (appInstanceConfig) {
                 if (appInstanceConfig.auto_approve) {
-                    if (devRequest.auto_promote) {
+                    if (devRequest.auto_promote && devRequest.auto_promote) {
                         devRequest.setValue('state', DevRequestStates.PROMOTING);
                     } else {
                         devRequest.setValue('state', DevRequestStates.PENDING_SCHEDULE);
@@ -767,10 +819,15 @@ PulseUtilsImpl.prototype = {
         child.addQuery('state', DevRequestStates.AWAITING_PARENT);
         child.query();
         while (child.next()) {
-            child.setValue('state', DevRequestStates.PROMOTING);
-            child.update();
+			this.localMoveToPromoting(child);
         }
     },
+	
+	// Called from the function above and also from the scheduled job
+	localMoveToPromoting: function(devRequest) {
+		devRequest.setValue('state', DevRequestStates.PROMOTING);
+		devRequest.update();
+	},
 
     // Given a update set sys_id, grab the retrieved update set and commit (as long as it's previewed)
     // If the update set is already committed, grab the update set sys_id for the local copy.
@@ -1053,7 +1110,6 @@ PulseUtilsImpl.prototype = {
         return copy_sys_id;
     },
 
-
     // Moves record to review in this environment
     // This should only be done in PROD
     handleFindings: function(environment, setID, findings) {
@@ -1128,116 +1184,23 @@ PulseUtilsImpl.prototype = {
         return answer;
     },
 
-    // Schedule Dev request to be promoted to upper environment
-    // TODO - not confirmed if it's working yet
-    scheduleInstallation: function(devRequest) {
-        this.l.logDebug('Creating scheduled job for [' + devRequest.getValue('number') + ']');
+    handleSchedule: function(devRequest) {
+        this.l.logDebug('Starting handleSchedule[' + devRequest.getValue('number') + ']');
         var answer = {
             success : false,
             message : ''
         };
 
-        if (devRequest.getValue('due_date')) {
-            var getScheduledS = new GlideRecord('sysauto_script');
-            getScheduledS.addQuery('name','devRequest.' + devRequest.getValue('number'));
-            getScheduledS.query();
-            
-            if (getScheduledS.next()) {
-                // Update Time
-                var actualDateTime = new GlideDateTime();
-                actualDateTime.setDisplayValue(gs.nowDateTime());
-                
-                var startDateTime = new GlideDateTime();
-                startDateTime.setDisplayValue(devRequest.due_date.getDisplayValue());
-                
-                if (startDateTime.getNumericValue() < actualDateTime.getNumericValue()) {
-                    SncTriggerSynchronizer.executeNow(getScheduledS);
-                    devRequest.due_date = actualDateTime;
-                    answer.message = 'Development request scheduled for RIGHT NOW!';
-                    answer.success = true;
-                } else {
-                    getScheduledS.run_type = 'once';
-                    getScheduledS.run_start.setDisplayValue(devRequest.due_date.getDisplayValue());
-                    getScheduledS.update();
-                    answer.message = 'Development request scheduled for ' + devRequest.due_date.getDisplayValue();
-                    answer.success = true;
-                }
-            } else {
-                var script = "";
-                script += "var getDevReq = new GlideRecord('x_wms_pulse_dev_request');\n";
-                script += "getDevReq.get('" + devRequest.getValue('sys_id') + "');\n\n";
-                script += "if (getDevReq.getValue('state') == DevRequestStates.SCHEDULED) {\n";
-                script += "  getDevReq.setValue('state', DevRequestStates.PROMOTING);\n";
-                script += "  getDevReq.update();\n";
-                script += "}\n\n";
-                script += " var getScheduledScript = new GlideRecord('sysauto_script');\n";
-                script += " getScheduledScript.get('name','devRequest." +  devRequest.getValue('number') + "');\n";
-                script += " getScheduledScript.query();\n\n";
-                script += " if (getScheduledScript.next()) {\n";
-                script += "     getScheduledScript.deleteRecord();\n";
-                script += " }\n";
-                
-                var getScheduledScript = new GlideRecord('sysauto_script');
-                getScheduledScript.initialize();
-                getScheduledScript.name = 'devRequest.' + devRequest.getValue('number');
-                getScheduledScript.run_type = 'on_demand';
-                getScheduledScript.sys_class_name = 'sysauto_script';
-                getScheduledScript.run_as = 'admin';
-                getScheduledScript.script = script;
-                
-                getScheduledScript.get(getScheduledScript.insert());
-                
-                var actualDateTime2 = new GlideDateTime();
-                actualDateTime2.setDisplayValue(gs.nowDateTime());
-                
-                var startDateTime2 = new GlideDateTime();
-                startDateTime2.setDisplayValue(devRequest.due_date.getDisplayValue());
-                
-                if (startDateTime2.getNumericValue() < actualDateTime2.getNumericValue()) {
-                    SncTriggerSynchronizer.executeNow(getScheduledScript);
-                    devRequest.due_date = actualDateTime2;
-                    answer.message = 'Development request scheduled for RIGHT NOW!';
-                    answer.success = true;
-                } else {
-                    getScheduledScript.run_type = 'once';
-                    getScheduledScript.run_start.setDisplayValue(devRequest.due_date.getDisplayValue());
-                    getScheduledScript.update();
-                    answer.message = 'Development request scheduled for ' + devRequest.due_date.getDisplayValue();
-                    answer.success = true;
-                }
+        answer = this.pulseGlobal.scheduleInstallation(this.l, devRequest);
+
+        if (answer.success) {
+            if (answer.time) {
+                devRequest.setValue('due_date', answer.time);
             }
-        } else {
-            answer.message = 'Release date field is empty';
+            if (answer.final_state && devRequest.getValue('state') != answer.final_state) {
+                devRequest.setValue('state', answer.final_state);
+            }
         }
-        this.l.logDebug('Answer from scheduleInstallation: ' + JSON.stringify(answer));
-        return answer;
-    },
-
-    // Removes a scheduled job
-    // TODO: Test
-    removeScheduleInstallation: function(devRequest) {
-        this.l.logDebug('Deleting scheduled job for [' + devRequest.getValue('number') + ']');
-        var answer = {
-            success : false,
-            message : ''
-        };
-        var getScheduledS = new GlideRecord('sysauto_script');
-        getScheduledS.addQuery('name','devRequest.' + devRequest.getValue('number'));
-        getScheduledS.query();
-        
-        if (getScheduledS.next()) {
-            getScheduledS.deleteRecord();
-            answer.message = 'Schedule removed.';
-        } else {
-            answer.message = 'Schedule not found.';
-        }
-        answer.success = true;
-        if (devRequest.getValue('state') == DevRequestStates.SCHEDULED) {
-            devRequest.setValue('state', DevRequestStates.TEST_PASSED);
-            devRequest.update();
-        }
-        this.l.logDebug('Answer from removeScheduleInstallation: ' + JSON.stringify(answer));
-        return answer;
     },
 
     // Moves a local update set to ignored
@@ -1297,91 +1260,54 @@ PulseUtilsImpl.prototype = {
     },
 
     // Calculates the next step when it moves to test passed
-    testPass: function(devRequest) {
-        this.l.logDebug('Starting testPass[' + devRequest.getValue('number') + ']');
+    localMoveToInReview: function(devRequest) {
+        this.l.logDebug('Starting localMoveToInReview[' + devRequest.getValue('number') + ']');
         var answer = {
-            success : false,
+            success : true,
             message : ''
         };
-        // TODO
+        // All we need to do here is set it to In Review
+        // By doing that, it will calculate where to go next
+        devRequest.setValue('state', DevRequestStates.IN_REVIEW);
+        return answer;
     },
 
     // Generates a Change Request
-    // TODO: Test
     generateChange: function(devRequest) {
         this.l.logDebug('Starting generateChange[' + devRequest.getValue('number') + ']');
         var answer = {
             success : false,
             message : ''
         };
-        var chg = devRequest.getValue('rfc');
 
-        var gdt = new GlideDateTime();
-        gdt.setDisplayValue(devRequest.getDisplayValue('due_date'));
-        gdt.addSeconds(60*4*60); // 4 hours
-
-        if (chg == '') {
-            var newChange = new GlideRecord('change_request');
-            newChange.newRecord();
-            var templateID = gs.getProperty('x_wms_pulse.change_request_template');
-            if (templateID) {
-                newChange.applyTemplate(templateID);
+        // Check if the Dev Request requires a Change Request right now
+        // If the environment it's going to is the last one and
+        // the system property have something, it means it requires a change
+        var templateID = gs.getProperty('x_wms_pulse.change_request_template');
+        var targetEnv = this.getTargetEnvironment(devRequest);
+        if (targetEnv && targetEnv.getValue('type') == 'prod' && templateID) {
+            var answer = this.pulseGlobal.generateChange(this.l, devRequest);
+            if (answer.rfc != '') {
+                this.l.logDebug('Setting RFC to:' + answer.rfc);
+                devRequest.setValue('change_request', answer.rfc);
             }
-            newChange.short_description = 'Automated Change for ServiceNow ' + devRequest.getDisplayValue('category') + ': ' + devRequest.getValue('number');
-            newChange.description = 'Change details:';
-            newChange.description += '\nSummary: ' + devRequest.getValue('short_description');
-            newChange.description += '\nRelease Notes: ' + devRequest.getValue('description');
-            newChange.start_date = devRequest.due_date;
-            newChange.end_date = gdt;
-            chg = newChange.insert();
-            devRequest.setValue('rfc', chg);
-            answer.success = true;
-            answer.message = 'New Change Request Created';
         } else {
-            // Update time on CHG
-            var oldChange = new GlideRecord('change_request');
-            oldChange.addQuery('sys_id', chg);
-            oldChange.query();
-
-            if (oldChange.next()) {
-                oldChange.start_date = devRequest.due_date;
-                oldChange.end_date = gdt;
-                oldChange.update();
-            }
+            // Doesn't need a change request
             answer.success = true;
-            answer.message = 'Change Request Updated';
         }
-        devRequest.setValue('state', DevRequestStates.SCHEDULED);
-        this.l.logDebug('Answer from generateChange: ' + JSON.stringify(answer));
+
+        if (answer.success) {
+            devRequest.setValue('state', DevRequestStates.SCHEDULED);
+        } else {
+            devRequest.setValue('state', DevRequestStates.AUTOMATION_FAILURE);
+        }
+
         return answer;
     },
 
     // Close a Change Request
     closeChange: function(devRequest) {
-        this.l.logDebug('Starting closeChange[' + devRequest.getValue('number') + ']');
-        var answer = {
-            success : false,
-            message : ''
-        };
-        if (devRequest.getValue('rfc')) {
-            var chg = new GlideRecord('change_request');
-            if (chg.get(devRequest.rfc)) {
-                chg.setValue('state', '-1'); // Implement
-                chg.update();
-                chg.setValue('state', '0'); // Review
-                chg.update();
-                chg.setValue('state', '3'); // Closed
-                chg.setValue('close_notes', 'Update set promoted correctly.');
-                chg.setValue('close_code', 'successful');
-                chg.update();
-                answer.success = true;
-                answer.message = 'Change Request Closed.';
-            }
-        } else {
-            answer.message = 'Change request field is empty!';
-        }
-        this.l.logDebug('Answer from closeChange: ' + JSON.stringify(answer));
-        return answer;
+        return this.pulseGlobal.closeChange(this.l, devRequest);
     },
 
     // TODO - Review Notifications
@@ -2064,13 +1990,13 @@ PulseUtilsImpl.prototype = {
         <sys_created_by>mmoreli</sys_created_by>
         <sys_created_on>2018-08-07 21:43:44</sys_created_on>
         <sys_id>910e5311dbf3130089fb2fb748961988</sys_id>
-        <sys_mod_count>192</sys_mod_count>
+        <sys_mod_count>233</sys_mod_count>
         <sys_name>PulseUtilsImpl</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_script_include_910e5311dbf3130089fb2fb748961988</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-04-30 15:57:53</sys_updated_on>
+        <sys_updated_on>2019-05-27 15:55:55</sys_updated_on>
     </sys_script_include>
 </record_update>

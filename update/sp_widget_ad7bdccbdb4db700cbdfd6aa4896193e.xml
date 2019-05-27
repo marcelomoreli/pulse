@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function() {  /* widget controller */  var c = this;}]]></client_script>
+        <controller_as>c</controller_as>
+        <css/>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>pulse_doc</id>
+        <internal>false</internal>
+        <link/>
+        <name>Pulse Documentation</name>
+        <option_schema>[{"name":"title","section":"other","default_value":"Document Details","label":"Title","type":"string"},{"name":"search_scope","section":"other","default_value":"e970e883db6bdb0c1f0d322b7c9619a2","label":"Search Scope","type":"string"}]</option_schema>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+	data.sys_id = $sp.getParameter('sys_id');
+	var sourceTable = options.source_table || 'sp_documentation';
+	if (!data.sys_id)
+		return;
+	var doc = new GlideRecord(sourceTable);
+	if(!doc.get(data.sys_id)){
+		gs.addErrorMessage('Documentation not found');
+		return;
+	}
+	var mdUtils = new MarkdownUtils();
+	data.content = mdUtils.parseMarkdown(doc.content + '');
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>jgbox</sys_created_by>
+        <sys_created_on>2019-04-30 17:31:51</sys_created_on>
+        <sys_id>ad7bdccbdb4db700cbdfd6aa4896193e</sys_id>
+        <sys_mod_count>8</sys_mod_count>
+        <sys_name>Pulse Documentation</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sp_widget_ad7bdccbdb4db700cbdfd6aa4896193e</sys_update_name>
+        <sys_updated_by>jgbox</sys_updated_by>
+        <sys_updated_on>2019-05-01 21:14:58</sys_updated_on>
+        <template><![CDATA[<div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">{{::options.title}}</h4>
+    </div>
+    <div class="panel-body wrapper-lg markdown-body" ng-bind-html="data.content"></div>
+  </div>
+</div>]]></template>
+    </sp_widget>
+</record_update>

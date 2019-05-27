@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><database>
-    <element audit="true" extends="task" label="ServiceNow Development Request" max_length="40" name="x_wms_pulse_dev_request" sizeclass="1" type="collection">
+    <element audit="true" extends="task" label="ServiceNow Development Request" max_length="40" name="x_wms_pulse_dev_request" sizeclass="2" type="collection">
         <element label="Application" max_length="32" name="application" reference="x_wms_pulse_sn_application" type="reference"/>
         <element label="Application owner" max_length="32" name="application_owner" reference="sys_user" type="reference"/>
         <element label="Auto Promote" max_length="40" name="auto_promote" type="boolean"/>
@@ -10,6 +10,7 @@
         <element choice="3" choice_field="state" choice_table="x_wms_pulse_dev_request" label="Previous State" max_length="40" name="previous_state" type="integer">
             <choice/>
         </element>
+        <element label="Remediation For" max_length="32" name="remediation_for" reference="x_wms_pulse_dev_request" type="reference"/>
         <element label="Review Requested" max_length="40" name="review_requested_on" type="glide_date_time"/>
         <element label="Root Sys ID" max_length="32" name="root_sys_id" type="string"/>
         <element label="Scope" max_length="32" name="scope" reference="x_wms_pulse_sn_scope" type="reference"/>
@@ -24,5 +25,6 @@
         </element>
         <element label="Update set JSON" max_length="1000" name="update_set_json" type="string"/>
         <element attributes="ref_contributions=x_wms_pulse_go_to_update_set" label="Update set name" max_length="80" name="update_set_name" type="string"/>
+        <element default="1" label="Version" max_length="40" name="version" type="integer"/>
     </element>
 </database>

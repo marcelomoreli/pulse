@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update>
-    <sys_documentation element="" label="Pulse M2m Sn App Scope" language="en" table="x_wms_pulse_m2m_sn_app_scope">
+    <sys_documentation element="" label="Application Scope" language="en" table="x_wms_pulse_m2m_sn_app_scope">
         <sys_documentation action="INSERT_OR_UPDATE">
             <element/>
             <help/>
             <hint/>
-            <label>Pulse M2m Sn App Scope</label>
+            <label>Application Scope</label>
             <language>en</language>
             <name>x_wms_pulse_m2m_sn_app_scope</name>
-            <plural>Pulse M2m Sn App Scopes</plural>
+            <plural>Application Scopes</plural>
             <sys_class_name>sys_documentation</sys_class_name>
             <sys_created_by>jgbox</sys_created_by>
             <sys_created_on>2018-07-31 11:39:48</sys_created_on>
             <sys_id>83d0954fdb63130089fb2fb748961941</sys_id>
-            <sys_mod_count>0</sys_mod_count>
-            <sys_name>Pulse M2m Sn App Scope</sys_name>
+            <sys_mod_count>1</sys_mod_count>
+            <sys_name>Application Scope</sys_name>
             <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
             <sys_policy/>
             <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
             <sys_update_name>sys_documentation_x_wms_pulse_m2m_sn_app_scope__en</sys_update_name>
-            <sys_updated_by>jgbox</sys_updated_by>
-            <sys_updated_on>2018-07-31 11:39:48</sys_updated_on>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-04-30 18:28:56</sys_updated_on>
             <url/>
             <url_target/>
         </sys_documentation>

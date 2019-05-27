@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update>
-    <sys_dictionary action="INSERT_OR_UPDATE" element="code_freeze" table="x_wms_pulse_sn_application">
+    <sys_dictionary action="INSERT_OR_UPDATE" element="version" table="x_wms_pulse_dev_request">
         <active>true</active>
         <array>false</array>
         <array_denormalized>false</array_denormalized>
@@ -14,10 +14,10 @@
         <choice/>
         <choice_field/>
         <choice_table/>
-        <column_label>Code freeze</column_label>
+        <column_label>Version</column_label>
         <comments/>
         <create_roles/>
-        <default_value/>
+        <default_value>1</default_value>
         <defaultsort/>
         <delete_roles/>
         <dependent/>
@@ -27,15 +27,15 @@
         <dynamic_creation_script/>
         <dynamic_default_value/>
         <dynamic_ref_qual/>
-        <element>code_freeze</element>
+        <element>version</element>
         <element_reference>false</element_reference>
         <foreign_database/>
         <function_definition/>
         <function_field>false</function_field>
-        <internal_type display_value="">boolean</internal_type>
+        <internal_type display_value="Integer">integer</internal_type>
         <mandatory>false</mandatory>
         <max_length>40</max_length>
-        <name>x_wms_pulse_sn_application</name>
+        <name>x_wms_pulse_dev_request</name>
         <next_element/>
         <primary>false</primary>
         <read_only>false</read_only>
@@ -51,17 +51,17 @@
         <spell_check>false</spell_check>
         <staged>false</staged>
         <sys_class_name>sys_dictionary</sys_class_name>
-        <sys_created_by>jgbox</sys_created_by>
-        <sys_created_on>2018-08-09 21:59:14</sys_created_on>
-        <sys_id>c6329552db33930089fb2fb74896190b</sys_id>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-05-01 20:10:17</sys_created_on>
+        <sys_id>58194e17db4df700cbdfd6aa4896198a</sys_id>
         <sys_mod_count>0</sys_mod_count>
-        <sys_name>Code freeze</sys_name>
+        <sys_name>Version</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy/>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
-        <sys_update_name>sys_dictionary_x_wms_pulse_sn_application_code_freeze</sys_update_name>
-        <sys_updated_by>system</sys_updated_by>
-        <sys_updated_on>2018-08-10 14:06:05</sys_updated_on>
+        <sys_update_name>sys_dictionary_x_wms_pulse_dev_request_version</sys_update_name>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2019-05-01 20:10:17</sys_updated_on>
         <table_reference>false</table_reference>
         <text_index>false</text_index>
         <unique>false</unique>
