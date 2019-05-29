@@ -2,10 +2,10 @@
     <sys_ui_action action="INSERT_OR_UPDATE">
         <action_name>on_hold_back_up</action_name>
         <active>true</active>
-        <client>false</client>
+        <client>true</client>
         <client_script_v2/>
         <comments>Attaches a backup of the update set to the dev request and sets the dev request status to On Hold.</comments>
-        <condition>gs.hasRole('x_wms_pulse.developer') &amp;&amp; current.active</condition>
+        <condition>gs.hasRole('x_wms_pulse.developer') &amp;&amp; current.active &amp;&amp; current.state != DevRequestStates.BACKING_UP &amp;&amp; current.state != DevRequestStates.ON_HOLD</condition>
         <form_action>true</form_action>
         <form_button>false</form_button>
         <form_button_v2>false</form_button_v2>
@@ -24,21 +24,11 @@
         <list_save_with_form_button>false</list_save_with_form_button>
         <list_style/>
         <name>On Hold and Back Up</name>
-        <onclick/>
+        <onclick>runBackup()</onclick>
         <order>100</order>
-        <script><![CDATA[runBackup();
-
-function runBackup() {
-	var utils = new x_wms_pulse.PulseUtils();
-	var response = utils.backupDevelopment(current);
-	if (response && response.success) {
-		gs.addInfoMessage(response.message);
-	} else {
-		if (response && response.errorMessage) {
-			gs.addErrorMessage(response.errorMessage);
-		}
-	}
-	action.setRedirectURL(current);
+        <script><![CDATA[function runBackup() {
+	g_form.setValue('state', 72); // Backing Up
+	g_form.save();
 }]]></script>
         <show_insert>false</show_insert>
         <show_multiple_update>false</show_multiple_update>
@@ -50,17 +40,17 @@ function runBackup() {
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>f63372cedbbb530089fb2fb748961984</sys_id>
-        <sys_mod_count>3</sys_mod_count>
+        <sys_mod_count>5</sys_mod_count>
         <sys_name>On Hold and Back Up</sys_name>
         <sys_overrides/>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy/>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_ui_action_f63372cedbbb530089fb2fb748961984</sys_update_name>
-        <sys_updated_by>jgbox</sys_updated_by>
-        <sys_updated_on>2018-09-15 18:20:21</sys_updated_on>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2019-05-28 15:44:41</sys_updated_on>
         <table>x_wms_pulse_dev_request</table>
         <ui11_compatible>true</ui11_compatible>
-        <ui16_compatible>false</ui16_compatible>
+        <ui16_compatible>true</ui16_compatible>
     </sys_ui_action>
 </record_update>

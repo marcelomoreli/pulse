@@ -132,13 +132,15 @@ PulseUtilsImpl.prototype = {
             case DevRequestStates.CLOSING_CHANGE:
                 break;
             case DevRequestStates.RESTORING:
+                // Once a Development is backed up and have a file attached, you can restore it
+                answer = this.restoreBackup(devRequest);
                 break;
             case DevRequestStates.MOVING_TO_IGNORE:
                 break;
             case DevRequestStates.ON_HOLD:
                 break;
             case DevRequestStates.BACKING_UP:
-                answer = this.backupDevelopment(devRequest);
+                answer = this.remoteBackupDevelopment(devRequest);
                 break;
             case DevRequestStates.DONE:
                 break;
@@ -788,7 +790,7 @@ PulseUtilsImpl.prototype = {
                                 if (futureTarget) {
                                     devRequest.setValue('state', DevRequestStates.IN_REVIEW);
                                 } else {
-                                    devRequest.setValue('state', DevRequestStates.DONE);
+                                    devRequest.setValue('state', DevRequestStates.CLOSING_CHANGE);
                                 }
                             }
                         } else {
@@ -814,6 +816,17 @@ PulseUtilsImpl.prototype = {
     // Once an update set is committed, kick off the children too to promote to the same environment
     kickOffChildren: function(devRequest) {
         this.l.logDebug('Starting kickOffChildren: ' + devRequest.getValue('number'));
+
+        // Move first the remediations
+        var remed = new GlideRecord('x_wms_pulse_dev_request');
+        remed.addQuery('remediation_for', devRequest.sys_id);
+        remed.addQuery('state', DevRequestStates.AWAITING_REMEDIATION);
+        remed.query();
+        while (remed.next()) {
+			this.localMoveToPromoting(remed);
+        }
+
+        // An then the children
         var child = new GlideRecord('x_wms_pulse_dev_request');
         child.addQuery('parent', devRequest.sys_id);
         child.addQuery('state', DevRequestStates.AWAITING_PARENT);
@@ -1051,53 +1064,56 @@ PulseUtilsImpl.prototype = {
 
 
     // Function called to create an update set XML based on the current content on the lower environment
-    backupDevelopment: function(devRequest) {
-        this.l.logDebug('Starting backupDevelopment[' + devRequest.getValue('number') + ']');
+    remoteBackupDevelopment: function(devRequest) {
+        this.l.logDebug('Starting remoteBackupDevelopment[' + devRequest.getValue('number') + ']');
         var answer = {
             success : false,
             message : ''
         };
 
-        var environment = devRequest.dev_instance;
-        var copy_sys_id = this.generateCopy(devRequest);
-        if (copy_sys_id != '') {
-            var operation = 'get';
-            var gdt = new GlideDateTime();
-            var filename = devRequest.getValue('update_set_name').substr(0,74) + ' (' + gdt.getDisplayValue() + ').xml';
-            var endPoint = environment.getValue('url') + "/export_update_set.do?sysparm_sys_id=" + copy_sys_id + "&sysparm_delete_when_done=true";
-            var r = new sn_ws.RESTMessageV2();
-            r.setEndpoint(endPoint);
-            r.setBasicAuth(environment.getValue('user'), environment.password.getDecryptedValue());
-            r.setHttpMethod(operation);
-            r.saveResponseBodyAsAttachment('x_wms_pulse_dev_request', devRequest.getValue('sys_id'), filename);
-            var response = r.execute();
-            var httpStatus = response.getStatusCode();
-            if (httpStatus == '200') {
-                answer.success = true;
-                answer.message = 'Update set saved: ' + filename;
-            } else {
-                answer.success = false;
-                answer.message = 'Error! Error message attached to the record.';
+        var environment = new GlideRecord('x_wms_pulse_sn_instance');
+        environment.query('sys_id', devRequest.getValue('dev_instance'));
+        if (environment.next()) {
+            var copy_sys_id = this.remoteGenerateCopy(devRequest);
+            if (copy_sys_id != '') {
+                var operation = 'get';
+                var gdt = new GlideDateTime();
+                var filename = devRequest.getValue('update_set_name').substr(0,74) + ' (' + gdt.getDisplayValue() + ').xml';
+                var endPoint = environment.getValue('url') + "/export_update_set.do?sysparm_sys_id=" + copy_sys_id + "&sysparm_delete_when_done=true";
+                var r = new sn_ws.RESTMessageV2();
+                r.setEndpoint(endPoint);
+                r.setBasicAuth(environment.getValue('user'), environment.password.getDecryptedValue());
+                r.setHttpMethod(operation);
+                r.saveResponseBodyAsAttachment('x_wms_pulse_dev_request', devRequest.getValue('sys_id'), filename);
+                var response = r.execute();
+                var httpStatus = response.getStatusCode();
+                if (httpStatus == '200') {
+                    answer.success = true;
+                    answer.message = 'Update set saved: ' + filename;
+                } else {
+                    answer.success = false;
+                    answer.message = 'Error! Error message attached to the record.';
+                }
             }
         }
         if (answer.success) {
             devRequest.setValue('state', DevRequestStates.ON_HOLD);
             devRequest.setValue('comments', answer.message);
         }
-        this.l.logDebug('Answer from backupDevelopment: ' + JSON.stringify(answer));
+        this.l.logDebug('Answer from remoteBackupDevelopment: ' + JSON.stringify(answer));
         return answer;
     },
 
     // Calls the Development instance and grab the whole content of the update set
-    generateCopy: function(devRequest) {
-        this.l.logDebug('Starting generateCopy[' + devRequest.getValue('number') + ']');
+    remoteGenerateCopy: function(devRequest) {
+        this.l.logDebug('Starting remoteGenerateCopy[' + devRequest.getValue('number') + ']');
         var copy_sys_id = '';
 
         var environment = new GlideRecord('x_wms_pulse_sn_instance');
         environment.query('sys_id', devRequest.getValue('dev_instance'));
         if (environment.next()) {
 
-            var path = '/api/x_wms_pulse/pulse/updateset/getxml/';
+            var path = 'api/x_wms_pulse/pulse/updateset/getxml/';
             var operation = 'get';
             var usObj = JSON.parse(devRequest.getValue('update_set_json'));
             path += usObj[environment.getValue('name')].local;
@@ -1106,7 +1122,7 @@ PulseUtilsImpl.prototype = {
                 copy_sys_id = answer.update_set_sys_id + '';
             }
         }
-        this.l.logDebug('generateCopy return: ' + copy_sys_id);
+        this.l.logDebug('remoteGenerateCopy return: ' + copy_sys_id);
         return copy_sys_id;
     },
 
@@ -1307,7 +1323,13 @@ PulseUtilsImpl.prototype = {
 
     // Close a Change Request
     closeChange: function(devRequest) {
-        return this.pulseGlobal.closeChange(this.l, devRequest);
+        var answer = this.pulseGlobal.closeChange(this.l, devRequest);
+
+        if (answer.success) {
+            devRequest.setValue('state', DevRequestStates.DONE);
+        }
+
+        return answer;
     },
 
     // TODO - Review Notifications
@@ -1990,13 +2012,13 @@ PulseUtilsImpl.prototype = {
         <sys_created_by>mmoreli</sys_created_by>
         <sys_created_on>2018-08-07 21:43:44</sys_created_on>
         <sys_id>910e5311dbf3130089fb2fb748961988</sys_id>
-        <sys_mod_count>233</sys_mod_count>
+        <sys_mod_count>239</sys_mod_count>
         <sys_name>PulseUtilsImpl</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_script_include_910e5311dbf3130089fb2fb748961988</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-05-27 15:55:55</sys_updated_on>
+        <sys_updated_on>2019-05-28 21:10:44</sys_updated_on>
     </sys_script_include>
 </record_update>
