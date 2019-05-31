@@ -1487,7 +1487,7 @@ PulseUtilsImpl.prototype = {
                                         }
                                     } else {
                                         // Load all changes
-                                        var answer = this.insertUpdateSetContent(usObjSysId, uSetObj.sys_update_xml, devRequest);
+                                        var answer = this.remoteInsertUpdateSetContent(usObjSysId, uSetObj.sys_update_xml, devRequest);
                                     }
                                 } else {
                                     answer.message = answer.message || 'Error getting/generating retrieved update set!';
@@ -1881,7 +1881,7 @@ PulseUtilsImpl.prototype = {
             var operation = 'get';
             var answer = this.callAPI(environment.sys_id, path, operation, '');
             if (answer.success) {
-                return ParseInt(answer.count);
+                return parseInt(answer.count);
             }
         }
 
@@ -1911,13 +1911,13 @@ PulseUtilsImpl.prototype = {
         <sys_created_by>mmoreli</sys_created_by>
         <sys_created_on>2018-08-07 21:43:44</sys_created_on>
         <sys_id>910e5311dbf3130089fb2fb748961988</sys_id>
-        <sys_mod_count>276</sys_mod_count>
+        <sys_mod_count>278</sys_mod_count>
         <sys_name>PulseUtilsImpl</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_script_include_910e5311dbf3130089fb2fb748961988</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-05-31 17:50:55</sys_updated_on>
+        <sys_updated_on>2019-05-31 21:02:22</sys_updated_on>
     </sys_script_include>
 </record_update>
