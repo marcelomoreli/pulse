@@ -133,7 +133,7 @@ PulseUtilsImpl.prototype = {
                 break;
             case DevRequestStates.RESTORING:
                 // Once a Development is backed up and have a file attached, you can restore it
-                answer = this.restoreBackup(devRequest);
+                answer = this.remoteRestoreBackup(devRequest);
                 break;
             case DevRequestStates.MOVING_TO_IGNORE:
                 break;
@@ -1416,8 +1416,8 @@ PulseUtilsImpl.prototype = {
     },
 
     // Restores a backed up development
-    restoreBackup: function(devRequest) {
-        this.l.logDebug('Starting restoreBackup - DevRequest [' + devRequest.getValue('number') + ']');
+    remoteRestoreBackup: function(devRequest) {
+        this.l.logDebug('Starting remoteRestoreBackup - DevRequest [' + devRequest.getValue('number') + ']');
         var answer = {
             success : false,
             message : 'Request could not be completed. Contact your system administrator.'
@@ -1444,32 +1444,16 @@ PulseUtilsImpl.prototype = {
                         var uSetObj = this.parseAttachmentToObject(attachId, answer);
                         if (uSetObj) {
                             var environment = this.getDevelopmentEnvironment(devRequest);
-                            var parentLocal = this.updateSetExists(devRequest.getValue('root_sys_id'), 'sys_update_set', 'sys_id', environment.parent);
-                            if (parentLocal.error) {
-                                answer.errorMessage = 'Query error on updateSetExists. Target didn\'t accept the query.';
-                                return answer;
-                            }
-
-                            if (parentLocal.exist && parentLocal.sys_id != '') {
-                                var parentRemote = this.updateSetExists(devRequest.getValue('u_root_sys_id'), 'sys_remote_update_set', 'u_root_sys_id', environment.parent);
-                                if (parentRemote.exist && parentRemote.sys_id != '' && parentRemote.state == 'committed') {
-                                    answer.errorMessage = 'Update set is already promoted to ' + environment.u_parent_instance.u_name;
-                                }
-                                answer.local_sys_id = parentLocal.sys_id + '';
-                                answer.remote_sys_id = parentLocal.remote_sys_id + '';
-                                answer.success = true;
-                                answer.errorMessage = '';
-                                answer.message = 'An update set was found related to this DEV request already. The update set is now linked with this Dev Request.';
-                                return answer;
-                            }
-
                             if (environment) {
-                                var path = 'api/x_wms_pulse/pulse/remoteupdateset/create';
+                                var path = '/api/x_wms_pulse/pulse/remoteupdateset/create';
                                 var operation = 'post';
                                 var body = JSON.stringify(uSetObj.sys_remote_update_set);
                                 answer = this.callAPI(environment.sys_id, path, operation, body);
                             }
 
+                            if (!usObj[environment.getValue('name')]) {
+                                usObj[environment.getValue('name')] = {};
+                            }
                             if (answer.local_sys_id) {
                                 usObj[environment.getValue('name')].local = answer.local_sys_id;
                             }
@@ -1484,32 +1468,36 @@ PulseUtilsImpl.prototype = {
                                 var usObjSysId = answer.local_sys_id;
                                 var usObjRemoteSysId = answer.remote_sys_id + '';
                                 if (usObjSysId.length == 32 && usObjRemoteSysId.length == 32) {
-                                    var countRecords = this.getUpdatesCount(usObj.sys_id, devRequest.dev_instance.sys_id);
+                                    var countRecords = this.getUpdatesCount(usObjSysId, devRequest.dev_instance);
                                     if (countRecords > 0) {
                                         this.l.logDebug('The update set already have records!');
                                         if (countRecords == uSetObj.sys_update_xml.length) {
-                                          if (usObj.state == 'loaded') {
-                                            answer.retrieved_sys_id = usObj.sys_id;
-                                            answer.sys_id = usObjSysId;
-                                            answer.remote_sys_id = usObjRemoteSysId;
-                                            answer.errorMessage = '';
-                                            answer.message = 'Retrieved update set found as loaded and record count match.';
-                                            answer.success = true;
-                                          } else {
-                                            answer.message = 'Update set needs to be checked manually - content match but it\'s not in loaded state. Something is wrong.';
-                                          }
+                                            if (answer.state == 'loaded') {
+                                                answer.retrieved_sys_id = usObj.sys_id;
+                                                answer.sys_id = usObjSysId;
+                                                answer.remote_sys_id = usObjRemoteSysId;
+                                                answer.errorMessage = '';
+                                                answer.message = 'Retrieved update set found as loaded and record count match.';
+                                                answer.success = true;
+                                            } else {
+                                                answer.message = 'Update set needs to be checked manually - content match but it\'s not in loaded state. Something is wrong.';
+                                            }
                                         } else {
-                                          answer.message = 'Update set already have content and number of updates doesn\'t match!';
+                                            answer.message = 'Update set already have content and number of updates doesn\'t match!';
                                         }
                                     } else {
                                         // Load all changes
-                                        this.insertUpdateSetContent(usObj.getValue('sys_id'), uSetObj.sys_update_xml, devRequest.dev_instance.sys_id, answer);
+                                        var answer = this.insertUpdateSetContent(usObjSysId, uSetObj.sys_update_xml, devRequest);
                                     }
                                 } else {
                                     answer.message = answer.message || 'Error getting/generating retrieved update set!';
                                 }
                             } else {
-                                answer.message = 'Update set not created. It\'s already there.';
+                                if (answer.success) {
+                                    answer.message = 'Update set not created. It\'s already there.';
+                                } else {
+                                    answer.message = 'Error while creating update set.';
+                                }
                             }
                         } else {
                             answer.message = 'Not able to get attachment content!';
@@ -1526,7 +1514,7 @@ PulseUtilsImpl.prototype = {
         } else {
             answer.message = 'You can only perform this action in Production!';
         }
-        this.l.logDebug('Answer from restoreBackup: ' + JSON.stringify(answer));
+        this.l.logDebug('Answer from remoteRestoreBackup: ' + JSON.stringify(answer));
         return answer;
     },
 
@@ -1564,7 +1552,7 @@ PulseUtilsImpl.prototype = {
     },
 
     updateSetExists: function(setID, tbl, field, env) {
-        this.l.logDebug('Starting updateSetExists - setID ['+setID+'] tbl ['+field+'] field ['+field+'] environment [' + env + ']');
+        this.l.logDebug('Starting updateSetExists - setID ['+setID+'] tbl ['+tbl+'] field ['+field+'] environment [' + env + ']');
         var answer = {
             success : false,
             exist : false,
@@ -1597,95 +1585,25 @@ PulseUtilsImpl.prototype = {
         return answer;
     },
 
-    insertUpdateSetContent: function(setID, uptXMLArray, environment, answer) {
-        this.l.logDebug('Starting insertUpdateSetContent - setID [' + setID + '] - Environment [' + environment.u_name + ']');
-        if (!uptXMLArray) {
-            answer.errorMessage = 'Update set is empty!';
-            answer.success = false;
-        } else {
-            var currentPassword = environment.password.getDecryptedValue();
-            var inObj;
-            var newXMLRec;
-            if (!uptXMLArray.length) {
-                // Means we only have 1 change
-              inObj = uptXMLArray;
-              newXMLRec = new GlideRemoteGlideRecord(environment.getValue('url'), 'sys_update_xml');
-              newXMLRec.setBasicAuth(environment.getValue('user'), currentPassword);
-              newXMLRec.initialize();
-              newXMLRec.setValue('update_set', '');
-              if (inObj.comments)
-                newXMLRec.setValue('comments', inObj.comments);
-              newXMLRec.setValue('target_name', inObj.target_name);
-              newXMLRec.setValue('sys_mod_count', inObj.sys_mod_count);
-              newXMLRec.setValue('replace_on_upgrade', inObj.replace_on_upgrade);
-              newXMLRec.setValue('sys_updated_on', inObj.sys_updated_on);
-              newXMLRec.setValue('type', inObj.type);
-              if (inObj.view)
-                newXMLRec.setValue('view', inObj.view);
-              newXMLRec.setValue('sys_updated_by', inObj.sys_updated_by);
-              newXMLRec.setValue('application', inObj.application['#text']);
-              newXMLRec.setValue('payload', inObj.payload);
-              newXMLRec.setValue('sys_created_on', inObj.sys_created_on);
-              newXMLRec.setValue('name', inObj.name);
-              newXMLRec.setValue('remote_update_set', setID);
-              newXMLRec.setValue('action', inObj.action);
-              newXMLRec.setValue('update_domain', inObj.update_domain);
-              newXMLRec.setValue('category', inObj.category);
-              newXMLRec.setValue('sys_created_by', inObj.sys_created_by);
-              newXMLRec.setValue('table', inObj.table);
-              newXMLRec.autoSysFields(false);
-              newXMLRec.insert();
-            }
-            for (var x = 0; x < uptXMLArray.length; x++) {
-              inObj = uptXMLArray[x];
-              newXMLRec = new GlideRemoteGlideRecord(environment.getValue('url'), 'sys_update_xml');
-              newXMLRec.setBasicAuth(environment.getValue('user'), currentPassword);
-              newXMLRec.initialize();
-              newXMLRec.setValue('update_set', '');
-              if (inObj.comments)
-                newXMLRec.setValue('comments', inObj.comments);
-              newXMLRec.setValue('target_name', inObj.target_name);
-              newXMLRec.setValue('sys_mod_count', inObj.sys_mod_count);
-              newXMLRec.setValue('replace_on_upgrade', inObj.replace_on_upgrade);
-              newXMLRec.setValue('sys_updated_on', inObj.sys_updated_on);
-              newXMLRec.setValue('type', inObj.type);
-              if (inObj.view)
-                newXMLRec.setValue('view', inObj.view);
-              newXMLRec.setValue('sys_updated_by', inObj.sys_updated_by);
-              newXMLRec.setValue('application', inObj.application['#text']);
-              newXMLRec.setValue('payload', inObj.payload);
-              newXMLRec.setValue('sys_created_on', inObj.sys_created_on);
-              newXMLRec.setValue('name', inObj.name);
-              newXMLRec.setValue('remote_update_set', setID);
-              newXMLRec.setValue('action', inObj.action);
-              newXMLRec.setValue('update_domain', inObj.update_domain);
-              newXMLRec.setValue('category', inObj.category);
-              newXMLRec.setValue('sys_created_by', inObj.sys_created_by);
-              newXMLRec.setValue('table', inObj.table);
-              newXMLRec.autoSysFields(false);
-              newXMLRec.insert();
-            }
-            var len = uptXMLArray.length || 1;
-            if (this.getUpdatesCount(setID, environment) == len) {
-              // All good, all inserted
-              var remoteGR = new GlideRemoteGlideRecord(environment.getValue('url'), 'sys_remote_update_set');
-              remoteGR.setBasicAuth(environment.getValue('user'), currentPassword);
-              remoteGR.addQuery('sys_id', setID);
-              remoteGR.addQuery('state', 'loading');
-              remoteGR.query();
-              if (remoteGR.next()) {
-                remoteGR.setValue('state', 'loaded');
-                remoteGR.update();
-                answer.errorMessage = '';
-                answer.message = 'All changes loaded!';
-                answer.success = true;
-              } else {
-                answer.errorMessage = 'Update set not found for changing state! Something is wrong!';
-              }
-            } else {
-              answer.errorMessage = 'Not all updates were written - warning! Something is wrong!';
-            }
+    remoteInsertUpdateSetContent: function(setID, uptXMLArray, devRequest) {
+        this.l.logDebug('Starting insertUpdateSetContent - setID [' + setID + ']');
+        var answer = {
+            success : false,
+            message : ''
+        };
+        var environment = this.getDevelopmentEnvironment(devRequest);
+        if (environment) {
+            var path = '/api/x_wms_pulse/pulse/remoteupdateset/content/' + setID;
+            var operation = 'post';
+            var body = JSON.stringify(uptXMLArray);
+            answer = this.callAPI(environment.sys_id, path, operation, body);
         }
+        this.l.logDebug('Response from remoteInsertUpdateSetContent: ' + JSON.stringify(answer));
+        return answer;
+    },
+
+    localInsertUpdateSetContent: function(setID, payload) {
+        return this.pulseGlobal.localInsertUpdateSetContent(this.l, setID, payload);
     },
 
     getUpdateSet: function(usObj, instanceGR) {
@@ -1956,12 +1874,14 @@ PulseUtilsImpl.prototype = {
     },
 
     getUpdatesCount: function (setID, environment) {
+        this.l.logDebug('Starting getUpdatesCount [' + setID + '] - Current Instance [' + environment + ']');
+        
         if (environment) {
-            var path = 'api/x_wms_pulse/pulse/updateset/count/' + setID;
+            var path = '/api/x_wms_pulse/pulse/updateset/count/' + setID;
             var operation = 'get';
-            var answer = this.callAPI(environment.sys_id, path, operation, body);
+            var answer = this.callAPI(environment.sys_id, path, operation, '');
             if (answer.success) {
-                return answer.count;
+                return ParseInt(answer.count);
             }
         }
 
@@ -1991,13 +1911,13 @@ PulseUtilsImpl.prototype = {
         <sys_created_by>mmoreli</sys_created_by>
         <sys_created_on>2018-08-07 21:43:44</sys_created_on>
         <sys_id>910e5311dbf3130089fb2fb748961988</sys_id>
-        <sys_mod_count>259</sys_mod_count>
+        <sys_mod_count>276</sys_mod_count>
         <sys_name>PulseUtilsImpl</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_script_include_910e5311dbf3130089fb2fb748961988</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-05-30 20:54:43</sys_updated_on>
+        <sys_updated_on>2019-05-31 17:50:55</sys_updated_on>
     </sys_script_include>
 </record_update>
