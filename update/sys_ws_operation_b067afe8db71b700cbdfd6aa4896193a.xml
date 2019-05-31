@@ -14,7 +14,7 @@
 		count : -1,
 	};
 	
-	var pulseGlobal = new PulseGlobal();
+	var pulseGlobal = new global.PulseGlobal();
 	answer.count = pulseGlobal.getUpdatesCount(setID);
 	
 	if (answer.count > -1) {
@@ -43,14 +43,14 @@
         <sys_created_by>mmoreli</sys_created_by>
         <sys_created_on>2019-05-30 20:45:05</sys_created_on>
         <sys_id>b067afe8db71b700cbdfd6aa4896193a</sys_id>
-        <sys_mod_count>1</sys_mod_count>
+        <sys_mod_count>2</sys_mod_count>
         <sys_name>Get Update Set Count</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy/>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_ws_operation_b067afe8db71b700cbdfd6aa4896193a</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-05-31 17:50:39</sys_updated_on>
+        <sys_updated_on>2019-05-31 20:55:16</sys_updated_on>
         <web_service_definition display_value="Pulse">1db74d9adbff530089fb2fb7489619c5</web_service_definition>
         <web_service_version/>
     </sys_ws_operation>
