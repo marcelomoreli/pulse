@@ -1,18 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sp_documentation">
     <sp_documentation action="INSERT_OR_UPDATE">
-        <content>#Getting Started</content>
+        <content>#Getting Started&#13;
+Congratulations! You've already completed the first step by installing the Pulse application. You are well on your way to speeding up the development process. Before you create your first development request, there are a few settings you need to configure.&#13;
+##Setting up Access&#13;
+Before beginning development, a system administrator will need to assign roles to the development team. Pulse provides the following roles, which will need to be assigned to the appropriate users:&#13;
+* **x_wms_pulse.sn_admin**: administrator of the Pulse application. A user with this role can configure Pulse options, add applications and instances, and has full access to the development requests.&#13;
+* **x_wms_pulse.developer**: developers can create developer requests and use them to track their work.&#13;
+* **x_wms_pulse.developer_lead**: developer leads review the work of developers by completing code reviews. This role is intended for senior members of the development team. Developer leads can also create code scan rules.&#13;
+&#13;
+##Configuring the Application&#13;
+Now that roles have been assigned, the next step is to configure the application. Take some time to configure the following options, which can be located in the application navigator under Pulse =&gt; Administration.&#13;
+###Properties&#13;
+Navigate to Pulse =&gt; Administration =&gt; Properties to set some of the basic properties of the application. Set the instance name for production, the desired log level, and any other properties you wish to use.&#13;
+###Instances&#13;
+Instances are used by Pulse to automate the creation and promotion of update sets as part of the development process. Take a moment to define the environment structure. Instances can be configured using types and parent-child relationships to mirror your structure. Three types of instances are available.&#13;
+* Development&#13;
+* Test&#13;
+* Production&#13;
+&#13;
+Instance configuration for promotion of development requests must be completed in the production environment.&#13;
+###Scopes&#13;
+Scopes are used by Pulse to define the ServiceNow application scopes available for development requests. Pulse provides the Global scope as a starting point. Administrators will need to configure any additional scopes that are needed for development.&#13;
+###Applications&#13;
+Applications are used as logic dividers for development work. An application can reference only 1 scope but a scope may be referenced by many applications as desired. For instance, development against ITSM modules can be organized by one logical application 'ITSM', or can be spilt into multiple applications with their own product managers (e.g. Incident Management, Change Management, Service Catalog, etc...) all referencing the Global scope.&#13;
+###Application x Instance Config&#13;
+Application x Instance configurations are used to set the rules for applications by instance. An administrator can use these settings to control how the update sets move to each instance by application, if approval is needed, and who will approve.</content>
         <sys_class_name>sp_documentation</sys_class_name>
         <sys_created_by>jgbox</sys_created_by>
         <sys_created_on>2019-05-01 17:54:36</sys_created_on>
         <sys_id>652a2513db0df700cbdfd6aa48961970</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>19</sys_mod_count>
         <sys_name>1000|Getting Started</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy/>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sp_documentation_652a2513db0df700cbdfd6aa48961970</sys_update_name>
         <sys_updated_by>jgbox</sys_updated_by>
-        <sys_updated_on>2019-05-01 17:54:36</sys_updated_on>
+        <sys_updated_on>2019-06-01 22:09:19</sys_updated_on>
         <title>1000|Getting Started</title>
     </sp_documentation>
 </record_update>
