@@ -271,6 +271,25 @@
             <element>state</element>
             <hint/>
             <inactive>false</inactive>
+            <label>Awaiting Parent</label>
+            <language>en</language>
+            <name>x_wms_pulse_dev_request</name>
+            <sequence>43</sequence>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-06-05 20:43:07</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>5270a66edb35fb00cbdfd6aa489619c4</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-06-05 20:43:07</sys_updated_on>
+            <value>43</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>state</element>
+            <hint/>
+            <inactive>false</inactive>
             <label>Generating Change</label>
             <language>en</language>
             <name>x_wms_pulse_dev_request</name>

@@ -19,24 +19,27 @@ Instances are used by Pulse to automate the creation and promotion of update set
 * Production&#13;
 &#13;
 Instance configuration for promotion of development requests must be completed in the production environment.&#13;
+The production environment should be set up on the instances table on all non-prod environments too (This will change in the future).&#13;
 ###Scopes&#13;
-Scopes are used by Pulse to define the ServiceNow application scopes available for development requests. Pulse provides the Global scope as a starting point. Administrators will need to configure any additional scopes that are needed for development.&#13;
+Scopes are used by Pulse to define the ServiceNow application scopes available for development requests. Pulse provides the Global scope as a starting point. Administrators will need to configure any additional scopes that are needed for development. For the 'Scope ID' field use the sys_id of the record on sys_scope.&#13;
 ###Applications&#13;
 Applications are used as logic dividers for development work. An application can reference only 1 scope but a scope may be referenced by many applications as desired. For instance, development against ITSM modules can be organized by one logical application 'ITSM', or can be spilt into multiple applications with their own product managers (e.g. Incident Management, Change Management, Service Catalog, etc...) all referencing the Global scope.&#13;
 ###Application x Instance Config&#13;
-Application x Instance configurations are used to set the rules for applications by instance. An administrator can use these settings to control how the update sets move to each instance by application, if approval is needed, and who will approve.</content>
+Application x Instance configurations are used to set the rules for applications by instance. An administrator can use these settings to control how the update sets move to each instance by application, if approval is needed, and who will approve.&#13;
+###Additional Configurations&#13;
+Make sure the "Upgrade Source" of your instances are configured correctly. If you already use those instances on a normal update set proccess, you don't need to worry about this.</content>
         <sys_class_name>sp_documentation</sys_class_name>
         <sys_created_by>jgbox</sys_created_by>
         <sys_created_on>2019-05-01 17:54:36</sys_created_on>
         <sys_id>652a2513db0df700cbdfd6aa48961970</sys_id>
-        <sys_mod_count>19</sys_mod_count>
+        <sys_mod_count>22</sys_mod_count>
         <sys_name>1000|Getting Started</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy/>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sp_documentation_652a2513db0df700cbdfd6aa48961970</sys_update_name>
-        <sys_updated_by>jgbox</sys_updated_by>
-        <sys_updated_on>2019-06-01 22:09:19</sys_updated_on>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2019-06-05 17:57:18</sys_updated_on>
         <title>1000|Getting Started</title>
     </sp_documentation>
 </record_update>

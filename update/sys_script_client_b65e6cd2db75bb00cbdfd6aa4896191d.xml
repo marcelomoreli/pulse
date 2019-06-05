@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_script_client">
+    <sys_script_client action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <applies_extended>false</applies_extended>
+        <condition/>
+        <description/>
+        <field>application</field>
+        <global>true</global>
+        <isolate_script>true</isolate_script>
+        <messages/>
+        <name>Auto-Populate Fields</name>
+        <order/>
+        <script><![CDATA[function onChange(control, oldValue, newValue, isLoading, isTemplate) {
+	if (isLoading || newValue === '') {
+		return;
+	}
+	
+	glideAjaxHelper('x_wms_pulse_m2m_sn_app_scope', 'sn_application', newValue, 'sn_scope', false, autoFillScope, false);
+	glideAjaxHelper('x_wms_pulse_sn_application', 'sys_id', newValue, 'owner', false, autoFillOwner, false);
+	glideAjaxHelper('x_wms_pulse_m2m_sn_app_instance', 'sn_application', newValue, 'sn_instance', false, autoFillDevEnv, false, 'sn_instance.type=dev');
+	
+	function autoFillScope(answer) {
+		if (!answer.hasNext) {
+			g_form.setValue('scope', answer.sn_scope);
+		}
+	}
+	
+	function autoFillOwner(answer) {
+		if (!answer.hasNext) {
+			g_form.setValue('application_owner', answer.owner);
+		}
+	}
+	
+	function autoFillDevEnv(answer) {
+		if (!answer.hasNext) {
+			g_form.setValue('dev_instance', answer.sn_instance);
+		}
+	}
+	
+}]]></script>
+        <sys_class_name>sys_script_client</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-06-04 18:15:50</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>b65e6cd2db75bb00cbdfd6aa4896191d</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name>Auto-Populate Fields</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sys_script_client_b65e6cd2db75bb00cbdfd6aa4896191d</sys_update_name>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2019-06-04 19:17:23</sys_updated_on>
+        <table>x_wms_pulse_dev_request</table>
+        <type>onChange</type>
+        <ui_type>0</ui_type>
+        <view/>
+    </sys_script_client>
+</record_update>

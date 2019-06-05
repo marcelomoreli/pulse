@@ -247,9 +247,9 @@ PulseUtilsImpl.prototype = {
         if (devRequest.parent == '') {
             return true;
         }
-        var parentDev = new GlideRecord('x_wms_pulse_dev_request');
+
         var usObj = JSON.parse(devRequest.parent.update_set_json + '');
-        if (usObj[targetEnv.getValue('name')].local) {
+        if (usObj[targetEnv.getValue('name')] && usObj[targetEnv.getValue('name')].local) {
             return true;
         }
         return false;
@@ -398,7 +398,11 @@ PulseUtilsImpl.prototype = {
                                 } else {
                                     answer.message = 'Parent is not on the target environment yet. Setting to Awaiting Parent';
                                     answer.success = true;
-                                    devRequest.setValue('state', DevRequestStates.AWAITING_PARENT);
+                                    if (devRequest.getValue('remediation_for')) {
+                                        devRequest.setValue('state', DevRequestStates.READY_FOR_TESTING);
+                                    } else {
+                                        devRequest.setValue('state', DevRequestStates.AWAITING_PARENT);
+                                    }
                                 }
                             } else {
                                 answer.message = 'Target environment not found.';
@@ -611,15 +615,17 @@ PulseUtilsImpl.prototype = {
             var appInstanceConfig = this.getInstanceApplication(devRequest, targetEnv.sys_id);
             if (appInstanceConfig) {
                 if (appInstanceConfig.auto_approve) {
-                    if (devRequest.auto_promote && devRequest.auto_promote) {
+                    if (appInstanceConfig.auto_promote && devRequest.auto_promote) {
                         devRequest.setValue('state', DevRequestStates.PROMOTING);
                     } else {
                         devRequest.setValue('state', DevRequestStates.PENDING_SCHEDULE);
                     }
                     answer.success = true;
                 } else {
-                    this.l.logDebug('Didn\'t find approvers for ' + grAppInstance.getDisplayValue('sn_instance') + ':' + grAppInstance.getDisplayValue('sn_application'));
+                    this.l.logDebug('Didn\'t find approvers for ' + appInstanceConfig.getDisplayValue('sn_instance') + ':' + appInstanceConfig.getDisplayValue('sn_application'));
                     answer.message = 'Instance x Application doesn\'t have configuration for the approvers and also doesn\'t have the "Auto Approve" flag checked.';
+                    devRequest.setValue('state', DevRequestStates.AUTOMATION_FAILURE);
+                    devRequest.update();
                 }
             } else {
                 answer.message = 'Instance doesn\'t have configuration for the next environment: ';
@@ -708,13 +714,13 @@ PulseUtilsImpl.prototype = {
                         answer.message = 'Development Request not found for this update set: ' + setID;
                     }
                 } else {
-                    answer.message = 'Environment is inactive x_wms_pulse_sn_instance: ' + environment;
+                    answer.message = 'Environment is inactive x_wms_pulse_sn_instance: ' + env;
                 }
             } else {
-                answer.message = 'Environment not found on x_wms_pulse_sn_instance: ' + environment;
+                answer.message = 'Environment not found on x_wms_pulse_sn_instance: ' + instance;
             }
         } else {
-            answer.message = 'This function should only be used in PROD. Environment is not prod: ' + environment;
+            answer.message = 'This function should only be used in PROD. Environment is not prod: ' + instance;
         }
         this.l.logDebug('Answer from moveToReview: ' + JSON.stringify(answer));
         return answer;
@@ -861,16 +867,6 @@ PulseUtilsImpl.prototype = {
     // Once an update set is committed, kick off the children too to promote to the same environment
     kickOffChildren: function(devRequest) {
         this.l.logDebug('Starting kickOffChildren: ' + devRequest.getValue('number'));
-
-        // Move first the remediations
-        var remed = new GlideRecord('x_wms_pulse_dev_request');
-        remed.addQuery('remediation_for', devRequest.sys_id);
-        remed.addQuery('state', DevRequestStates.AWAITING_REMEDIATION);
-        remed.query();
-        while (remed.next()) {
-			this.localMoveToPromoting(remed);
-        }
-
         // An then the children
         var child = new GlideRecord('x_wms_pulse_dev_request');
         child.addQuery('parent', devRequest.sys_id);
@@ -1358,9 +1354,23 @@ PulseUtilsImpl.prototype = {
             success : true,
             message : ''
         };
-        // All we need to do here is set it to In Review
-        // By doing that, it will calculate where to go next
-        devRequest.setValue('state', DevRequestStates.IN_REVIEW);
+        // If this is a remediation for something, set the parent as test passed
+        if (devRequest.getValue('remediation_for')) {
+            var remFor = new GlideRecord('x_wms_pulse_dev_request');
+            remFor.addQuery('sys_id', devRequest.getValue('remediation_for'));
+            remFor.query();
+            if (remFor.next()) {
+                if (remFor.getValue('state') == DevRequestStates.AWAITING_REMEDIATION) {
+                    remFor.setValue('state', DevRequestStates.TEST_PASSED);
+                    remFor.update();
+                    devRequest.setValue('state', DevRequestStates.AWAITING_PARENT);
+                }
+            }
+        } else {
+            // All we need to do here is set it to In Review
+            // By doing that, it will calculate where to go next
+            devRequest.setValue('state', DevRequestStates.IN_REVIEW);
+        }
         return answer;
     },
 
@@ -1406,6 +1416,42 @@ PulseUtilsImpl.prototype = {
         }
 
         return answer;
+    },
+
+    createRemediation: function(devRequest) {
+        this.l.logDebug('Starting createRemediation[' + devRequest.getValue('number') + ']');
+        var answer = {
+            success : false,
+            message : ''
+        };
+        var newDevReq = new GlideRecord('x_wms_pulse_dev_request');
+        newDevReq.initialize();
+        newDevReq.setValue('remediation_for', devRequest.getValue('sys_id'));
+        newDevReq.setValue('short_description', devRequest.getValue('short_description'));
+        newDevReq.setValue('auto_promote', devRequest.getValue('auto_promote'));
+        newDevReq.setValue('type', devRequest.getValue('type'));
+        newDevReq.setValue('application', devRequest.getValue('application'));
+        newDevReq.setValue('scope', devRequest.getValue('scope'));
+        newDevReq.setValue('state', DevRequestStates.NEW);
+        newDevReq.setValue('parent', devRequest.getValue('sys_id'));
+        newDevReq.setValue('source', devRequest.getValue('source'));
+        newDevReq.setValue('source_id', devRequest.getValue('source_id'));
+        newDevReq.setValue('scope', devRequest.getValue('scope'));
+        newDevReq.setValue('dev_instance', devRequest.getValue('dev_instance'));
+        newDevReq.setValue('assignment_group', devRequest.getValue('assignment_group'));
+        newDevReq.setValue('assigned_to', devRequest.getValue('assigned_to'));
+        newDevReq.setValue('application_owner', devRequest.getValue('application_owner'));
+        var version = parseInt(devRequest.getValue('version'));
+        newDevReq.setValue('version', version + 1);
+        var id = newDevReq.insert();
+
+        if (id.length == 32) {
+            devRequest.setValue('state', DevRequestStates.AWAITING_REMEDIATION);
+            devRequest.update();
+            return 'x_wms_pulse_dev_request.do?sys_id=' + id;
+        } else {
+            gs.addInfoMessage('Error while creating remediation.');
+        }
     },
 
     // TODO - Review Notifications
@@ -1989,13 +2035,13 @@ PulseUtilsImpl.prototype = {
         <sys_created_by>mmoreli</sys_created_by>
         <sys_created_on>2018-08-07 21:43:44</sys_created_on>
         <sys_id>910e5311dbf3130089fb2fb748961988</sys_id>
-        <sys_mod_count>286</sys_mod_count>
+        <sys_mod_count>300</sys_mod_count>
         <sys_name>PulseUtilsImpl</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_script_include_910e5311dbf3130089fb2fb748961988</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-06-03 20:46:18</sys_updated_on>
+        <sys_updated_on>2019-06-05 21:21:14</sys_updated_on>
     </sys_script_include>
 </record_update>

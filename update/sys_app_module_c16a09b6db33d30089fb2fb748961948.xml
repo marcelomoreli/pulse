@@ -25,17 +25,17 @@
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>c16a09b6db33d30089fb2fb748961948</sys_id>
-        <sys_mod_count>2</sys_mod_count>
-        <sys_name>My Groups Dev Requests</sys_name>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>My Groups Developments</sys_name>
         <sys_overrides/>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy/>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_app_module_c16a09b6db33d30089fb2fb748961948</sys_update_name>
-        <sys_updated_by>jgbox</sys_updated_by>
-        <sys_updated_on>2018-08-12 03:03:11</sys_updated_on>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2019-06-04 20:09:39</sys_updated_on>
         <timeline_page/>
-        <title>My Groups Dev Requests</title>
+        <title>My Groups Developments</title>
         <uncancelable>false</uncancelable>
         <view_name/>
         <window_name/>
