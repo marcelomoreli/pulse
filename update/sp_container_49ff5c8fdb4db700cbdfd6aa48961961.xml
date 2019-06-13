@@ -8,7 +8,7 @@
         <container_class_name/>
         <name>Pulse Documentation - Container 1</name>
         <order>1</order>
-        <sp_page display_value="docs">fcff5c8fdb4db700cbdfd6aa4896195e</sp_page>
+        <sp_page display_value="pulse_docs">fcff5c8fdb4db700cbdfd6aa4896195e</sp_page>
         <subheader>false</subheader>
         <sys_class_name>sp_container</sys_class_name>
         <sys_created_by>jgbox</sys_created_by>

@@ -3,137 +3,137 @@
         <sys_ui_list_element action="INSERT_OR_UPDATE">
             <average_value>false</average_value>
             <element>name</element>
-            <list_id display_value="x_wms_pulse_sn_instance" element="NULL" name="x_wms_pulse_sn_instance" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">2731a11edb33930089fb2fb7489619e5</list_id>
+            <list_id display_value="x_wms_pulse_sn_instance" element="NULL" name="x_wms_pulse_sn_instance" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">e167b24ddbca7340cbdfd6aa489619a7</list_id>
             <max_value>false</max_value>
             <min_value>false</min_value>
             <position>0</position>
             <sum>false</sum>
             <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2018-08-10 15:11:38</sys_created_on>
-            <sys_id>2331a11edb33930089fb2fb7489619e6</sys_id>
+            <sys_created_on>2019-06-13 16:48:05</sys_created_on>
+            <sys_id>2d67b24ddbca7340cbdfd6aa489619a7</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2018-08-10 15:11:38</sys_updated_on>
+            <sys_updated_on>2019-06-13 16:48:05</sys_updated_on>
         </sys_ui_list_element>
         <sys_ui_list_element action="INSERT_OR_UPDATE">
             <average_value>false</average_value>
             <element>active</element>
-            <list_id display_value="x_wms_pulse_sn_instance" element="NULL" name="x_wms_pulse_sn_instance" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">2731a11edb33930089fb2fb7489619e5</list_id>
+            <list_id display_value="x_wms_pulse_sn_instance" element="NULL" name="x_wms_pulse_sn_instance" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">e167b24ddbca7340cbdfd6aa489619a7</list_id>
             <max_value>false</max_value>
             <min_value>false</min_value>
             <position>1</position>
             <sum>false</sum>
             <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2018-08-10 15:11:38</sys_created_on>
-            <sys_id>2b31a11edb33930089fb2fb7489619e6</sys_id>
+            <sys_created_on>2019-06-13 16:48:05</sys_created_on>
+            <sys_id>ad67b24ddbca7340cbdfd6aa489619a7</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2018-08-10 15:11:38</sys_updated_on>
+            <sys_updated_on>2019-06-13 16:48:05</sys_updated_on>
         </sys_ui_list_element>
         <sys_ui_list_element action="INSERT_OR_UPDATE">
             <average_value>false</average_value>
-            <element>auto_promote</element>
-            <list_id display_value="x_wms_pulse_sn_instance" element="NULL" name="x_wms_pulse_sn_instance" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">2731a11edb33930089fb2fb7489619e5</list_id>
+            <element>parent</element>
+            <list_id display_value="x_wms_pulse_sn_instance" element="NULL" name="x_wms_pulse_sn_instance" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">e167b24ddbca7340cbdfd6aa489619a7</list_id>
             <max_value>false</max_value>
             <min_value>false</min_value>
             <position>2</position>
             <sum>false</sum>
             <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2018-08-10 15:11:38</sys_created_on>
-            <sys_id>ab31a11edb33930089fb2fb7489619e6</sys_id>
+            <sys_created_on>2019-06-13 16:48:05</sys_created_on>
+            <sys_id>2167b24ddbca7340cbdfd6aa489619a8</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2018-08-10 15:11:38</sys_updated_on>
+            <sys_updated_on>2019-06-13 16:48:05</sys_updated_on>
         </sys_ui_list_element>
         <sys_ui_list_element action="INSERT_OR_UPDATE">
             <average_value>false</average_value>
-            <element>code_freeze</element>
-            <list_id display_value="x_wms_pulse_sn_instance" element="NULL" name="x_wms_pulse_sn_instance" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">2731a11edb33930089fb2fb7489619e5</list_id>
+            <element>password</element>
+            <list_id display_value="x_wms_pulse_sn_instance" element="NULL" name="x_wms_pulse_sn_instance" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">e167b24ddbca7340cbdfd6aa489619a7</list_id>
             <max_value>false</max_value>
             <min_value>false</min_value>
             <position>3</position>
             <sum>false</sum>
             <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2018-08-10 15:11:38</sys_created_on>
-            <sys_id>2f31a11edb33930089fb2fb7489619e6</sys_id>
+            <sys_created_on>2019-06-13 16:48:05</sys_created_on>
+            <sys_id>a167b24ddbca7340cbdfd6aa489619a8</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2018-08-10 15:11:38</sys_updated_on>
+            <sys_updated_on>2019-06-13 16:48:05</sys_updated_on>
         </sys_ui_list_element>
         <sys_ui_list_element action="INSERT_OR_UPDATE">
             <average_value>false</average_value>
-            <element>parent</element>
-            <list_id display_value="x_wms_pulse_sn_instance" element="NULL" name="x_wms_pulse_sn_instance" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">2731a11edb33930089fb2fb7489619e5</list_id>
+            <element>type</element>
+            <list_id display_value="x_wms_pulse_sn_instance" element="NULL" name="x_wms_pulse_sn_instance" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">e167b24ddbca7340cbdfd6aa489619a7</list_id>
             <max_value>false</max_value>
             <min_value>false</min_value>
             <position>4</position>
             <sum>false</sum>
             <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2018-08-10 15:11:38</sys_created_on>
-            <sys_id>af31a11edb33930089fb2fb7489619e6</sys_id>
+            <sys_created_on>2019-06-13 16:48:05</sys_created_on>
+            <sys_id>2567b24ddbca7340cbdfd6aa489619a8</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2018-08-10 15:11:38</sys_updated_on>
+            <sys_updated_on>2019-06-13 16:48:05</sys_updated_on>
         </sys_ui_list_element>
         <sys_ui_list_element action="INSERT_OR_UPDATE">
             <average_value>false</average_value>
-            <element>password</element>
-            <list_id display_value="x_wms_pulse_sn_instance" element="NULL" name="x_wms_pulse_sn_instance" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">2731a11edb33930089fb2fb7489619e5</list_id>
+            <element>url</element>
+            <list_id display_value="x_wms_pulse_sn_instance" element="NULL" name="x_wms_pulse_sn_instance" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">e167b24ddbca7340cbdfd6aa489619a7</list_id>
             <max_value>false</max_value>
             <min_value>false</min_value>
             <position>5</position>
             <sum>false</sum>
             <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2018-08-10 15:11:38</sys_created_on>
-            <sys_id>2331a11edb33930089fb2fb7489619e7</sys_id>
+            <sys_created_on>2019-06-13 16:48:05</sys_created_on>
+            <sys_id>a567b24ddbca7340cbdfd6aa489619a8</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2018-08-10 15:11:38</sys_updated_on>
+            <sys_updated_on>2019-06-13 16:48:05</sys_updated_on>
         </sys_ui_list_element>
         <sys_ui_list_element action="INSERT_OR_UPDATE">
             <average_value>false</average_value>
-            <element>type</element>
-            <list_id display_value="x_wms_pulse_sn_instance" element="NULL" name="x_wms_pulse_sn_instance" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">2731a11edb33930089fb2fb7489619e5</list_id>
+            <element>user</element>
+            <list_id display_value="x_wms_pulse_sn_instance" element="NULL" name="x_wms_pulse_sn_instance" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">e167b24ddbca7340cbdfd6aa489619a7</list_id>
             <max_value>false</max_value>
             <min_value>false</min_value>
             <position>6</position>
             <sum>false</sum>
             <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2018-08-10 15:11:38</sys_created_on>
-            <sys_id>a331a11edb33930089fb2fb7489619e7</sys_id>
+            <sys_created_on>2019-06-13 16:48:05</sys_created_on>
+            <sys_id>2967b24ddbca7340cbdfd6aa489619a8</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2018-08-10 15:11:38</sys_updated_on>
+            <sys_updated_on>2019-06-13 16:48:05</sys_updated_on>
         </sys_ui_list_element>
         <sys_ui_list_element action="INSERT_OR_UPDATE">
             <average_value>false</average_value>
-            <element>url</element>
-            <list_id display_value="x_wms_pulse_sn_instance" element="NULL" name="x_wms_pulse_sn_instance" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">2731a11edb33930089fb2fb7489619e5</list_id>
+            <element>sys_updated_on</element>
+            <list_id display_value="x_wms_pulse_sn_instance" element="NULL" name="x_wms_pulse_sn_instance" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">e167b24ddbca7340cbdfd6aa489619a7</list_id>
             <max_value>false</max_value>
             <min_value>false</min_value>
             <position>7</position>
             <sum>false</sum>
             <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2018-08-10 15:11:38</sys_created_on>
-            <sys_id>2731a11edb33930089fb2fb7489619e7</sys_id>
+            <sys_created_on>2019-06-13 16:48:05</sys_created_on>
+            <sys_id>a967b24ddbca7340cbdfd6aa489619a8</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2018-08-10 15:11:38</sys_updated_on>
+            <sys_updated_on>2019-06-13 16:48:05</sys_updated_on>
         </sys_ui_list_element>
         <sys_ui_list_element action="INSERT_OR_UPDATE">
             <average_value>false</average_value>
-            <element>user</element>
-            <list_id display_value="x_wms_pulse_sn_instance" element="NULL" name="x_wms_pulse_sn_instance" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">2731a11edb33930089fb2fb7489619e5</list_id>
+            <element>sys_updated_by</element>
+            <list_id display_value="x_wms_pulse_sn_instance" element="NULL" name="x_wms_pulse_sn_instance" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">e167b24ddbca7340cbdfd6aa489619a7</list_id>
             <max_value>false</max_value>
             <min_value>false</min_value>
             <position>8</position>
             <sum>false</sum>
             <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2018-08-10 15:11:38</sys_created_on>
-            <sys_id>a731a11edb33930089fb2fb7489619e7</sys_id>
+            <sys_created_on>2019-06-13 16:48:05</sys_created_on>
+            <sys_id>2d67b24ddbca7340cbdfd6aa489619a8</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2018-08-10 15:11:38</sys_updated_on>
+            <sys_updated_on>2019-06-13 16:48:05</sys_updated_on>
         </sys_ui_list_element>
         <sys_ui_list action="INSERT_OR_UPDATE">
             <average_value>false</average_value>
@@ -147,10 +147,10 @@
             <sum>false</sum>
             <sys_class_name>sys_ui_list</sys_class_name>
             <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2018-08-10 15:11:38</sys_created_on>
+            <sys_created_on>2019-06-13 16:48:05</sys_created_on>
             <sys_domain>global</sys_domain>
             <sys_domain_path>/</sys_domain_path>
-            <sys_id>2731a11edb33930089fb2fb7489619e5</sys_id>
+            <sys_id>e167b24ddbca7340cbdfd6aa489619a7</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_name>x_wms_pulse_sn_instance</sys_name>
             <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
@@ -158,7 +158,7 @@
             <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
             <sys_update_name>sys_ui_list_x_wms_pulse_sn_instance_null</sys_update_name>
             <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2018-08-10 15:11:38</sys_updated_on>
+            <sys_updated_on>2019-06-13 16:48:05</sys_updated_on>
             <sys_user/>
             <view display_value="Default view" name="NULL">Default view</view>
             <view_name/>
