@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><database>
-    <element audit="true" extends="task" label="ServiceNow Development Request" max_length="40" name="x_wms_pulse_dev_request" sizeclass="3" type="collection">
+    <element audit="true" extends="task" label="ServiceNow Development Request" max_length="40" name="x_wms_pulse_dev_request" sizeclass="10" type="collection">
         <element label="Application" mandatory="true" max_length="32" name="application" reference="x_wms_pulse_sn_application" type="reference"/>
         <element label="Application owner" max_length="32" name="application_owner" reference="sys_user" type="reference"/>
         <element default="true" label="Auto Promote" max_length="40" name="auto_promote" type="boolean"/>

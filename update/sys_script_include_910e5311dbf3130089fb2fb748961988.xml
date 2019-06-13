@@ -1454,6 +1454,50 @@ PulseUtilsImpl.prototype = {
         }
     },
 
+    // Function called in order to see if there is any update set to install right now
+    checkNextInSchedule: function() {
+        if (!this.isProduction()) {
+            return;
+        }
+        // First check if there is any running, we shouldn't start any in parallel
+        // We only care about the ones being promoted to Prod
+
+        var prodInstance = new GlideRecord('x_wms_pulse_sn_instance');
+        prodInstance.addQuery('name', this.production_instance);
+        prodInstance.query();
+        if (prodInstance.next()) {
+            var prodSource = new GlideRecord('x_wms_pulse_sn_instance');
+            prodSource.addQuery('parent', prodInstance.sys_id + '');
+            prodSource.query();
+            if (prodSource.next()) {
+                var promotingNow = new GlideRecord('x_wms_pulse_dev_request');
+                promotingNow.addQuery('current_instance', prodSource.sys_id + '');
+                var stateCond = promotingNow.addQuery('state', DevRequestStates.PROMOTING);
+                stateCond.addOrCondition('state', DevRequestStates.COMMITTING);
+                promotingNow.query();
+                if (promotingNow.next()) {
+                    this.l.logDebug('There is one request being promoted already: ' + promotingNow.number);
+                } else {
+                    // It's free to start a new promotion
+
+                    //TODO: Check if progress workers / sys_mutex are fine and we really don't have anything committing now
+                    var gdt = new GlideDateTime(); // Right now
+                    var nextDev = new GlideRecord('x_wms_pulse_dev_request');
+                    nextDev.addQuery('active', 'true');
+                    nextDev.addQuery('state', DevRequestStates.SCHEDULED);
+                    nextDev.addQuery('due_date', '<', gdt);
+                    nextDev.orderBy('due_date');
+                    nextDev.query();
+                    if (nextDev.next()) {
+                        this.l.logDebug('Promoting: ' + nextDev.getValue('number'));
+                        nextDev.setValue('state', DevRequestStates.PROMOTING);
+                        nextDev.update();
+                    }
+                }
+            }
+        }
+    },
+
     // TODO - Review Notifications
     sendNotification: function(channel, message) {
         this.l.logDebug('Starting sendNotification(' + channel + ',' + message + ')');
@@ -2035,13 +2079,13 @@ PulseUtilsImpl.prototype = {
         <sys_created_by>mmoreli</sys_created_by>
         <sys_created_on>2018-08-07 21:43:44</sys_created_on>
         <sys_id>910e5311dbf3130089fb2fb748961988</sys_id>
-        <sys_mod_count>300</sys_mod_count>
+        <sys_mod_count>305</sys_mod_count>
         <sys_name>PulseUtilsImpl</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_script_include_910e5311dbf3130089fb2fb748961988</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-06-05 21:21:14</sys_updated_on>
+        <sys_updated_on>2019-06-13 15:40:26</sys_updated_on>
     </sys_script_include>
 </record_update>

@@ -19,7 +19,7 @@ Instances are used by Pulse to automate the creation and promotion of update set
 * Production&#13;
 &#13;
 Instance configuration for promotion of development requests must be completed in the production environment.&#13;
-The production environment should be set up on the instances table on all non-prod environments too (This will change in the future).&#13;
+The production environment should be set up on the instances table on all non-prod environments too (Just the URL - Username and password are not needed).&#13;
 ###Scopes&#13;
 Scopes are used by Pulse to define the ServiceNow application scopes available for development requests. Pulse provides the Global scope as a starting point. Administrators will need to configure any additional scopes that are needed for development. For the 'Scope ID' field use the sys_id of the record on sys_scope.&#13;
 ###Applications&#13;
@@ -32,14 +32,14 @@ Make sure the "Upgrade Source" of your instances are configured correctly. If yo
         <sys_created_by>jgbox</sys_created_by>
         <sys_created_on>2019-05-01 17:54:36</sys_created_on>
         <sys_id>652a2513db0df700cbdfd6aa48961970</sys_id>
-        <sys_mod_count>22</sys_mod_count>
+        <sys_mod_count>23</sys_mod_count>
         <sys_name>1000|Getting Started</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy/>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sp_documentation_652a2513db0df700cbdfd6aa48961970</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-06-05 17:57:18</sys_updated_on>
+        <sys_updated_on>2019-06-06 17:58:37</sys_updated_on>
         <title>1000|Getting Started</title>
     </sp_documentation>
 </record_update>
