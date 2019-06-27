@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?><database>
     <element label="ServiceNow Instance" max_length="40" name="x_wms_pulse_sn_instance" type="collection">
-        <element default="true" label="Active" max_length="40" name="active" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true" default="true" label="Active" max_length="40" name="active" type="boolean"/>
         <element label="Name" mandatory="true" max_length="100" name="name" type="string"/>
-        <element label="Parent" max_length="32" name="parent" reference="x_wms_pulse_sn_instance" reference_qual="active=true^EQ" reference_qual_condition="active=true^EQ" type="glide_list"/>
-        <element label="Password" max_length="255" name="password" type="password2"/>
-        <element choice="3" label="Type" mandatory="true" max_length="40" name="type" type="choice">
+        <element attributes="edge_encryption_enabled=true,no_sort=true,slushbucket_ref_no_expand=true" label="Parent" max_length="1024" name="parent" reference="x_wms_pulse_sn_instance" reference_qual="active=true^EQ" reference_qual_condition="active=true^EQ" type="glide_list"/>
+        <element attributes="edge_encryption_enabled=true,no_data_replicate=true" label="Password" max_length="255" name="password" type="password2"/>
+        <element attributes="edge_encryption_enabled=true" choice="3" label="Type" mandatory="true" max_length="40" name="type" type="choice">
             <choice>
                 <element inactive_on_update="false" label="Development" sequence="100" value="dev"/>
                 <element inactive_on_update="false" label="Test" sequence="200" value="test"/>
@@ -13,8 +13,5 @@
         </element>
         <element label="URL" mandatory="true" max_length="1024" name="url" type="url"/>
         <element label="User" max_length="40" name="user" type="string"/>
-        <index name="index">
-            <element name="parent"/>
-        </index>
     </element>
 </database>

@@ -3,8 +3,8 @@
         <element label="Available Actions" max_length="320" name="available_actions" type="string"/>
         <element label="Description" max_length="2048" name="description" type="string"/>
         <element label="Developer Comments" max_length="4000" name="developer_comments" type="string"/>
-        <element label="Development Request" max_length="32" name="dev_request" reference="x_wms_pulse_dev_request" type="reference"/>
-        <element label="Instance" max_length="32" name="instance" reference="x_wms_pulse_sn_instance" type="reference"/>
+        <element attributes="edge_encryption_enabled=true" label="Development Request" max_length="32" name="dev_request" reference="x_wms_pulse_dev_request" type="reference"/>
+        <element attributes="edge_encryption_enabled=true" label="Instance" max_length="32" name="instance" reference="x_wms_pulse_sn_instance" type="reference"/>
         <element label="Missing Item" max_length="40" name="missing_item" type="string"/>
         <element label="Missing Item Table" max_length="80" name="missing_item_table" type="string"/>
         <element label="Problem Sys ID" max_length="32" name="problem_sys_id" type="string"/>
@@ -16,13 +16,13 @@
                 <element inactive_on_update="false" label="Skipped" value="skipped"/>
             </choice>
         </element>
-        <element choice="1" label="Type" max_length="40" name="type" type="choice">
+        <element attributes="edge_encryption_enabled=true" choice="1" label="Type" max_length="40" name="type" type="choice">
             <choice>
                 <element inactive_on_update="false" label="Error" value="error"/>
                 <element inactive_on_update="false" label="Warning" value="warning"/>
             </choice>
         </element>
-        <element choice="1" label="Version" max_length="10" name="version" type="choice">
+        <element attributes="edge_encryption_enabled=true" choice="1" label="Version" max_length="10" name="version" type="choice">
             <choice>
                 <element inactive_on_update="false" label="Current" value="current"/>
                 <element inactive_on_update="false" label="Previous" value="previous"/>

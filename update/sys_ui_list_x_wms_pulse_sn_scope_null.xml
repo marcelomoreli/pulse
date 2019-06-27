@@ -58,6 +58,7 @@
             <sys_class_name>sys_ui_list</sys_class_name>
             <sys_created_by>mmoreli</sys_created_by>
             <sys_created_on>2018-08-13 22:29:16</sys_created_on>
+            <sys_customer_update>false</sys_customer_update>
             <sys_domain>global</sys_domain>
             <sys_domain_path>/</sys_domain_path>
             <sys_id>1f222653db73130089fb2fb74896197a</sys_id>
@@ -65,6 +66,7 @@
             <sys_name>x_wms_pulse_sn_scope</sys_name>
             <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
             <sys_policy/>
+            <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
             <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
             <sys_update_name>sys_ui_list_x_wms_pulse_sn_scope_null</sys_update_name>
             <sys_updated_by>mmoreli</sys_updated_by>

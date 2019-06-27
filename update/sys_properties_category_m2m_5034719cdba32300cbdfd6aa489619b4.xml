@@ -6,11 +6,13 @@
         <sys_class_name>sys_properties_category_m2m</sys_class_name>
         <sys_created_by>mmoreli</sys_created_by>
         <sys_created_on>2019-02-06 21:22:02</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
         <sys_id>5034719cdba32300cbdfd6aa489619b4</sys_id>
         <sys_mod_count>0</sys_mod_count>
         <sys_name>x_wms_pulse.auto_pull_failure.Pulse Properties</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_properties_category_m2m_5034719cdba32300cbdfd6aa489619b4</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>

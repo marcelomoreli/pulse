@@ -3,140 +3,70 @@
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>sys_created_on</element>
             <position>0</position>
-            <sys_created_by>jgbox</sys_created_by>
-            <sys_created_on>2019-04-30 19:58:20</sys_created_on>
-            <sys_id>1ffc3c07dbcdb700cbdfd6aa48961969</sys_id>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-06-13 18:46:33</sys_created_on>
+            <sys_id>0d82d349db063f0c87ff568bdc961981</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="System" display_value="System" name="x_wms_pulse_sn_scan_rule" sys_domain="global" view="Default view">4a7c254adb3b530089fb2fb74896196d</sys_ui_section>
-            <sys_updated_by>jgbox</sys_updated_by>
-            <sys_updated_on>2019-04-30 19:58:20</sys_updated_on>
-            <sys_user/>
-            <type/>
-        </sys_ui_element>
-        <sys_ui_element action="INSERT_OR_UPDATE">
-            <element>sys_created_on</element>
-            <position>0</position>
-            <sys_created_by>jgbox</sys_created_by>
-            <sys_created_on>2018-08-09 21:22:13</sys_created_on>
-            <sys_id>967c254adb3b530089fb2fb7489619e5</sys_id>
-            <sys_mod_count>0</sys_mod_count>
-            <sys_ui_formatter/>
-            <sys_ui_section caption="System" display_value="System" name="x_wms_pulse_sn_scan_rule" sys_domain="global" view="Default view">4a7c254adb3b530089fb2fb74896196d</sys_ui_section>
-            <sys_updated_by>jgbox</sys_updated_by>
-            <sys_updated_on>2018-08-09 21:22:13</sys_updated_on>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-06-13 18:46:33</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>sys_updated_on</element>
             <position>1</position>
-            <sys_created_by>jgbox</sys_created_by>
-            <sys_created_on>2018-08-09 21:22:13</sys_created_on>
-            <sys_id>1a7c254adb3b530089fb2fb7489619e5</sys_id>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-06-13 18:46:33</sys_created_on>
+            <sys_id>8d82d349db063f0c87ff568bdc961981</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="System" display_value="System" name="x_wms_pulse_sn_scan_rule" sys_domain="global" view="Default view">4a7c254adb3b530089fb2fb74896196d</sys_ui_section>
-            <sys_updated_by>jgbox</sys_updated_by>
-            <sys_updated_on>2018-08-09 21:22:13</sys_updated_on>
-            <sys_user/>
-            <type/>
-        </sys_ui_element>
-        <sys_ui_element action="INSERT_OR_UPDATE">
-            <element>sys_updated_on</element>
-            <position>1</position>
-            <sys_created_by>jgbox</sys_created_by>
-            <sys_created_on>2019-04-30 19:58:20</sys_created_on>
-            <sys_id>9ffc3c07dbcdb700cbdfd6aa48961969</sys_id>
-            <sys_mod_count>0</sys_mod_count>
-            <sys_ui_formatter/>
-            <sys_ui_section caption="System" display_value="System" name="x_wms_pulse_sn_scan_rule" sys_domain="global" view="Default view">4a7c254adb3b530089fb2fb74896196d</sys_ui_section>
-            <sys_updated_by>jgbox</sys_updated_by>
-            <sys_updated_on>2019-04-30 19:58:20</sys_updated_on>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-06-13 18:46:33</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>.split</element>
             <position>2</position>
-            <sys_created_by>jgbox</sys_created_by>
-            <sys_created_on>2019-04-30 19:58:20</sys_created_on>
-            <sys_id>13fc3c07dbcdb700cbdfd6aa4896196a</sys_id>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-06-13 18:46:33</sys_created_on>
+            <sys_id>0182d349db063f0c87ff568bdc961982</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="System" display_value="System" name="x_wms_pulse_sn_scan_rule" sys_domain="global" view="Default view">4a7c254adb3b530089fb2fb74896196d</sys_ui_section>
-            <sys_updated_by>jgbox</sys_updated_by>
-            <sys_updated_on>2019-04-30 19:58:20</sys_updated_on>
-            <sys_user/>
-            <type>.split</type>
-        </sys_ui_element>
-        <sys_ui_element action="INSERT_OR_UPDATE">
-            <element>.split</element>
-            <position>2</position>
-            <sys_created_by>jgbox</sys_created_by>
-            <sys_created_on>2018-08-09 21:22:13</sys_created_on>
-            <sys_id>9a7c254adb3b530089fb2fb7489619e5</sys_id>
-            <sys_mod_count>0</sys_mod_count>
-            <sys_ui_formatter/>
-            <sys_ui_section caption="System" display_value="System" name="x_wms_pulse_sn_scan_rule" sys_domain="global" view="Default view">4a7c254adb3b530089fb2fb74896196d</sys_ui_section>
-            <sys_updated_by>jgbox</sys_updated_by>
-            <sys_updated_on>2018-08-09 21:22:13</sys_updated_on>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-06-13 18:46:33</sys_updated_on>
             <sys_user/>
             <type>.split</type>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>sys_created_by</element>
             <position>3</position>
-            <sys_created_by>jgbox</sys_created_by>
-            <sys_created_on>2018-08-09 21:22:13</sys_created_on>
-            <sys_id>1e7c254adb3b530089fb2fb7489619e5</sys_id>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-06-13 18:46:33</sys_created_on>
+            <sys_id>8182d349db063f0c87ff568bdc961982</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="System" display_value="System" name="x_wms_pulse_sn_scan_rule" sys_domain="global" view="Default view">4a7c254adb3b530089fb2fb74896196d</sys_ui_section>
-            <sys_updated_by>jgbox</sys_updated_by>
-            <sys_updated_on>2018-08-09 21:22:13</sys_updated_on>
-            <sys_user/>
-            <type/>
-        </sys_ui_element>
-        <sys_ui_element action="INSERT_OR_UPDATE">
-            <element>sys_created_by</element>
-            <position>3</position>
-            <sys_created_by>jgbox</sys_created_by>
-            <sys_created_on>2019-04-30 19:58:20</sys_created_on>
-            <sys_id>93fc3c07dbcdb700cbdfd6aa4896196a</sys_id>
-            <sys_mod_count>0</sys_mod_count>
-            <sys_ui_formatter/>
-            <sys_ui_section caption="System" display_value="System" name="x_wms_pulse_sn_scan_rule" sys_domain="global" view="Default view">4a7c254adb3b530089fb2fb74896196d</sys_ui_section>
-            <sys_updated_by>jgbox</sys_updated_by>
-            <sys_updated_on>2019-04-30 19:58:20</sys_updated_on>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-06-13 18:46:33</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>sys_updated_by</element>
             <position>4</position>
-            <sys_created_by>jgbox</sys_created_by>
-            <sys_created_on>2019-04-30 19:58:20</sys_created_on>
-            <sys_id>17fc3c07dbcdb700cbdfd6aa4896196a</sys_id>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-06-13 18:46:33</sys_created_on>
+            <sys_id>0582d349db063f0c87ff568bdc961982</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="System" display_value="System" name="x_wms_pulse_sn_scan_rule" sys_domain="global" view="Default view">4a7c254adb3b530089fb2fb74896196d</sys_ui_section>
-            <sys_updated_by>jgbox</sys_updated_by>
-            <sys_updated_on>2019-04-30 19:58:20</sys_updated_on>
-            <sys_user/>
-            <type/>
-        </sys_ui_element>
-        <sys_ui_element action="INSERT_OR_UPDATE">
-            <element>sys_updated_by</element>
-            <position>4</position>
-            <sys_created_by>jgbox</sys_created_by>
-            <sys_created_on>2018-08-09 21:22:13</sys_created_on>
-            <sys_id>9e7c254adb3b530089fb2fb7489619e5</sys_id>
-            <sys_mod_count>0</sys_mod_count>
-            <sys_ui_formatter/>
-            <sys_ui_section caption="System" display_value="System" name="x_wms_pulse_sn_scan_rule" sys_domain="global" view="Default view">4a7c254adb3b530089fb2fb74896196d</sys_ui_section>
-            <sys_updated_by>jgbox</sys_updated_by>
-            <sys_updated_on>2018-08-09 21:22:13</sys_updated_on>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-06-13 18:46:33</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -148,6 +78,7 @@
             <sys_class_name>sys_ui_section</sys_class_name>
             <sys_created_by>jgbox</sys_created_by>
             <sys_created_on>2018-08-09 21:22:13</sys_created_on>
+            <sys_customer_update>false</sys_customer_update>
             <sys_domain>global</sys_domain>
             <sys_domain_path>/</sys_domain_path>
             <sys_id>4a7c254adb3b530089fb2fb74896196d</sys_id>
@@ -156,6 +87,7 @@
             <sys_overrides/>
             <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
             <sys_policy/>
+            <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
             <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
             <sys_update_name>sys_ui_section_4a7c254adb3b530089fb2fb74896196d</sys_update_name>
             <sys_updated_by>jgbox</sys_updated_by>

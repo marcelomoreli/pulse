@@ -3,7 +3,7 @@
         <sys_ui_list_element action="INSERT_OR_UPDATE">
             <average_value>false</average_value>
             <element>name</element>
-            <list_id display_value="x_wms_pulse_sn_scope" element="NULL" name="x_wms_pulse_sn_scope" parent="NULL" relationship="NULL" sys_domain="global" view="734a11515d121300651727c3e282e80d">37c4341adb75bb00cbdfd6aa489619fe</list_id>
+            <list_id display_value="x_wms_pulse_sn_scope" element="NULL" name="x_wms_pulse_sn_scope" parent="NULL" relationship="NULL" sys_domain="global" view="6f1704034f20220024cf4e328110c77e">37c4341adb75bb00cbdfd6aa489619fe</list_id>
             <max_value>false</max_value>
             <min_value>false</min_value>
             <position>0</position>
@@ -28,6 +28,7 @@
             <sys_class_name>sys_ui_list</sys_class_name>
             <sys_created_by>mmoreli</sys_created_by>
             <sys_created_on>2019-06-04 18:14:13</sys_created_on>
+            <sys_customer_update>false</sys_customer_update>
             <sys_domain>global</sys_domain>
             <sys_domain_path>/</sys_domain_path>
             <sys_id>37c4341adb75bb00cbdfd6aa489619fe</sys_id>
@@ -35,12 +36,13 @@
             <sys_name>x_wms_pulse_sn_scope</sys_name>
             <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
             <sys_policy/>
+            <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
             <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
             <sys_update_name>sys_ui_list_x_wms_pulse_sn_scope_sys_ref_list</sys_update_name>
             <sys_updated_by>mmoreli</sys_updated_by>
             <sys_updated_on>2019-06-04 18:14:13</sys_updated_on>
             <sys_user/>
-            <view display_value="Reference List" name="sys_ref_list">734a11515d121300651727c3e282e80d</view>
+            <view display_value="Reference List" name="sys_ref_list">6f1704034f20220024cf4e328110c77e</view>
             <view_name/>
         </sys_ui_list>
     </sys_ui_list>

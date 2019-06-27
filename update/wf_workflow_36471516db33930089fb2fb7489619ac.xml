@@ -51,6 +51,7 @@
         <sys_class_name>wf_workflow</sys_class_name>
         <sys_created_by>mmoreli</sys_created_by>
         <sys_created_on>2018-08-10 14:28:10</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>36471516db33930089fb2fb7489619ac</sys_id>
@@ -59,6 +60,7 @@
         <sys_overrides/>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>wf_workflow_36471516db33930089fb2fb7489619ac</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
@@ -569,12 +571,12 @@ answer = 0;</value>
         <sys_class_name>sys_variable_value</sys_class_name>
         <sys_created_by>mmoreli</sys_created_by>
         <sys_created_on>2019-04-11 15:37:01</sys_created_on>
-        <sys_id>5afa42f4dbf87300cbdfd6aa489619f6</sys_id>
+        <sys_id>9efa42f4dbf87300cbdfd6aa489619f7</sys_id>
         <sys_mod_count>0</sys_mod_count>
         <sys_updated_by>mmoreli</sys_updated_by>
         <sys_updated_on>2019-04-11 15:37:01</sys_updated_on>
-        <value/>
-        <variable display_value="">a8ad144ec0a8006638755cb3662df229</variable>
+        <value>3bf802c20a0a0b52008e2859cd8abcf2</value>
+        <variable display_value="">a8a7bc7dc0a800666777a9bd9b84fef8</variable>
     </sys_variable_value>
     <sys_variable_value action="INSERT_OR_UPDATE">
         <document>wf_activity</document>
@@ -597,12 +599,12 @@ answer = 0;</value>
         <sys_class_name>sys_variable_value</sys_class_name>
         <sys_created_by>mmoreli</sys_created_by>
         <sys_created_on>2019-04-11 15:37:01</sys_created_on>
-        <sys_id>9efa42f4dbf87300cbdfd6aa489619f7</sys_id>
+        <sys_id>5afa42f4dbf87300cbdfd6aa489619f6</sys_id>
         <sys_mod_count>0</sys_mod_count>
         <sys_updated_by>mmoreli</sys_updated_by>
         <sys_updated_on>2019-04-11 15:37:01</sys_updated_on>
-        <value>3bf802c20a0a0b52008e2859cd8abcf2</value>
-        <variable display_value="">a8a7bc7dc0a800666777a9bd9b84fef8</variable>
+        <value/>
+        <variable display_value="">a8ad144ec0a8006638755cb3662df229</variable>
     </sys_variable_value>
     <sys_variable_value action="INSERT_OR_UPDATE">
         <document>wf_activity</document>
@@ -1188,6 +1190,20 @@ answer = 0;</value>
         <sys_class_name>sys_variable_value</sys_class_name>
         <sys_created_by>mmoreli</sys_created_by>
         <sys_created_on>2018-08-14 14:33:50</sys_created_on>
+        <sys_id>f8fef9a3db3b130089fb2fb74896194d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2018-08-14 14:33:50</sys_updated_on>
+        <value>3bf802c20a0a0b52008e2859cd8abcf2</value>
+        <variable display_value="">220cd53d0a0a0b214103bdc2ec5c7ab4</variable>
+    </sys_variable_value>
+    <sys_variable_value action="INSERT_OR_UPDATE">
+        <document>wf_activity</document>
+        <document_key>f0fef9a3db3b130089fb2fb74896194c</document_key>
+        <order>1310</order>
+        <sys_class_name>sys_variable_value</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2018-08-14 14:33:50</sys_created_on>
         <sys_id>38fef9a3db3b130089fb2fb74896194d</sys_id>
         <sys_mod_count>0</sys_mod_count>
         <sys_updated_by>mmoreli</sys_updated_by>
@@ -1208,20 +1224,6 @@ answer = 0;</value>
         <sys_updated_on>2018-08-14 14:33:50</sys_updated_on>
         <value/>
         <variable display_value="">21fd462c0a0a0b211c997276d7806c03</variable>
-    </sys_variable_value>
-    <sys_variable_value action="INSERT_OR_UPDATE">
-        <document>wf_activity</document>
-        <document_key>f0fef9a3db3b130089fb2fb74896194c</document_key>
-        <order>1310</order>
-        <sys_class_name>sys_variable_value</sys_class_name>
-        <sys_created_by>mmoreli</sys_created_by>
-        <sys_created_on>2018-08-14 14:33:50</sys_created_on>
-        <sys_id>f8fef9a3db3b130089fb2fb74896194d</sys_id>
-        <sys_mod_count>0</sys_mod_count>
-        <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2018-08-14 14:33:50</sys_updated_on>
-        <value>3bf802c20a0a0b52008e2859cd8abcf2</value>
-        <variable display_value="">220cd53d0a0a0b214103bdc2ec5c7ab4</variable>
     </sys_variable_value>
     <sys_variable_value action="INSERT_OR_UPDATE">
         <document>wf_activity</document>
@@ -1286,12 +1288,12 @@ answer = 0;</value>
         <sys_class_name>sys_variable_value</sys_class_name>
         <sys_created_by>mmoreli</sys_created_by>
         <sys_created_on>2018-08-14 14:33:50</sys_created_on>
-        <sys_id>34fef9a3db3b130089fb2fb74896194e</sys_id>
+        <sys_id>70fef9a3db3b130089fb2fb74896194e</sys_id>
         <sys_mod_count>0</sys_mod_count>
         <sys_updated_by>mmoreli</sys_updated_by>
         <sys_updated_on>2018-08-14 14:33:50</sys_updated_on>
         <value/>
-        <variable display_value="">292b2f0e0a0a0b215aa2dd2cbc578dc5</variable>
+        <variable display_value="">292bd15e0a0a0b215a040c701033e3c5</variable>
     </sys_variable_value>
     <sys_variable_value action="INSERT_OR_UPDATE">
         <document>wf_activity</document>
@@ -1300,12 +1302,12 @@ answer = 0;</value>
         <sys_class_name>sys_variable_value</sys_class_name>
         <sys_created_by>mmoreli</sys_created_by>
         <sys_created_on>2018-08-14 14:33:50</sys_created_on>
-        <sys_id>70fef9a3db3b130089fb2fb74896194e</sys_id>
+        <sys_id>34fef9a3db3b130089fb2fb74896194e</sys_id>
         <sys_mod_count>0</sys_mod_count>
         <sys_updated_by>mmoreli</sys_updated_by>
         <sys_updated_on>2018-08-14 14:33:50</sys_updated_on>
         <value/>
-        <variable display_value="">292bd15e0a0a0b215a040c701033e3c5</variable>
+        <variable display_value="">292b2f0e0a0a0b215aa2dd2cbc578dc5</variable>
     </sys_variable_value>
     <sys_variable_value action="INSERT_OR_UPDATE">
         <document>wf_activity</document>

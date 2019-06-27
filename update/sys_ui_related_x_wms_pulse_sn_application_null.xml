@@ -38,6 +38,7 @@
             <sys_class_name>sys_ui_related_list</sys_class_name>
             <sys_created_by>mmoreli</sys_created_by>
             <sys_created_on>2019-04-11 15:20:10</sys_created_on>
+            <sys_customer_update>false</sys_customer_update>
             <sys_domain>global</sys_domain>
             <sys_domain_path>/</sys_domain_path>
             <sys_id>db170ef0dbf87300cbdfd6aa489619d9</sys_id>
@@ -45,6 +46,7 @@
             <sys_name>ServiceNow Application - Default view</sys_name>
             <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
             <sys_policy/>
+            <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
             <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
             <sys_update_name>sys_ui_related_x_wms_pulse_sn_application_null</sys_update_name>
             <sys_updated_by>mmoreli</sys_updated_by>
