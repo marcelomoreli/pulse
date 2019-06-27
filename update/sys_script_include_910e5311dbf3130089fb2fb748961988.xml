@@ -13,7 +13,7 @@ PulseUtilsImpl.prototype = {
 
     initialize: function() {
         this.l = new global.GSLog(this.PULSE_LOG_LEVEL, this.type);
-        this.production_instance = gs.getProperty('x_wms_pulse.production_instance');
+        this.production_instance = this.getProductionInstance();
         this.currInstance = gs.getProperty('instance_name');
         this.pulseGlobal = new global.PulseGlobal();
     },
@@ -2056,6 +2056,16 @@ PulseUtilsImpl.prototype = {
         return 0;
     },
 
+    getProductionInstance: function() {
+        var prodInstance = new GlideRecord('x_wms_pulse_sn_instance');
+        prodInstance.addQuery('active', true);
+        prodInstance.addQuery('type', 'prod');
+        prodInstance.query();
+        if (prodInstance.next()) {
+            return prodInstance.name + '';
+        }
+    },
+
     isProduction: function() {
         this.l.logDebug('Starting isProduction - Production [' + this.production_instance + '] - Current Instance [' + this.currInstance + ']');
         if (this.production_instance == this.currInstance) {
@@ -2080,7 +2090,7 @@ PulseUtilsImpl.prototype = {
         <sys_created_on>2018-08-07 21:43:44</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>910e5311dbf3130089fb2fb748961988</sys_id>
-        <sys_mod_count>305</sys_mod_count>
+        <sys_mod_count>307</sys_mod_count>
         <sys_name>PulseUtilsImpl</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy>read</sys_policy>
@@ -2088,6 +2098,6 @@ PulseUtilsImpl.prototype = {
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_script_include_910e5311dbf3130089fb2fb748961988</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-06-13 15:40:26</sys_updated_on>
+        <sys_updated_on>2019-06-27 20:22:46</sys_updated_on>
     </sys_script_include>
 </record_update>
