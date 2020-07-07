@@ -11,7 +11,7 @@
         <sys_created_on>2019-02-06 21:38:32</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>44b7b910dbe32300cbdfd6aa48961935</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>14</sys_mod_count>
         <sys_name>go_to_update_set</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy/>
@@ -19,7 +19,7 @@
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_ui_macro_44b7b910dbe32300cbdfd6aa48961935</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-02-06 21:38:32</sys_updated_on>
+        <sys_updated_on>2019-12-27 14:55:43</sys_updated_on>
         <xml><![CDATA[<?xml version="1.0" encoding="utf-8" ?>
 <j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null">
 <g:evaluate var="jvar_guid" expression="gs.generateGUID(this);" />
@@ -31,10 +31,10 @@
 <script>
 function goToUpdateSet(reference) {
 	try {
-	var baseUri = g_scratchpad.curr_env_url;
-	var usSysId = g_scratchpad.curr_us_sys_id;
-	var url = baseUri + '/nav_to.do?uri=%2Fsys_update_set.do%3Fsys_id%3D' + usSysId;
-	window.open(url);
+	    var usID = encodeURIComponent(document.getElementById('x_wms_pulse_dev_request.root_sys_id').value).replace(/%/g, '%25');
+	    var currInstance = document.getElementById('sys_display.x_wms_pulse_dev_request.current_instance').value;
+	    var url = 'https://' + currInstance + '.service-now.com/nav_to.do?uri=%2Fsys_update_set.do%3Fsysparm_refkey%3Du_root_sys_id%26sys_id%3D' + usID;
+	    window.open(url);
 	} catch (e) {
 		jslog('error showing updateSet decoration');
 		jslog(e);

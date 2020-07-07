@@ -15,7 +15,7 @@
         <condition/>
         <description/>
         <execute_function>false</execute_function>
-        <filter_condition table="x_wms_pulse_preview_problem">status=ignored^available_actionsNOT LIKE43d7d01a97b00100f309124eda2975e4^EQ<item endquery="false" field="status" goto="false" newquery="false" operator="=" or="false" value="ignored"/>
+        <filter_condition table="x_wms_pulse_preview_problem">status=ignored^available_actionsNOT LIKE43d7d01a97b00100f309124eda2975e4^EQ<item display_value="Ignored" endquery="false" field="status" goto="false" newquery="false" operator="=" or="false" value="ignored"/>
             <item endquery="false" field="available_actions" goto="false" newquery="false" operator="NOT LIKE" or="false" value="43d7d01a97b00100f309124eda2975e4"/>
             <item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/>
         </filter_condition>

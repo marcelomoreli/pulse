@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_documentation">
+    <sp_documentation action="INSERT_OR_UPDATE">
+        <content>#Development Lifecycle&#13;
+Before we go through details on each step on the lifecycle of a development request, let's first understand the overall picture. Each step has its own section with full detail; in this page we will just explain briefly.&#13;
+&#13;
+##Before the Development&#13;
+As any other development, before developing you need to have requirements and a clear understanding of what you need. In most cases that's in another tool with the Stories, Bugs or Incidents you want to fix. Understanding that this previous step is done, let's start with the fun part.&#13;
+&#13;
+##Creation of the Development Request&#13;
+First step on Pulse is the creation of a Development Request. The most important information needed at this point is the application being changed, the scope, the dev instance and a short description of the change. With this minimal information Pulse will be able to calculate the update set name and will automatically create the update set on the development environment.&#13;
+&#13;
+##Developing&#13;
+During this phase it's expected that the developer mark the update set as the current set and do all the changes needed as part of that development. The development request will be "In Development".&#13;
+&#13;
+Before completing the update set it's highly recommended that the developer run a "Code Scan" to identify things out of the best practices, with possible performance problems or similar and get all the findings addressed.&#13;
+&#13;
+Once all development is completed and findings are addressed, complete the update set and a new UI action called "Send to Review" will be present. Clicking that moves you to the next stage of the development process.&#13;
+&#13;
+##Review&#13;
+Before the review really happens, the development request will actually move to "Testing Preview", which will preview it in the upper environment where it would promote the code. This stage is where you could see preview problems even before you get your code reviewed. It's important that you go to your dev request (There is a link you send the update set to review) to confirm that you don't have preview problems and it's really sent to review.&#13;
+In the case where you have preview problems the dev request will show as "Awaiting Justification" - that means that it's not yet in review and you have to take one out of two actions. &#13;
+* First option (highly recommended) is clicking "Return to Dev" UI action and fixing the preview problems so that they don't occour anymore and re-submit for review.&#13;
+* Second option is put a comment on all preview problems you have (Developer Comments column) to justify why that preview problem is there and what's the action that should be taken (Ignore/Skip). Once all Preview Problems have a comment, the development request will move to "In Review".&#13;
+During review we can have several different groups approving the dev request. Usually we have one technical team doing the code review and another team doing the functional review. If it gets rejected it will move it back to "In Development" and reopen the update set, otherwise it will follow the process and promote it to the upper environment.&#13;
+&#13;
+##Promotion of the Dev Request&#13;
+There are two possible configurations for each environment where we define if we require the update set to be scheduled or not to get to that environment. Usually we don't require schedule to get promoted to CERT environment but we do to get to PROD. In the case that it's not marked as "auto-promote" the release manager (usually the Product Owner) have to pick a date on the development request. Once a date is picked, it will move from "Awaiting Schedule" to "Scheduled".&#13;
+Once it reaches the scheduled date or in the case that it doesn't require a schedule, it will automatically retrieve the update set on the target environment, preview it, apply preview problem actions if any and commit the update set in the target environment.&#13;
+&#13;
+Once a development request gets promoted to an instance, it defines the next destination of that request.&#13;
+* Ready for Testing: In case the instance requires testing, it will move to ready for testing.&#13;
+* In Review: If the next environment also requires approvals, it will move it back to In Review in order to get to the next environment.&#13;
+* Awaiting Parent: If you have a dependency between the dev request with another request and the other one is not on the target environment yet it will be awaiting the parent.&#13;
+* Done: If the environment it just got to is the final environment (PROD).&#13;
+&#13;
+##Testing the Change&#13;
+Whenever the environment requires testing, the development request gets to "Ready for Testing". The testing can be completed by a developer or product owner (Release manager). In order to move to the next step you have two actions "Test Passed" and "Test Failed".&#13;
+* Test Failed: If the test fails, you can from the development request click "Create Remediation" to generate a new development request tied to the original one; You should use this new development request to fix the issues that you have identified during the test. The new development request will follow same process as any other. Creating a new remediation will move the parent development request to "Awaiting Remediation".&#13;
+* Test Passed: When it's test passed, it will do the same calculation of the next step identified in the previous step. In most cases the test is completed on the CERT environment and it will move to "Awaiting Schedule" to get to Prod on the scheduled date.&#13;
+&#13;
+&#13;
+</content>
+        <sys_class_name>sp_documentation</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-08-14 16:13:10</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>26f1c2c9db137384fce87bbb8c961900</sys_id>
+        <sys_mod_count>6</sys_mod_count>
+        <sys_name>1500|Development Lifecycle</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sp_documentation_26f1c2c9db137384fce87bbb8c961900</sys_update_name>
+        <sys_updated_by>pgmarti</sys_updated_by>
+        <sys_updated_on>2019-08-20 14:51:23</sys_updated_on>
+        <title>1500|Development Lifecycle</title>
+    </sp_documentation>
+</record_update>

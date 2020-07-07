@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_documentation">
+    <sp_documentation action="INSERT_OR_UPDATE">
+        <content>#Getting Your Changes to Production&#13;
+##Pending Schedule&#13;
+Assuming you got to the state "Pending Schedule", reviews are done and your testings are all passed. Next action should be taken by a "Release Manager" - usually the Process owner gets that role.&#13;
+&#13;
+![Screenshot](pendingSchedule.png)&#13;
+&#13;
+All the Release Manager has to do is pick a time on the "Release Date" field and hit "Save", and that will automatically schedule the update set, moving it to "Scheduled". It's highly recommended and enforced to do any deployment **out of working hours**, since it will cause a cache flush and possibly cause a semaphore exhaustion on ServiceNow.&#13;
+&#13;
+![Screenshot](devRequestScheduled.png)&#13;
+&#13;
+If your target environment (Prod) has a change template defined, it will at this point also create a change request record and reference it on the development request.&#13;
+Once it reaches the time defined on the "Release Date", Pulse will automatically start the promotion process for the update set. Note that during upgrades it will not happen - It will wait the upgrade to complete since the job is not 'upgrade safe' and will trigger automatically after the background jobs in the instance are running.&#13;
+&#13;
+##Rescheduling&#13;
+At any point in time the release manager can change the date and time of the scheduled release. By doing so it will respect the new date and will also update the timing on the Change Request record (planned start / planned end).&#13;
+&#13;
+##Cancelling a Release&#13;
+![Screenshot](devRequestCancelRelease.png)&#13;
+&#13;
+Another option the release manager have once it's scheduled is click "Cancel Release". This button will clear the Release date and move the development request back to "Pending Schedule".</content>
+        <sys_class_name>sp_documentation</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-08-16 15:00:55</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>ab948c79db9f73c4fce87bbb8c961993</sys_id>
+        <sys_mod_count>5</sys_mod_count>
+        <sys_name>2600|Getting Your Changes to PROD</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sp_documentation_ab948c79db9f73c4fce87bbb8c961993</sys_update_name>
+        <sys_updated_by>pgmarti</sys_updated_by>
+        <sys_updated_on>2019-08-20 15:22:08</sys_updated_on>
+        <title>2600|Getting Your Changes to PROD</title>
+    </sp_documentation>
+</record_update>

@@ -5,7 +5,7 @@
         <assessment/>
         <content_page/>
         <device_type/>
-        <filter table="x_wms_pulse_dev_request">state=29^EQ<item endquery="false" field="state" goto="false" newquery="false" operator="=" or="false" value="29"/>
+        <filter table="x_wms_pulse_dev_request">state=29^EQ<item display_value="Pending Schedule" endquery="false" field="state" goto="false" newquery="false" operator="=" or="false" value="29"/>
             <item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/>
         </filter>
         <hint>All Development Requests</hint>

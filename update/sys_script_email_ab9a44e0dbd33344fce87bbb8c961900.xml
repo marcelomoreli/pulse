@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_email">
+    <sys_script_email action="INSERT_OR_UPDATE">
+        <name>pulse_email_approval_body</name>
+        <new_lines_to_html>false</new_lines_to_html>
+        <script><![CDATA[(function runMailScript(/* GlideRecord */ current, /* TemplatePrinter */ template,
+/* Optional EmailOutbound */ email, /* Optional GlideRecord */ email_action,
+/* Optional GlideRecord */ event) {
+	var devRequest = new GlideRecord('x_wms_pulse_dev_request');
+	if (devRequest.get(current.sysapproval + '')) {
+		txt = '';
+		if (devRequest.getValue('source_id')) {
+			txt += devRequest.getValue('source_id') + ' ';
+		}
+		txt += devRequest.getValue('short_description') + '<br/>';
+		txt += '<br/><b>Approval group:</b> ' + current.sysapproval.group.assignment_group.name;
+		if (devRequest.getValue('application')) {
+			txt += '<br/><b>Application:</b> ' + devRequest.getDisplayValue('application');
+		}
+		
+		if (devRequest.getValue('assignment_group')) {
+			txt += '<br/><b>Developed by:</b> ' + devRequest.getDisplayValue('assignment_group');
+			if (devRequest.getValue('assigned_to')) {
+				txt += ' / ' + devRequest.getDisplayValue('assigned_to');
+			}
+		} else {
+			if (devRequest.getValue('assigned_to')) {
+				txt += '<br/><b>Developed by:</b> ' + devRequest.getDisplayValue('assigned_to') + '<br/>';
+			}
+		}
+		
+		txt += '<br/><b>Dev Instance:</b> ' + devRequest.getDisplayValue('dev_instance') + '<br/>';
+		txt += '<b>Current Instance:</b> ' + devRequest.getDisplayValue('current_instance') + '<br/>';
+		
+		if (current.getValue('description')) {
+			txt += '<br/><b>Release Notes:</b><br/>' + current.getValue('description');
+		}
+		
+		
+		txt += '<style>';
+		txt += 'td.tbl_header { border: 1px solid black; font-size:14px; } ';
+			txt += 'td.tbl_data { font-size: 12px; border: 1px solid black; padding: 2px; } ';
+				txt += '</style>';
+				
+				// Find Preview Problems
+				var prevProb = new GlideRecord('x_wms_pulse_preview_problem');
+				prevProb.addQuery('dev_request', devRequest.sys_id + '');
+				prevProb.addQuery('version', 'current');
+				prevProb.query();
+				
+				if (prevProb.hasNext()) {
+					// Print header
+					txt += '<br/><b>Preview problems:</b><br/>';
+					txt += '<table style="border-collapse: collapse;"><tr><td class="tbl_header">Remote Update</td><td class="tbl_header">Description</td><td class="tbl_header">Developer Comments</td></tr>';
+					while (prevProb.next()) {
+						txt += '<tr><td class="tbl_data">' + prevProb.remote_update + '</td><td class="tbl_data">' + prevProb.description + '</td><td class="tbl_data">' + (prevProb.developer_comments != '' ? prevProb.developer_comments : 'None') + '</td></tr>';
+					}
+					txt += '</table>';
+				} else {
+					txt += '<br/>There are no preview problems';
+				}
+				
+				// Find Scan Findings
+				var findings = new GlideRecord('x_wms_pulse_sn_scan_finding');
+				findings.addQuery('dev_request', devRequest.sys_id + '');
+				findings.addQuery('state', 'current');
+				findings.query();
+				
+				if (findings.hasNext()) {
+					// Print header
+					txt += '<br/><b>Scan Findings:</b><br/>';
+					txt += '<table style="border-collapse: collapse;"><tr><td class="tbl_header">Remote Update</td><td class="tbl_header">Description</td><td class="tbl_header">Developer Comments</td></tr>';
+					while (findings.next()) {
+						txt += '<tr><td class="tbl_data">' + findings.table + findings.table_sys_id + '</td><td class="tbl_data">' + findings.recommendation + '</td><td class="tbl_data">' + (findings.developer_comments != '' ? findings.developer_comments : 'None') + '</td></tr>';
+					}
+					txt += '</table>';
+				} else {
+					txt += '<br/>There are no scan findings';
+				}
+				
+				template.print(txt);
+				
+				template.print('<div style="color:red;">');
+				template.print('<b>');
+				template.print(gs.getMessage('If you are rejecting this, please add a rejection reason so the requestor can make the needed corrections'));
+				template.print('</b>');
+				template.print('</div>');
+				template.print('<br/>');
+				template.print('<br/>');
+				template.print(gs.getMessage('Once a request is approved or rejected, any further approval actions will be blocked.'));
+				template.print('<hr />');
+				template.print('<p>');
+				template.print(gs.getMessage('Link does not work from a mobile device.'));
+				template.print('</p>');
+				template.print('<a href="mailto:' + gs.getProperty('instance_name') + '@service-now.com?subject=Re%3A' + current.sysapproval.getDisplayValue() + '%20-%20approve&amp;body=%0A%0ARef%3A' + email.watermark + '">' + gs.getMessage('Click here to approve') + ' ' + current.sysapproval.getDisplayValue() + '</a>');
+				template.print('<hr />');
+				template.print('<p>');
+				template.print(gs.getMessage('Link does not work from a mobile device.'));
+				template.print('</p>');
+				template.print('<a href="mailto:' + gs.getProperty('instance_name') + '@service-now.com?subject=Re%3A' + current.sysapproval.getDisplayValue() + '%20-%20reject&amp;body=%0A%0ARef%3A' + email.watermark + '">' + gs.getMessage('Click here to reject') + ' ' + current.sysapproval.getDisplayValue() + '</a>');
+				template.print('<hr />');
+				
+			}
+		})(current, template, email, email_action, event);]]></script>
+        <sys_class_name>sys_script_email</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-08-12 18:14:43</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>ab9a44e0dbd33344fce87bbb8c961900</sys_id>
+        <sys_mod_count>19</sys_mod_count>
+        <sys_name>pulse_email_approval_body</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sys_script_email_ab9a44e0dbd33344fce87bbb8c961900</sys_update_name>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2019-11-06 20:59:26</sys_updated_on>
+    </sys_script_email>
+</record_update>

@@ -1,44 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update>
     <sys_ui_section caption="Notes" section_id="79d3bd96db73930089fb2fb74896193d" sys_domain="global" table="x_wms_pulse_dev_request" version="3" view="">
         <sys_ui_element action="INSERT_OR_UPDATE">
-            <element>description</element>
+            <element>cab_reviewed</element>
             <position>0</position>
             <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2018-08-10 16:32:54</sys_created_on>
-            <sys_id>75d3bd96db73930089fb2fb7489619eb</sys_id>
+            <sys_created_on>2019-11-06 21:02:36</sys_created_on>
+            <sys_id>d9c96bccdb89c450fc9e5c77dc96195c</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="Notes" display_value="Notes" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">79d3bd96db73930089fb2fb74896193d</sys_ui_section>
             <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2018-08-10 16:32:54</sys_updated_on>
+            <sys_updated_on>2019-11-06 21:02:36</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
-            <element>work_notes</element>
+            <element>description</element>
             <position>1</position>
             <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2018-08-10 16:32:54</sys_created_on>
-            <sys_id>f5d3bd96db73930089fb2fb7489619eb</sys_id>
+            <sys_created_on>2019-11-06 21:02:36</sys_created_on>
+            <sys_id>91c96bccdb89c450fc9e5c77dc96195d</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="Notes" display_value="Notes" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">79d3bd96db73930089fb2fb74896193d</sys_ui_section>
             <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2018-08-10 16:32:54</sys_updated_on>
+            <sys_updated_on>2019-11-06 21:02:36</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>comments</element>
+            <position>2</position>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-11-06 21:02:36</sys_created_on>
+            <sys_id>15c96bccdb89c450fc9e5c77dc96195d</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="Notes" display_value="Notes" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">79d3bd96db73930089fb2fb74896193d</sys_ui_section>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-11-06 21:02:36</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>activity.xml</element>
-            <position>2</position>
+            <position>3</position>
             <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2018-08-10 16:32:54</sys_created_on>
-            <sys_id>79d3bd96db73930089fb2fb7489619eb</sys_id>
+            <sys_created_on>2019-11-06 21:02:36</sys_created_on>
+            <sys_id>95c96bccdb89c450fc9e5c77dc96195d</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter display_value="Activities (filtered)">444ea5c6bf310100e628555b3f0739d6</sys_ui_formatter>
             <sys_ui_section caption="Notes" display_value="Notes" name="x_wms_pulse_dev_request" sys_domain="global" view="Default view">79d3bd96db73930089fb2fb74896193d</sys_ui_section>
             <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2018-08-10 16:32:54</sys_updated_on>
+            <sys_updated_on>2019-11-06 21:02:36</sys_updated_on>
             <sys_user/>
             <type>formatter</type>
         </sys_ui_element>

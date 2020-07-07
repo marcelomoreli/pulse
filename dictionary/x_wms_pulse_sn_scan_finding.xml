@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?><database>
-    <element label="ServiceNow Scan Finding" max_length="40" name="x_wms_pulse_sn_scan_finding" type="collection">
+    <element label="ServiceNow Scan Finding" max_length="40" name="x_wms_pulse_sn_scan_finding" sizeclass="0" type="collection">
         <element attributes="edge_encryption_enabled=true" choice="1" label="Action" max_length="40" name="action" type="choice">
             <choice>
+                <element inactive_on_update="false" label="Remediate" value="remediate"/>
                 <element inactive_on_update="false" label="Accept" value="accept"/>
                 <element inactive_on_update="false" label="Ignore" value="ignore"/>
-                <element inactive_on_update="false" label="Remediate" value="remediate"/>
             </choice>
         </element>
         <element label="Developer Comments" max_length="400" name="developer_comments" type="string"/>

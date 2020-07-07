@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_documentation">
+    <sp_documentation action="INSERT_OR_UPDATE">
+        <content>#The Review Phase#&#13;
+##Two different level of reviews##&#13;
+As part of Pulse we recommend always having two level of reviews happening at some point before production on the chain of instances.&#13;
+&#13;
+##Functional Review&#13;
+During this review the process owner (Same concept as ITIL) should:&#13;
+* Ensure the development meets the process needs&#13;
+* Ensure it meets the standards defined&#13;
+* Make sure the release notes is well written&#13;
+* Clients are communicated to (if needed)&#13;
+&#13;
+##Technical Review&#13;
+Also known as "Code Review" is the review done by technical folks getting deep into the code. The code scans helps with this work a lot, but not everything can be automatically checked.&#13;
+Code reviews check for:&#13;
+* Code standards (indentation, comments, debug logs)&#13;
+* Coding Best Practices&#13;
+* Redundant code&#13;
+* Ensure that the development considered:&#13;
+  * Performance / Efficiency&#13;
+  * Scalability&#13;
+  * Upgradeability&#13;
+  * Usability / Reusability&#13;
+&#13;
+##Marking it as rejected/approved&#13;
+The review is the same as a normal approval. You can approve/reject it from the menu item "My Approvals", from the e-mail notification, from the related list on Pulse or any other enabled method.&#13;
+&#13;
+##What's next?&#13;
+Once all necessary reviews are completed, the development request will calculate the next phase. &#13;
+* "Ready for Testing": Whenever the environment it just went to requires Testing&#13;
+* "Pending Schedule": When it doesn't require testing but the next environment requires Schedule&#13;
+* "Promoting": When neither testing nor schedule is needed, it will automatically move it to the next environment&#13;
+Most cases the reviews are done prior to get to CERT environment and it will move to "Ready for Testing" for user acceptance testing.</content>
+        <sys_class_name>sp_documentation</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-08-16 15:00:41</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>589440b9db9f73c4fce87bbb8c9619c9</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name>2400|The Review Phase</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sp_documentation_589440b9db9f73c4fce87bbb8c9619c9</sys_update_name>
+        <sys_updated_by>pgmarti</sys_updated_by>
+        <sys_updated_on>2019-08-20 15:14:20</sys_updated_on>
+        <title>2400|The Review Phase</title>
+    </sp_documentation>
+</record_update>

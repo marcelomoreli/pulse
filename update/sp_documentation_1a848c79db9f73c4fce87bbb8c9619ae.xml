@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_documentation">
+    <sp_documentation action="INSERT_OR_UPDATE">
+        <content>#Dealing with Preview Problems#&#13;
+##What are preview problems?##&#13;
+When "Send to Review" is clicked on the update set, Pulse retrieves the update set in the target environment and does a preview of the update set.&#13;
+The process of previewing the update set detects problems that may occur during the installation.&#13;
+&#13;
+###Example of Preview Problems:&#13;
+A variable being promoted witout the catalog item/variable set, a record producer being promoted with a reference to a KA that doesn't exist, a form layout change missing a new field or any other reference to an record that doesn't exist in the target environment.&#13;
+&#13;
+##What should I do with the preview problems?&#13;
+&#13;
+Most times you can take some action to fix the preview problem.&#13;
+&#13;
+* Check the dependency that is missing and take one of the actions; each case may have a different resolution.&#13;
+  * Include the record that it's complaining about on the update set&#13;
+  * Fix the reference to the correct one&#13;
+  * Remove the record from the update set&#13;
+&#13;
+![Screenshot](previewProblemsReturnToDev.png)&#13;
+&#13;
+To reopen the update set and do the changes to avoid the preview problems, you have to click "Return to Development" on the Pulse Request.&#13;
+&#13;
+In very rare cases you will go on with the process without resolving the preview problem. In case you do, it's mandatory for you to include in the "Developer Comments" the reason why you're going on with that preview problem. If that's the case, make sure you put the action you expect to be taken - Ignore (Commit anyway) or Skip (Do not deploy it).&#13;
+&#13;
+![Screenshot](previewProblemsDevComments.png)&#13;
+&#13;
+To include Developer Comments, you can double-click the column on the related list and type the comments.&#13;
+&#13;
+***A development request cannot be promoted while unaddressed preview problems exist!***&#13;
+&#13;
+Once all preview problems are dealt with, the development process will go on automatically.</content>
+        <sys_class_name>sp_documentation</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-08-16 15:00:33</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>1a848c79db9f73c4fce87bbb8c9619ae</sys_id>
+        <sys_mod_count>6</sys_mod_count>
+        <sys_name>2300|Dealing with Preview Problems</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sp_documentation_1a848c79db9f73c4fce87bbb8c9619ae</sys_update_name>
+        <sys_updated_by>pgmarti</sys_updated_by>
+        <sys_updated_on>2019-08-20 15:06:28</sys_updated_on>
+        <title>2300|Dealing with Preview Problems</title>
+    </sp_documentation>
+</record_update>

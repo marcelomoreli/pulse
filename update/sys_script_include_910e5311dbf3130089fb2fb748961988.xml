@@ -10,14 +10,16 @@
         <script><![CDATA[var PulseUtilsImpl = Class.create();
 PulseUtilsImpl.prototype = {
     PULSE_LOG_LEVEL : 'x_wms_pulse.log_level',
-
+    
     initialize: function() {
         this.l = new global.GSLog(this.PULSE_LOG_LEVEL, this.type);
         this.production_instance = this.getProductionInstance();
         this.currInstance = gs.getProperty('instance_name');
         this.pulseGlobal = new global.PulseGlobal();
     },
-
+    // Initializing globals for lint
+    /* global global, gs, sn_ws, Class, DevRequestStates, GlideRecord, GlideRemoteGlideRecord, GlideSysAttachment, GlideDateTime, GlideScopedEvaluator  */
+    
     // Called from an ASYNC business rule (With high priority) when the state change on a Dev Request
     // Basically calculates what to do on the state it got to
     handleStateChange: function(devRequest) {
@@ -29,147 +31,184 @@ PulseUtilsImpl.prototype = {
             message : '',
             error : ''
         };
-
+        
         switch (state) {
-            case DevRequestStates.NEW:
-				// Creates an update set in the development instance
-				// Moves to In Development automatically after it's created
-                answer = this.remoteCreateUpdateSet(devRequest);
-                break;
-            case DevRequestStates.IN_DEVELOPMENT:
-                // Do nothing - just wait the developer to finish his work.
-				// Once work is completed, Developer should click "Code Scan" on the update set form
-				// to check for findings from code scan and once they're cleared out, complete the update set and
-				// click "Send to Review"
-                break;
-            case DevRequestStates.TESTING_PREVIEW:
-				// When the update set is sent to review by the developer, it will first try to preview the update set
-				// on the next environment (parent environment defined in Prod)
-				// If we have preview problems or findings from code scan
-				// it will move the dev request to awaiting justification
-                answer = this.remotePromoteUpdateSet(devRequest, true);
-                break;
-            case DevRequestStates.AWAITING_JUSTIFICATION:
-                // Wait for developer to put justifications on the preview problems
-                // Once all of them have been addressed, move to "In Review" or "In Review (Problem)"
-                // depending if the dev request have preview problems or not
-                // It's also possible to send it back to the developer by moving to "Review Actions"
-                // so that he/she can fix something
-                break;
-            case DevRequestStates.IN_REVIEW_PROBLEMS:
-                // Works exactly the same as "In Review", it's in a different state just to flag it
-            case DevRequestStates.IN_REVIEW:
-                // Wait for the approval Workflow
-                // The workflow should identify what's the next step for the dev request
-                // It may or may not require approval
-                // The workflow will call one of the three functions accordingly:
-                // approveDevRequest: Approved
-                //  - Move to "Pending Schedule" if it is not "auto-promote"
-                //  - Move to "Promoting" if it is "auto-promote"
-                // rejectDevRequest: Approval was rejected
-                //  - Set the dev request to "Review Actions" with the reason for rejection
-                // skipApprovalDevRequest: Approvals were skipped - no approvers
-                //  - If we have a target instance:
-                //  -- If instance x application is flagged as "Auto-approve"
-                //  --- Move to "Pending Schedule" if it is not "auto-promote"
-                //  --- Move to "Promoting" if it is "auto-promote"
-                //  -- If instance x application is not flagged as "Auto-approve": Fail it (Automation failed)
-                //  - If we don't have a target instance:
-                //  -- Means it has reached the last enviornment. Move it to "Closing Change"
-                answer = this.restartApprovalWorkflow(devRequest);
-                break;
-            case DevRequestStates.REVIEW_ACTIONS:
-                // Sends a notification to the developer and reopen the update set
-                // State is moved to "In Development" after update set is reopened
-                answer = this.remoteReopenUpdateSet(devRequest);
-                break;
-            case DevRequestStates.PENDING_SCHEDULE:
-                // Wait for user to schedule the Dev Request
-                // Once a date-time is put in place, Dev request will move to "Generating Change"
-                break;
-            case DevRequestStates.PROMOTING:
-                // Automation that previews the update set
-                // Right after it's previewed it moves to "Committing"
-                answer = this.remotePromoteUpdateSet(devRequest, false);
-                break;
-            case DevRequestStates.COMMITTING:
-                // Automation that tries to commit an update set
-                // After commit is done, it will move to:
-                // - Ready for Testing: If the target instance (just promoted to) requires testing
-                // - Done: In case doesn't require testing and doesn't have another environment to go to
-                // - In Review: In case it does have another environment to go to and doesn't require testing on current environment
-                answer = this.remoteCommitUpdateSet(devRequest);
-                break;
-            case DevRequestStates.READY_FOR_TESTING:
-                // Wait user to Test fail or Test Pass the Dev Request
-                break;
-            case DevRequestStates.TEST_FAILED:
-                // When it's Test Failed, it's expected that the user created a remediation
-                // by creating the remediaton, the dev request moves to "Awaiting Remediation"
-                break;
-            case DevRequestStates.TEST_PASSED:
-                // When it's test passed, Send it to "In Review" so it calculates the next step
-                answer = this.localMoveToInReview(devRequest);
-                break;
-            case DevRequestStates.AWAITING_REMEDIATION:
-                // This basically waits the child to be in the same environment as this one (and test passed if it requires testing)
-                // Once it happens, it moves to "In Review" to calculate next step (moved by child)
-                // and the child (remediation) will become Awaiting Parent
-                break;
-            case DevRequestStates.AWAITING_PARENT:
-                // Dependency purposes
-                // Once the parent moves to another environment, move this one too
-                // State is updated by the parent
-                break;
-            case DevRequestStates.GENERATING_CHANGE:
-                // Generate a change if it doesn't already have one and it needs it
-                // if it have one, check the time and update accordingly
-                // After the change is created/updated, move it to "Scheduled"
-                answer = this.generateChange(devRequest);
-                break;
-            case DevRequestStates.SCHEDULED:
-                // The scheduled job will run and move from this state to the next one
-                // no manual actions are supposed to happen during this state
-                break;
-            case DevRequestStates.CLOSING_CHANGE:
-                // Closes the change request associated to the dev request
-                // Moves it to DONE once it completes
-                // If there is no change request, still moves to DONE
-                answer = this.closeChange(devRequest);
-                break;
-            case DevRequestStates.RESTORING:
-                // Once a Development is backed up and have a file attached, you can restore it
-                answer = this.remoteRestoreBackup(devRequest);
-                break;
-            case DevRequestStates.MOVING_TO_IGNORE:
-                // Called in order to discard a development request
-                answer = this.remoteIgnoreUpdateSet(devRequest);
-                break;
-            case DevRequestStates.ON_HOLD:
-                // State to hold development
-                break;
-            case DevRequestStates.BACKING_UP:
-                answer = this.remoteBackupDevelopment(devRequest);
-                break;
-            case DevRequestStates.DONE:
-                // Final State
-                break;
-            case DevRequestStates.DISCARDED:
-                // Final State
-                break;
-            case DevRequestStates.MERGED:
-                // Final State
-                break;
-            case DevRequestStates.AUTOMATION_FAILURE:
-                // State has to be checked manually
-                break;
-            case DevRequestStates.PREVIEW_PROBLEMS:
-                // State has to be checked manually
-                break;
-            default:
-                this.l.logDebug('handleStateChange reached DEFAULT switch!');
+        case DevRequestStates.NEW:
+            // Creates an update set in the development instance
+            // Moves to In Development automatically after it's created
+            gs.eventQueue('x_wms_pulse.new', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            answer = this.remoteCreateUpdateSet(devRequest);
+            break;
+        case DevRequestStates.IN_DEVELOPMENT:
+            // Do nothing - just wait the developer to finish his work.
+            // Once work is completed, Developer should click "Code Scan" on the update set form
+            // to check for findings from code scan and once they're cleared out, complete the update set and
+            // click "Send to Review"
+            this.cancelApprovals(devRequest);
+            gs.eventQueue('x_wms_pulse.in_development', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            break;
+        case DevRequestStates.TESTING_PREVIEW:
+            // When the update set is sent to review by the developer, it will first try to preview the update set
+            // on the next environment (parent environment defined in Prod)
+            // If we have preview problems or findings from code scan
+            // it will move the dev request to awaiting justification
+            gs.eventQueue('x_wms_pulse.testing_preview', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            answer = this.remotePromoteUpdateSet(devRequest, true);
+            break;
+        case DevRequestStates.AWAITING_JUSTIFICATION:
+            // Wait for developer to put justifications on the preview problems
+            // Once all of them have been addressed, move to "In Review" or "In Review (Problem)"
+            // depending if the dev request have preview problems or not
+            // It's also possible to send it back to the developer by moving to "Review Actions"
+            // so that he/she can fix something
+            gs.eventQueue('x_wms_pulse.awaiting_justification', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            break;
+        case DevRequestStates.IN_REVIEW_PROBLEMS:
+            // Works exactly the same as "In Review", it's in a different state just to flag it
+            gs.eventQueue('x_wms_pulse.in_review', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            answer = this.restartApprovalWorkflow(devRequest);
+            break;
+        case DevRequestStates.IN_REVIEW:
+            // Wait for the approval Workflow
+            // The workflow should identify what's the next step for the dev request
+            // It may or may not require approval
+            // The workflow will call one of the three functions accordingly:
+            // approveDevRequest: Approved
+            //  - Move to "Pending Schedule" if it is not "auto-promote"
+            //  - Move to "Promoting" if it is "auto-promote"
+            // rejectDevRequest: Approval was rejected
+            //  - Set the dev request to "Review Actions" with the reason for rejection
+            // skipApprovalDevRequest: Approvals were skipped - no approvers
+            //  - If we have a target instance:
+            //  -- If instance x application is flagged as "Auto-approve"
+            //  --- Move to "Pending Schedule" if it is not "auto-promote"
+            //  --- Move to "Promoting" if it is "auto-promote"
+            //  -- If instance x application is not flagged as "Auto-approve": Fail it (Automation failed)
+            //  - If we don't have a target instance:
+            //  -- Means it has reached the last enviornment. Move it to "Closing Change"
+            gs.eventQueue('x_wms_pulse.in_review', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            answer = this.restartApprovalWorkflow(devRequest);
+            break;
+        case DevRequestStates.REVIEW_ACTIONS:
+            // Sends a notification to the developer and reopen the update set
+            // State is moved to "In Development" after update set is reopened
+            gs.eventQueue('x_wms_pulse.review_actions', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            this.cancelApprovals(devRequest);
+            answer = this.remoteReopenUpdateSet(devRequest);
+            break;
+        case DevRequestStates.PENDING_SCHEDULE:
+            // Wait for user to schedule the Dev Request
+            // Once a date-time is put in place, Dev request will move to "Generating Change"
+            gs.eventQueue('x_wms_pulse.pending_schedule', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            break;
+        case DevRequestStates.PROMOTING:
+            // Automation that previews the update set
+            // Right after it's previewed it moves to "Committing"
+            gs.eventQueue('x_wms_pulse.promoting', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            answer = this.remotePromoteUpdateSet(devRequest, false);
+            break;
+        case DevRequestStates.COMMITTING:
+            // Automation that tries to commit an update set
+            // After commit is done, it will move to:
+            // - Ready for Testing: If the target instance (just promoted to) requires testing
+            // - Done: In case doesn't require testing and doesn't have another environment to go to
+            // - In Review: In case it does have another environment to go to and doesn't require testing on current environment
+            gs.eventQueue('x_wms_pulse.committing', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            answer = this.remoteCommitUpdateSet(devRequest);
+            break;
+        case DevRequestStates.READY_FOR_TESTING:
+            // Wait user to Test fail or Test Pass the Dev Request
+            gs.eventQueue('x_wms_pulse.ready_for_testing', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            break;
+        case DevRequestStates.TEST_FAILED:
+            // When it's Test Failed, it's expected that the user created a remediation
+            // by creating the remediaton, the dev request moves to "Awaiting Remediation"
+            gs.eventQueue('x_wms_pulse.test_failed', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            break;
+        case DevRequestStates.TEST_PASSED:
+            // When it's test passed, Send it to "In Review" so it calculates the next step
+            gs.eventQueue('x_wms_pulse.test_passed', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            this.checkPastSchedule(devRequest);
+            answer = this.localMoveToInReview(devRequest);
+            break;
+        case DevRequestStates.AWAITING_REMEDIATION:
+            // This basically waits the child to be in the same environment as this one (and test passed if it requires testing)
+            // Once it happens, it moves to "In Review" to calculate next step (moved by child)
+            // and the child (remediation) will become Awaiting Parent
+            gs.eventQueue('x_wms_pulse.awaiting_remediation', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            break;
+        case DevRequestStates.AWAITING_PARENT:
+            // Dependency purposes
+            // Once the parent moves to another environment, move this one too
+            // State is updated by the parent
+            gs.eventQueue('x_wms_pulse.awaiting_parent', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            break;
+        case DevRequestStates.GENERATING_CHANGE:
+            // Generate a change if it doesn't already have one and it needs it
+            // if it have one, check the time and update accordingly
+            // After the change is created/updated, move it to "Scheduled"
+            gs.eventQueue('x_wms_pulse.generating_change', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            answer = this.generateChange(devRequest);
+            break;
+        case DevRequestStates.SCHEDULED:
+            // The scheduled job will run and move from this state to the next one
+            // no manual actions are supposed to happen during this state
+            gs.eventQueue('x_wms_pulse.scheduled', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            break;
+        case DevRequestStates.CLOSING_CHANGE:
+            // Closes the change request associated to the dev request
+            // Moves it to DONE once it completes
+            // If there is no change request, still moves to DONE
+            gs.eventQueue('x_wms_pulse.closing_change', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            answer = this.closeChange(devRequest);
+            break;
+        case DevRequestStates.RESTORING:
+            // Once a Development is backed up and have a file attached, you can restore it
+            answer = this.remoteRestoreBackup(devRequest);
+            break;
+        case DevRequestStates.MOVING_TO_IGNORE:
+            // Called in order to discard a development request
+            gs.eventQueue('x_wms_pulse.moving_to_ignore', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            try {
+                this.remoteBackupDevelopment(devRequest);
+            } catch (e) {
+                // do nothing
+            }
+            answer = this.remoteIgnoreUpdateSet(devRequest);
+            break;
+        case DevRequestStates.ON_HOLD:
+            // State to hold development
+            gs.eventQueue('x_wms_pulse.on_hold', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            break;
+        case DevRequestStates.BACKING_UP:
+            gs.eventQueue('x_wms_pulse.backing_up', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            answer = this.remoteBackupDevelopment(devRequest);
+            break;
+        case DevRequestStates.DONE:
+            // Final State
+            gs.eventQueue('x_wms_pulse.done', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            break;
+        case DevRequestStates.DISCARDED:
+            gs.eventQueue('x_wms_pulse.discarded', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            // Final State
+            break;
+        case DevRequestStates.MERGED:
+            // Final State
+            gs.eventQueue('x_wms_pulse.merged', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            break;
+        case DevRequestStates.AUTOMATION_FAILURE:
+            // State has to be checked manually
+            this.cancelApprovals(devRequest);
+            gs.eventQueue('x_wms_pulse.automation_failure', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            break;
+        case DevRequestStates.PREVIEW_PROBLEMS:
+            // State has to be checked manually
+            gs.eventQueue('x_wms_pulse.preview_problems', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            break;
+        default:
+            this.l.logDebug('handleStateChange reached DEFAULT switch!');
         }
-
+        
         var update = false;
         if (answer.message && answer.message != '') {
             devRequest.work_notes = answer.message;
@@ -185,19 +224,83 @@ PulseUtilsImpl.prototype = {
         if (devRequest.getValue('state') != state) {
             update = true;
         }
-
+        
+        if (devRequest.sync_to_source) {
+            // Try some integration
+            try {
+                update = this.triggerSyncToSource(devRequest) || update;
+            } catch (e) {
+                this.l.logDebug('Error on integration: ' + e);
+            }
+        }
+        
         if (update) {
             this.l.logDebug('handleStateChange running update. State[' + devRequest.getValue('state') + '] State Earlier[' + state + ']');
             devRequest.update();
         }
     },
-
+    
+    // Checks if there is an integration for this dev request
+    triggerSyncToSource: function(devRequest) {
+        var source = devRequest.getValue('source');
+        if (source != '') {
+            var scriptName = 'PulseIntegration' + source;
+            var si = new GlideRecord('sys_script_include');
+            si.addQuery('name', scriptName);
+            si.query();
+            if (si.next()) {
+                this.l.logDebug('Script include that will be used:' + si.api_name);
+                var SIcode = new GlideRecord('sys_script_include');
+                // Hardcoded sys_id in here is on purpose
+                // eslint-disable-next-line servicenow/no-hardcoded-sysids
+                SIcode.addQuery('sys_id', '6f2ffe64db236300cbdfd6aa48961930'); // Get a real record
+                SIcode.query();
+                SIcode.next();
+                
+                var globalEvaluator = new GlideScopedEvaluator();
+                SIcode.script = 'result = new ' + si.api_name + '().process(devRequest);';
+                globalEvaluator.evaluateScript(SIcode, 'script', {devRequest : devRequest, result : null});
+                var resultFromScript = globalEvaluator.getVariable('result');
+                    
+                if (resultFromScript && resultFromScript != '') {
+                    devRequest.work_notes = resultFromScript;
+                    return true;
+                }
+            } else {
+                this.l.logDebug(scriptName + ' script include not found.');
+            }
+        }
+        return false;
+    },
+        
+    cancelApprovals: function(devRequest) {
+        var grGroup = new GlideRecord('sysapproval_group');
+        grGroup.addQuery('parent', devRequest.sys_id);
+        grGroup.addNotNullQuery('wf_activity');
+        grGroup.query();
+        while (grGroup.next()) {
+            grGroup.setValue('approval', 'cancelled');
+            grGroup.update();
+        }
+            
+        var grApp = new GlideRecord('sysapproval_approver');
+        grApp.addNotNullQuery('wf_activity');
+        var qc = grApp.addQuery('sysapproval', devRequest.sys_id);
+        qc.addOrCondition('document_id', devRequest.sys_id);
+        grApp.query();
+        while (grApp.next()) {
+            grApp.setValue('state', 'cancelled');
+            grApp.update();
+        }
+    },
+        
     // Restart the approval workflow
     restartApprovalWorkflow: function(devRequest) {
         var answer = {
             success : true,
             message : ''
         };
+        this.cancelApprovals(devRequest);
         if (new global.Workflow().hasWorkflow(devRequest)) {
             var oldWorkflow = new global.Workflow();
             oldWorkflow.cancel(devRequest);
@@ -206,7 +309,7 @@ PulseUtilsImpl.prototype = {
         newWorkflow.startFlow(new global.Workflow().getWorkflowFromName('Development Request Approval'), devRequest, '');
         return answer;
     },
-
+        
     // Gets a targetEnvironment for a dev request, returns false in case we don't have one
     getTargetEnvironment: function(devRequest) {
         var currEnv = this.getCurrentEnvironment(devRequest);
@@ -220,7 +323,7 @@ PulseUtilsImpl.prototype = {
         }
         return false;
     },
-
+        
     // Gets the current environment for a dev request, returns false in case we don't have one
     getCurrentEnvironment: function(devRequest) {
         var currEnv = new GlideRecord('x_wms_pulse_sn_instance');
@@ -231,7 +334,7 @@ PulseUtilsImpl.prototype = {
         }
         return false;
     },
-
+        
     getDevelopmentEnvironment: function(devRequest) {
         var devEnv = new GlideRecord('x_wms_pulse_sn_instance');
         devEnv.addQuery('sys_id', devRequest.dev_instance);
@@ -241,20 +344,30 @@ PulseUtilsImpl.prototype = {
         }
         return false;
     },
-
+        
     dependencyCheck: function(devRequest, targetEnv) {
         // Returns true if doesn't have parent or parent is already on target environment
         if (devRequest.parent == '') {
             return true;
         }
+        
+        var parentRoot = devRequest.parent.root_sys_id + '';
+        if (parentRoot == '') {
+            this.l.logDebug('DependencyCheck: Parent with a root_sys_id:' + devRequest.parent);
+            return false;
+        }
 
-        var usObj = JSON.parse(devRequest.parent.update_set_json + '');
-        if (usObj[targetEnv.getValue('name')] && usObj[targetEnv.getValue('name')].local) {
-            return true;
+        if (targetEnv) {
+            var path = '/api/now/table/sys_update_set?sysparm_query=u_root_sys_id%3D' + parentRoot;
+            var operation = 'get';
+            var answer = this.callAPI(targetEnv.sys_id, path, operation, '');
+            if (typeof answer != 'undefined' && typeof answer[0] != 'undefined' && typeof answer[0].sys_id != 'undefined' &&  answer[0].sys_id != '') {
+                return true;
+            }
         }
         return false;
     },
-
+        
     // BEFORE updating to review, it will try to PRE-preview the update set to find preview problems
     // This function should run in PROD to call target environment to retrieve / preview an update set
     remotePromoteUpdateSet: function(devRequest, testPromote) {
@@ -265,16 +378,16 @@ PulseUtilsImpl.prototype = {
             previewProblemsCount : 0,
             previewProblemsResolved : 0
         };
-
+            
         var usObj = JSON.parse(devRequest.getValue('update_set_json'));
-        var responseObj;
+        var responseObj, path, operation, body;
         var restoringBackup = devRequest.getValue('state') == DevRequestStates.RESTORING;
-        
-        //if (!this.isProduction()) {
+            
+        if (this.isProduction()) {
             var prodGR = new GlideRecord('x_wms_pulse_sn_instance');
             prodGR.addQuery('name', this.production_instance);
             prodGR.query();
-
+                
             if (prodGR.next()) {
                 if (prodGR.active) {
                     if (prodGR.getValue('type') == 'prod') {
@@ -291,118 +404,125 @@ PulseUtilsImpl.prototype = {
                             }
                             if (targetEnv) {
                                 if (restoringBackup || this.dependencyCheck(devRequest, targetEnv)) {
-
-                                    /*
-                                    *    START OF LOAD
-                                    */
-                                    if (!restoringBackup) {
-                                        this.l.logDebug('Loading update set (root_sys_id): ' + devRequest.root_sys_id + ' in ' + targetEnv.name);
-                                        path = '/api/x_wms_pulse/pulse/updateset/retrieve/' + currEnv.name + '/' + usObj[currEnv.getValue('name')].local;
-                                        operation = 'get';
-                                        body = '';
-                                        answer = this.callAPI(targetEnv.sys_id, path, operation, body);
-                                    }
-
-                                    if (restoringBackup || (answer && answer.success)) {
-                                        if (!restoringBackup) {
-                                            if (!usObj[targetEnv.name]) {
-                                                usObj[targetEnv.name] = {
-                                                    local: '',
-                                                    retrieved: '',
-                                                };
-                                            }
-                                            usObj[targetEnv.name].retrieved = answer.remote_sys_id;
-                                            devRequest.update_set_json = JSON.stringify(usObj);
-                                            devRequest.comments = 'Update set ' + usObj[currEnv.getValue('name')].local + ' loaded in ' + targetEnv.name + ' as ' + answer.remote_sys_id;
-                                        } else {
-                                            // Restoring a backup - grab the sys_id to preview
-                                            answer.remote_sys_id = usObj[targetEnv.name].retrieved + '';
-                                        }
-
+                                    // Code Freeze?
+                                    var appInstanceConfig = this.getInstanceApplication(devRequest, targetEnv.sys_id + '');
+                                    if (appInstanceConfig && !appInstanceConfig.code_freeze) {
                                         /*
-                                        *    END OF LOAD - START of PREVIEW
-                                        */
-
-                                        this.l.logDebug('Previewing update set (root_sys_id): ' + devRequest.root_sys_id + ' in ' + targetEnv.name);
-                                        path = '/api/x_wms_pulse/pulse/updateset/preview/' + answer.remote_sys_id;
-                                        operation = 'post';
-                                        body = '';
-                                        var responseObj = this.callAPI(targetEnv.sys_id, path, operation, body);
-
-                                        // If we already have issues for this update set on this instace, set it to "Previous"
-                                        var prevIssues = new GlideRecord('x_wms_pulse_preview_problem');
-                                        prevIssues.addQuery('dev_request', devRequest.sys_id);
-                                        prevIssues.addQuery('instance', targetEnv.sys_id);
-                                        prevIssues.addQuery('version', 'current');
-                                        prevIssues.query();
-
-                                        while (prevIssues.next()) {
-                                            prevIssues.setValue('version', 'previous');
-                                            prevIssues.update();
+                                             *    START OF LOAD
+                                             */
+                                        if (!restoringBackup) {
+                                            this.l.logDebug('Loading update set (root_sys_id): ' + devRequest.root_sys_id + ' in ' + targetEnv.name);
+                                            path = '/api/x_wms_pulse/pulse/updateset/retrieve/' + currEnv.name + '/' + devRequest.root_sys_id;
+                                            operation = 'get';
+                                            body = '';
+                                            answer = this.callAPI(targetEnv.sys_id, path, operation, body);
                                         }
-
-                                        if (responseObj.success) {
-                                            answer.success = true;
-                                        } else {
-                                            // Some preview problems
-                                            answer.previewProblemsCount = parseInt(responseObj.previewProblemsCount);
-                                            answer.message = responseObj.message;
-                                            answer.previewProblemsResolved = 0;
-                                            answer.previewProblems = responseObj.previewProblems;
-                                            // Insert the preview problems into PROD instance (this instance)
-                                            for (var issueN in responseObj.previewProblems) {
-                                                var issue = responseObj.previewProblems[issueN];
-                                                // Calculate last action on this preview problem
-                                                var status = '';
-                                                var devComm = '';
-                                                var latestSameIssue = new GlideRecord('x_wms_pulse_preview_problem');
-                                                latestSameIssue.addQuery('dev_request', devRequest.sys_id);
-                                                latestSameIssue.addQuery('remote_update', issue.remote_update);
-                                                latestSameIssue.addQuery('description', issue.description);
-                                                latestSameIssue.addQuery('status', '!=', '');
-                                                latestSameIssue.setLimit(1);
-                                                latestSameIssue.orderByDesc('sys_updated_on');
-                                                latestSameIssue.query();
-                                                if (latestSameIssue.next()) {
-                                                    this.l.logDebug('latestSameIssue.status:' + latestSameIssue.status + ' and issue.status: ' + issue.status);
-                                                    status = latestSameIssue.status;
-                                                    devComm = latestSameIssue.developer_comments;
-                                                    if (status != '') answer.previewProblemsResolved++;
+                                            
+                                        if (restoringBackup || (answer && answer.success)) {
+                                            if (!restoringBackup) {
+                                                if (!usObj[targetEnv.name]) {
+                                                    usObj[targetEnv.name] = {
+                                                        local: '',
+                                                        retrieved: '',
+                                                    };
                                                 }
-                                                
-                                                var newIssue = new GlideRecord('x_wms_pulse_preview_problem');
-                                                newIssue.setValue('problem_sys_id', issue.sys_id);
-                                                newIssue.setValue('type', issue.type);
-                                                newIssue.setValue('remote_update', issue.remote_update);
-                                                newIssue.setValue('description', issue.description);
-                                                newIssue.setValue('available_actions', issue.available_actions);
-                                                newIssue.setValue('status', !issue.status || issue.status == '' ? status : issue.status);
-                                                newIssue.setValue('developer_comments', devComm);
-                                                newIssue.setValue('missing_item_table', issue.missing_item_table);
-                                                newIssue.setValue('missing_item', issue.missing_item);
-                                                newIssue.setValue('remote_update_set', answer.remote_sys_id);
-                                                newIssue.setValue('dev_request', devRequest.sys_id);
-                                                newIssue.setValue('instance', targetEnv.sys_id);
-                                                newIssue.setValue('version', 'current');
-                                                newIssue.insert();
+                                                usObj[targetEnv.name].retrieved = answer.remote_sys_id;
+                                                devRequest.update_set_json = JSON.stringify(usObj);
+                                                this.l.logDebug('Update set ' + usObj[currEnv.getValue('name')].local + ' loaded in ' + targetEnv.name + ' as ' + answer.remote_sys_id);
+                                                // We just print too much info in the work notes if we do this
+                                                //devRequest.work_notes = 'Update set retrieved in ' + targetEnv.name;
+                                            } else {
+                                                // Restoring a backup - grab the sys_id to preview
+                                                answer.remote_sys_id = usObj[targetEnv.name].retrieved + '';
                                             }
-
-                                            this.syncPreviewIssues(devRequest);
+                                                
+                                            /*
+                                                 *    END OF LOAD - START of PREVIEW
+                                                 */
+                                                
+                                            this.l.logDebug('Previewing update set (root_sys_id): ' + devRequest.root_sys_id + ' in ' + targetEnv.name);
+                                            path = '/api/x_wms_pulse/pulse/updateset/preview/' + answer.remote_sys_id;
+                                            operation = 'post';
+                                            body = '';
+                                            responseObj = this.callAPI(targetEnv.sys_id, path, operation, body);
+                                                
+                                            // If we already have issues for this update set on this instace, set it to "Previous"
+                                            var prevIssues = new GlideRecord('x_wms_pulse_preview_problem');
+                                            prevIssues.addQuery('dev_request', devRequest.sys_id);
+                                            prevIssues.addQuery('instance', targetEnv.sys_id);
+                                            prevIssues.addQuery('version', 'current');
+                                            prevIssues.query();
+                                                
+                                            while (prevIssues.next()) {
+                                                prevIssues.setValue('version', 'previous');
+                                                prevIssues.update();
+                                            }
+                                                
+                                            if (responseObj.success) {
+                                                answer.success = true;
+                                            } else {
+                                                // Some preview problems
+                                                answer.previewProblemsCount = parseInt(responseObj.previewProblemsCount);
+                                                if (responseObj.message) {
+                                                    answer.message = responseObj.message;
+                                                } else {
+                                                    answer.message = JSON.stringify(responseObj);
+                                                }
+                                                answer.previewProblemsResolved = 0;
+                                                answer.previewProblems = responseObj.previewProblems;
+                                                // Insert the preview problems into PROD instance (this instance)
+                                                for (var issueN in responseObj.previewProblems) {
+                                                    var issue = responseObj.previewProblems[issueN];
+                                                    // Calculate last action on this preview problem
+                                                    var status = '';
+                                                    var devComm = '';
+                                                    var latestSameIssue = new GlideRecord('x_wms_pulse_preview_problem');
+                                                    latestSameIssue.addQuery('dev_request', devRequest.sys_id);
+                                                    latestSameIssue.addQuery('remote_update', issue.remote_update);
+                                                    latestSameIssue.addQuery('description', issue.description);
+                                                    latestSameIssue.addQuery('status', '!=', '');
+                                                    latestSameIssue.setLimit(1);
+                                                    latestSameIssue.orderByDesc('sys_updated_on');
+                                                    latestSameIssue.query();
+                                                    if (latestSameIssue.next()) {
+                                                        this.l.logDebug('latestSameIssue.status:' + latestSameIssue.status + ' and issue.status: ' + issue.status);
+                                                        status = latestSameIssue.status;
+                                                        devComm = latestSameIssue.developer_comments;
+                                                        if (status != '') answer.previewProblemsResolved++;
+                                                    }
+                                                        
+                                                    var newIssue = new GlideRecord('x_wms_pulse_preview_problem');
+                                                    newIssue.setValue('problem_sys_id', issue.sys_id);
+                                                    newIssue.setValue('type', issue.type);
+                                                    newIssue.setValue('remote_update', issue.remote_update);
+                                                    newIssue.setValue('description', issue.description);
+                                                    newIssue.setValue('available_actions', issue.available_actions);
+                                                    newIssue.setValue('status', !issue.status || issue.status == '' ? status : issue.status);
+                                                    newIssue.setValue('developer_comments', devComm);
+                                                    newIssue.setValue('missing_item_table', issue.missing_item_table);
+                                                    newIssue.setValue('missing_item', issue.missing_item);
+                                                    newIssue.setValue('remote_update_set', answer.remote_sys_id);
+                                                    newIssue.setValue('dev_request', devRequest.sys_id);
+                                                    newIssue.setValue('instance', targetEnv.sys_id);
+                                                    newIssue.setValue('version', 'current');
+                                                    newIssue.insert();
+                                                }
+                                                    
+                                                this.syncPreviewIssues(devRequest);
+                                            }
+                                        } else {
+                                            answer.message = 'Failure on retrieving update set.';
+                                            if (answer.error) {
+                                                answer.message += ' ' + answer.error;
+                                            }
                                         }
                                     } else {
-                                        answer.message = 'Failure on retrieving update set.';
-                                        if (answer.error) {
-                                            answer.message += ' ' + answer.error;
-                                        }
+                                        answer.message = 'CODE FREEZE: Environment is on freeze due to maintenance. Update set creation will resume once maintenance is completed.';
                                     }
                                 } else {
                                     answer.message = 'Parent is not on the target environment yet. Setting to Awaiting Parent';
                                     answer.success = true;
-                                    if (devRequest.getValue('remediation_for')) {
-                                        devRequest.setValue('state', DevRequestStates.READY_FOR_TESTING);
-                                    } else {
-                                        devRequest.setValue('state', DevRequestStates.AWAITING_PARENT);
-                                    }
+                                    devRequest.setValue('state', DevRequestStates.AWAITING_PARENT);
                                 }
                             } else {
                                 answer.message = 'Target environment not found.';
@@ -419,14 +539,14 @@ PulseUtilsImpl.prototype = {
             } else {
                 answer.message = 'Production is not defined. Please talk to your administrator';
             }
-        //} else {
-        //    answer.message = 'You cannot perform this action in Production! Only in Sub-Dev environments.';
-        //}
-
+        } else {
+            answer.message = 'You cannot perform this action in Sub-Prod! Only in Production.';
+        }
+            
         // Put the answer back into the u_status on the Update set on the Dev Environment!
         if (!restoringBackup) {
             this.remoteSetUpdateSetStatus(devRequest.current_instance.sys_id, usObj[devRequest.current_instance.name].local, JSON.stringify(answer));
-
+                
             var targetState;
             if (answer.previewProblemsCount > 0 && answer.previewProblemsResolved != answer.previewProblemsCount) {
                 targetState = testPromote ? DevRequestStates.AWAITING_JUSTIFICATION : DevRequestStates.PREVIEW_PROBLEMS;
@@ -437,7 +557,7 @@ PulseUtilsImpl.prototype = {
                     targetState = DevRequestStates.COMMITTING;
                 }
             }
-
+                
             if (testPromote) {
                 if (devRequest.getValue('state') == DevRequestStates.TESTING_PREVIEW) {
                     devRequest.setValue('state', targetState);
@@ -453,25 +573,25 @@ PulseUtilsImpl.prototype = {
                 answer.success = true;
             }
         }
-
+            
         this.l.logDebug('Answer from remotePromoteUpdateSet: ' + JSON.stringify(answer));
         return answer;
     },
-
+        
     // Sync the preview problem resolutions from the Dev request to the target instance
     syncPreviewIssues: function(devRequest) {
         this.l.logDebug('Starting syncPreviewIssues[' + devRequest.number + ']');
         var targetEnv;
         var body = {
         };
-
+            
         var needsSync = false;
         var previewIssues = new GlideRecord('x_wms_pulse_preview_problem');
         previewIssues.addQuery('dev_request', devRequest.sys_id);
         previewIssues.addQuery('version', 'current');
         previewIssues.addQuery('status', '!=', '');
         previewIssues.query();
-
+            
         while (previewIssues.next()) {
             if (!targetEnv) {
                 targetEnv = previewIssues.instance;
@@ -480,18 +600,18 @@ PulseUtilsImpl.prototype = {
             needsSync = true;
         }
         this.l.logDebug('Preview resolution matrix:' + JSON.stringify(body));
-
+            
         if (needsSync) {
-            var targetEnv = this.getTargetEnvironment(devRequest);
+            targetEnv = this.getTargetEnvironment(devRequest);
             var usObj = JSON.parse(devRequest.getValue('update_set_json'));
             this.l.logDebug('Needs sync, calling ' + targetEnv.getValue('name'));
-            path = '/api/x_wms_pulse/pulse/updateset/fixpreview/' + usObj[targetEnv.getValue('name')].retrieved;
-            operation = 'post';
-            answer = this.callAPI(targetEnv.sys_id, path, operation, JSON.stringify(body));
+            var path = '/api/x_wms_pulse/pulse/updateset/fixpreview/' + usObj[targetEnv.getValue('name')].retrieved;
+            var operation = 'post';
+            this.callAPI(targetEnv.sys_id, path, operation, JSON.stringify(body));
         }
         // Not returning anything on this function for now
     },
-
+        
     // Function called in PROD to call another instance (DEV) to update the u_status of a local update set
     remoteSetUpdateSetStatus: function(instance, setID, body) {
         this.l.logDebug('Starting remoteSetUpdateSetStatus[' + setID + ']');
@@ -499,15 +619,15 @@ PulseUtilsImpl.prototype = {
             success : false,
             message : ''
         };
-
+            
         var targetGR = new GlideRecord('x_wms_pulse_sn_instance');
         targetGR.addQuery('sys_id', instance);
         targetGR.query();
-
+            
         if (targetGR.next()) {
             if (targetGR.active) {
-                path = '/api/x_wms_pulse/pulse/updateset/setstatus/' + setID;
-                operation = 'post';
+                var path = '/api/x_wms_pulse/pulse/updateset/setstatus/' + setID;
+                var operation = 'post';
                 answer = this.callAPI(targetGR.sys_id, path, operation, body);
             } else {
                 answer.message = 'Dev is disabled. Please talk to your administrator';
@@ -515,11 +635,11 @@ PulseUtilsImpl.prototype = {
         } else {
             answer.message = 'Dev is not defined. Please talk to your administrator';
         }
-
+            
         this.l.logDebug('Answer from remoteSetUpdateSetStatus: ' + JSON.stringify(answer));
         return answer;
     },
-
+        
     // Function called from Scripted rest api on Dev environment to update u_status on local update set
     localSetUpdateSetStatus: function(setID, status) {
         var answer = {
@@ -528,49 +648,131 @@ PulseUtilsImpl.prototype = {
         answer.success = this.pulseGlobal.setValue(this.l, 'sys_update_set', setID, 'u_status', status);
         return answer;
     },
-
+        
     // Function called from the Scripted rest api to apply preview problem status
     fixPreviewProblems: function(setID, previewResolutions) {
         this.l.logDebug('Running fixPreviewProblems');
         var answer = {
             success : true,
         };
-
+            
         for (var prevIssue in previewResolutions) {
             this.l.logDebug('Changing status of preview problem [' + prevIssue + '] to [' + previewResolutions[prevIssue] + ']');
             this.pulseGlobal.handlePreviewProblem(this.l, prevIssue, previewResolutions[prevIssue]);
         }
         return answer;
     },
-
+        
     // Function called from Workflow to set the dev request to the next state after approved
     approveDevRequest: function(devRequest) {
         var answer = {
             success : false,
         };
-
+        
+        // Make sure first the devRequest is in a state that it can be approved
         if (devRequest.getValue('state') == DevRequestStates.IN_REVIEW || devRequest.getValue('state') == DevRequestStates.IN_REVIEW_PROBLEMS) {
             var targetEnv = this.getTargetEnvironment(devRequest);
-            var appInstanceConfig = this.getInstanceApplication(devRequest, targetEnv.sys_id);
-            if (appInstanceConfig) {
-                if (appInstanceConfig.auto_promote && devRequest.auto_promote) {
-                    devRequest.setValue('state', DevRequestStates.PROMOTING);
+            if (targetEnv) {
+                // First do a check to see if it was really approved or if we had some manipulation
+                // Basically if one of the groups approve and all others are manually removed, it will go to the approved path on the workflow
+                // This piece of code in here will prevent it from happening, it will move to Automation Failure instead so it is manually checked.
+                var appInstanceConfig = this.getInstanceApplication(devRequest, targetEnv.sys_id);
+                if (appInstanceConfig) {
+                    if (this.requiresTechnicalReview(devRequest) && appInstanceConfig.tech_approvers != '') {
+                        for (var grpIdx1 in appInstanceConfig.tech_approvers.split(',')) {
+                            var grp1 = appInstanceConfig.tech_approvers.split(',')[grpIdx1];
+                            // Has this group approved?
+                            var grp1Approved = new GlideRecord('sysapproval_approver');
+                            grp1Approved.addQuery('state', 'approved');
+                            grp1Approved.addQuery('sysapproval', devRequest.sys_id + '');
+                            grp1Approved.addQuery('group.assignment_group', grp1);
+                            grp1Approved.addNotNullQuery('wf_activity');
+                            grp1Approved.query();
+                            if (!grp1Approved.hasNext()) {
+                                // Group didn't approve
+                                answer.message = 'Group ' + grp1 + ' was supposed to approve it, but we have no approvals. Moving to automation failed.';
+                                return answer;
+                            }
+                        }
+                    }
+                        
+                    if (appInstanceConfig.additional_approvers != '') {
+                        for (var grpIdx2 in appInstanceConfig.additional_approvers.split(',')) {
+                            var grp2 = appInstanceConfig.additional_approvers.split(',')[grpIdx2];
+                            // Has this group approved?
+                            var grp2Approved = new GlideRecord('sysapproval_approver');
+                            grp2Approved.addQuery('state', 'approved');
+                            grp2Approved.addQuery('sysapproval', devRequest.sys_id + '');
+                            grp2Approved.addQuery('group.assignment_group', grp2);
+                            grp2Approved.addNotNullQuery('wf_activity');
+                            grp2Approved.query();
+                            if (!grp2Approved.hasNext()) {
+                                // Group didn't approve
+                                answer.message = 'Group ' + grp2 + ' was supposed to approve it, but we have no approvals. Moving to automation failed.';
+                                return answer;
+                            }
+                        }
+                    }
+                        
+                    // Approvals were completed - Untie it from the WF to keep history
+                    // Approval tables can be written by scope apps
+                    var currApprovals = new GlideRecord('sysapproval_approver');
+                    currApprovals.addQuery('sysapproval', devRequest.sys_id + '');
+                    currApprovals.addQuery('state', '!=', 'cancelled');
+                    currApprovals.addNotNullQuery('wf_activity');
+                    currApprovals.query();
+                    while (currApprovals.next()) {
+                        currApprovals.wf_activity = '';
+                        currApprovals.update();
+                    }
+                        
+                    var currGroupApprovals = new GlideRecord('sysapproval_group');
+                    currGroupApprovals.addQuery('parent', devRequest.sys_id + '');
+                    currGroupApprovals.addQuery('approval', '!=', 'cancelled');
+                    currGroupApprovals.addNotNullQuery('wf_activity');
+                    currGroupApprovals.query();
+                    while (currGroupApprovals.next()) {
+                        currGroupApprovals.wf_activity = '';
+                        currGroupApprovals.update();
+                    }
+                        
+                    if (devRequest.getValue('state') == DevRequestStates.IN_REVIEW || devRequest.getValue('state') == DevRequestStates.IN_REVIEW_PROBLEMS) {
+                        var usObj = JSON.parse(devRequest.getValue('update_set_json'));
+                        if (!usObj[targetEnv.name]) {
+                            usObj[targetEnv.name] = {
+                                local: '',
+                                retrieved: '',
+                                approved: true
+                            };
+                        } else {
+                            usObj[targetEnv.name].approved = true;
+                        }
+                        devRequest.update_set_json = JSON.stringify(usObj);
+                            
+                        if ((appInstanceConfig.auto_promote && devRequest.auto_promote) || devRequest.remediation_for != '') {
+                            devRequest.setValue('state', DevRequestStates.PROMOTING);
+                        } else {
+                            devRequest.setValue('state', DevRequestStates.PENDING_SCHEDULE);
+                        }
+                        answer.success = true;
+                    } else {
+                        // This is not considered a failure - request was manually manipulated.
+                        answer.message = 'Development Request in wrong state: ' + devRequest.getValue('state');
+                        answer.success = true;
+                    }
                 } else {
-                    devRequest.setValue('state', DevRequestStates.PENDING_SCHEDULE);
+                    answer.message = 'Instance doesn\'t have configuration for the next environment: ';
                 }
-                answer.success = true;
             } else {
-                answer.message = 'Instance doesn\'t have configuration for the next environment: ';
+                answer.message = 'No target environment!';
             }
         } else {
-            // This is not considered a failure - request was manually manipulated.
-            answer.message = 'Development Request in wrong state: ' + devRequest.getValue('state');
             answer.success = true;
+            // don't write anything in the logs
         }
-
         return answer;
     },
-
+        
     // Gets the m2m record between instance and application
     getInstanceApplication: function(devRequest, instance) {
         this.l.logDebug('Running getInstanceApplication: Application[' + devRequest.getValue('application') + '] and Instance [' + instance + ']');
@@ -583,15 +785,14 @@ PulseUtilsImpl.prototype = {
         }
         return false;
     },
-
+        
     // Function called from Workflow to set the dev request to the next state after rejected
     rejectDevRequest: function(devRequest) {
         var answer = {
             success : false,
         };
-
+            
         if (devRequest.getValue('state') == DevRequestStates.IN_REVIEW || devRequest.getValue('state') == DevRequestStates.IN_REVIEW_PROBLEMS) {
-            var targetEnv = this.getTargetEnvironment(devRequest);
             devRequest.setValue('state', DevRequestStates.REVIEW_ACTIONS);
             answer.success = true;
         } else {
@@ -600,63 +801,115 @@ PulseUtilsImpl.prototype = {
             answer.success = true;
         }
 
+        // Approvals were completed - Untie it from the WF to keep history
+        // Approval tables can be written by scope apps
+        var currApprovals = new GlideRecord('sysapproval_approver');
+        currApprovals.addQuery('sysapproval', devRequest.sys_id + '');
+        currApprovals.addQuery('state', '!=', 'cancelled');
+        currApprovals.addNotNullQuery('wf_activity');
+        currApprovals.query();
+        while (currApprovals.next()) {
+            currApprovals.wf_activity = '';
+            currApprovals.update();
+        }
+            
+        var currGroupApprovals = new GlideRecord('sysapproval_group');
+        currGroupApprovals.addQuery('parent', devRequest.sys_id + '');
+        currGroupApprovals.addQuery('approval', '!=', 'cancelled');
+        currGroupApprovals.addNotNullQuery('wf_activity');
+        currGroupApprovals.query();
+        while (currGroupApprovals.next()) {
+            currGroupApprovals.wf_activity = '';
+            currGroupApprovals.update();
+        }
+            
         return answer;
     },
-
+        
     // Function called from Workflow to set the dev request to the next state after the approval is skipped
     skipApprovalDevRequest: function(devRequest) {
         this.l.logDebug('Running skipApprovalDevRequest');
         var answer = {
             success : false,
         };
-
+            
         if (devRequest.getValue('state') == DevRequestStates.IN_REVIEW || devRequest.getValue('state') == DevRequestStates.IN_REVIEW_PROBLEMS) {
             var targetEnv = this.getTargetEnvironment(devRequest);
-            var appInstanceConfig = this.getInstanceApplication(devRequest, targetEnv.sys_id);
-            if (appInstanceConfig) {
-                if (appInstanceConfig.auto_approve) {
-                    if (appInstanceConfig.auto_promote && devRequest.auto_promote) {
-                        devRequest.setValue('state', DevRequestStates.PROMOTING);
+            if (targetEnv) {
+                var appInstanceConfig = this.getInstanceApplication(devRequest, targetEnv.sys_id);
+                if (appInstanceConfig) {
+                    var usObj = JSON.parse(devRequest.getValue('update_set_json'));
+                    // Check if it's set to auto_approve or if it's already approved
+                    if (appInstanceConfig.auto_approve || (usObj[targetEnv.name] && usObj[targetEnv.name].approved)) {
+                        if ((appInstanceConfig.auto_promote && devRequest.auto_promote) || devRequest.remediation_for != '') {
+                            devRequest.setValue('state', DevRequestStates.PROMOTING);
+                        } else {
+                            devRequest.setValue('state', DevRequestStates.PENDING_SCHEDULE);
+                        }
+                        answer.success = true;
                     } else {
-                        devRequest.setValue('state', DevRequestStates.PENDING_SCHEDULE);
+                        var shouldApprove = '';
+                        if (this.requiresTechnicalReview(devRequest)) {
+                            shouldApprove = appInstanceConfig.tech_approvers.toString();
+                        }
+                        if (appInstanceConfig.additional_approvers != '' ) {
+                            if (shouldApprove != '') {
+                                shouldApprove += ',';
+                            }
+                            shouldApprove += appInstanceConfig.additional_approvers;
+                        }
+                        // If no one is supposed to approve this, error out! Its not set to auto approve
+                        if (shouldApprove == '') {
+                            this.l.logDebug('Didn\'t find approvers for ' + appInstanceConfig.getDisplayValue('sn_instance') + ':' + appInstanceConfig.getDisplayValue('sn_application'));
+                            answer.message = 'Instance x Application doesn\'t have configuration for the approvers and also doesn\'t have the "Auto Approve" flag checked.';
+                            devRequest.setValue('state', DevRequestStates.AUTOMATION_FAILURE);
+                            devRequest.update();
+                        } else {
+                            // This is probably a workflow running when it shouldn't
+                            // Ignore it
+                        }
                     }
-                    answer.success = true;
                 } else {
-                    this.l.logDebug('Didn\'t find approvers for ' + appInstanceConfig.getDisplayValue('sn_instance') + ':' + appInstanceConfig.getDisplayValue('sn_application'));
-                    answer.message = 'Instance x Application doesn\'t have configuration for the approvers and also doesn\'t have the "Auto Approve" flag checked.';
-                    devRequest.setValue('state', DevRequestStates.AUTOMATION_FAILURE);
-                    devRequest.update();
+                    answer.message = 'Instance doesn\'t have configuration for the next environment: ';
                 }
-            } else {
-                answer.message = 'Instance doesn\'t have configuration for the next environment: ';
             }
         } else {
             // This is not considered a failure - request was manually manipulated.
             answer.message = 'Development Request in wrong state: ' + devRequest.getValue('state');
             answer.success = true;
         }
-
+            
         return answer;
     },
-
+        
     // Function called from DEV environment calling PROD (Scripted REST API) to tell an update set is ready to be pre-previewed
     remoteTestPreview: function(setID) {
-        this.l.logDebug('Starting prePreviewUpdateSet[' + setID + ']');
+        this.l.logDebug('Starting remoteTestPreview[' + setID + ']');
         var answer = {
             success : false,
             message : ''
         };
-        //if (!this.isProduction()) {
+        if (!this.isProduction()) {
             var prodGR = new GlideRecord('x_wms_pulse_sn_instance');
             prodGR.addQuery('name', this.production_instance);
             prodGR.query();
-
+                
             if (prodGR.next()) {
                 if (prodGR.active) {
                     if (prodGR.getValue('type') == 'prod') {
-                        path = '/api/x_wms_pulse/pulse/updateset/testpreview/' + this.currInstance + '/' + setID;
-                        operation = 'post';
-                        answer = this.callAPI(prodGR.sys_id, path, operation, JSON.stringify(this.codeScan(setID)));
+                        var path = '/api/x_wms_pulse/pulse/updateset/testpreview/' + this.currInstance + '/' + setID;
+                        var operation = 'post';
+                        var body = {};
+                        body.findings = this.codeScan(setID);
+                        body.coders = this.getCoders(setID);
+                        var updates = new GlideRecord('sys_update_xml');
+                        updates.addQuery('update_set', setID);
+                        updates.orderByDesc('sys_updated_on');
+                        updates.setLimit(1);
+                        updates.query();
+                        if (updates.next())
+                            body.lastUpdated = updates.getValue('sys_updated_on');
+                        answer = this.callAPI(prodGR.sys_id, path, operation, JSON.stringify(body));
                     } else {
                         answer.message = 'Production is set as ' + prodGR.getValue('type') + '. Please talk to your administrator';
                     }
@@ -666,21 +919,21 @@ PulseUtilsImpl.prototype = {
             } else {
                 answer.message = 'Production is not defined. Please talk to your administrator';
             }
-        //} else {
-        //    answer.message = 'You cannot perform this action in Production! Only in Sub-Dev environments.';
-        //}
+        } else {
+            answer.message = 'You cannot perform this action in Production! Only in Sub-Dev environments.';
+        }
         this.l.logDebug('Answer from remoteTestPreview: ' + JSON.stringify(answer));
         return answer;
     },
-
+            
     // Function called in PROD from a scripted rest API to move the Dev Request to Testing Preview
-    localTestPreview: function(instance, setID, findings) {
+    localTestPreview: function(instance, setID, input) {
         this.l.logDebug('Starting localTestPreview environment[' + instance + '] setID[' + setID + ']');
         var answer = {
             success : false,
             message : ''
         };
-
+                
         if (this.isProduction()) {
             // Check enviroment the request is from
             var env = new GlideRecord('x_wms_pulse_sn_instance');
@@ -690,20 +943,35 @@ PulseUtilsImpl.prototype = {
                 if (env.active) {
                     // So, environment is good!
                     // Let's try to find the work for this item;
-                    findings = findings || [];
-                    this.handleFindings(instance, setID, findings);
-
+                    var findings = input && input.findings || [];
+                    var coders = input && input.coders || {};
+                    this.handleFindings(instance, setID, findings, coders);
+                                
                     var devRequest = new GlideRecord('x_wms_pulse_dev_request');
-                    devRequest.addEncodedQuery('update_set_jsonLIKE' +  setID);
+                    devRequest.addEncodedQuery('active=true^update_set_jsonLIKE' +  setID);
+                    devRequest.orderBy('sys_updated_on');
                     devRequest.query();
                     if (devRequest.next()) {
                         if (devRequest.getValue('state') == DevRequestStates.IN_DEVELOPMENT || devRequest.getValue('state') == DevRequestStates.AWAITING_JUSTIFICATION || devRequest.getValue('state') == DevRequestStates.IN_REVIEW_PROBLEMS) {
                             if (devRequest.getValue('dev_instance') == env.getValue('sys_id')) {
+                                var targetEnv = this.getTargetEnvironment(devRequest);
+                                var usObj = JSON.parse(devRequest.getValue('update_set_json'));
+                                if (targetEnv && usObj[targetEnv.name] && usObj[targetEnv.name].approved) {
+                                    usObj[targetEnv.name].approved = false;
+                                }
+                                devRequest.update_set_json = JSON.stringify(usObj);
                                 devRequest.setValue('state', DevRequestStates.TESTING_PREVIEW);
+                                if (input && input.lastUpdated) {
+                                    var currDate = new GlideDateTime();
+                                    currDate.setValue(devRequest.expected_start);
+                                    if (devRequest.expected_start == '' || currDate.getDisplayValueInternal() < input.lastUpdated) {
+                                        devRequest.setValue('expected_start', input.lastUpdated);
+                                    }
+                                }
                                 devRequest.update();
                                 this.l.logDebug('Moved to Testing Preview.');
                                 answer.success = true;
-                                answer.message = 'Update set will Test preview now. Please wait!';
+                                answer.message = 'Update set is testing preview. Please go to your Development Request <a href="' + gs.getProperty('glide.servlet.uri') + devRequest.getLink() + '" target="_blank">' + devRequest.getValue('number') + '</a> and follow up for preview problems or findings.';
                             } else {
                                 answer.message = 'Development Request environment does not match: ' + devRequest.getDisplayValue('dev_instance');
                             }
@@ -725,7 +993,7 @@ PulseUtilsImpl.prototype = {
         this.l.logDebug('Answer from moveToReview: ' + JSON.stringify(answer));
         return answer;
     },
-
+                
     // Given a update set u_root_sys_id, retrieve update set.
     retrieveUpdateSet: function(instance, localSourceID) {
         this.l.logDebug('Starting retrieveUpdateSet[' + localSourceID + ']');
@@ -734,12 +1002,12 @@ PulseUtilsImpl.prototype = {
             remote_sys_id : '',
             info : []
         };
-
+                    
         this.pulseGlobal.retrieveUpdateSet(this.l, answer, instance, localSourceID);
         this.l.logDebug('Answer from retrieveUpdateSet: ' + JSON.stringify(answer));
         return answer;
     },
-
+                
     // Given a update set sys_id, grab the retrieved update set and preview.
     previewUpdateSet: function(localID) {
         this.l.logDebug('Starting previewUpdateSet[' + localID + ']');
@@ -750,12 +1018,12 @@ PulseUtilsImpl.prototype = {
             previewProblemsCount : 0,
             previewProblems : [],
         };
-
+                    
         // Grab the update set to be previewed
         var set = new GlideRecord('sys_remote_update_set');
         set.addQuery('sys_id', localID);
         set.query();
-
+                    
         if (set.next()) {
             if (set.getValue('state') != 'loaded' && set.getValue('state') != 'previewed') {
                 answer.message = 'Current state is not valid for previewing records: ' + set.getDisplayValue('state');
@@ -763,12 +1031,12 @@ PulseUtilsImpl.prototype = {
                 this.pulseGlobal.setValue(this.l, 'sys_remote_update_set', localID, 'state', 'previewing');
                 this.pulseGlobal.previewUpdateSet(this.l, localID);
                 this.pulseGlobal.setValue(this.l, 'sys_remote_update_set', localID, 'state', 'previewed');
-
+                            
                 // Get how many errors on preview
                 var previewRecords = new GlideRecord('sys_update_preview_problem');
                 previewRecords.addEncodedQuery('remote_update_set='+localID+'^status=');
                 previewRecords.query();
-
+                            
                 // Push all preview problems to an array to be returned
                 while (previewRecords.next()) {
                     answer.previewProblemsCount += 1;
@@ -784,7 +1052,7 @@ PulseUtilsImpl.prototype = {
                     };
                     answer.previewProblems.push(problem);
                 }
-
+                            
                 if (answer.previewProblemsCount > 0) {
                     answer.message = 'Update set have preview problems';
                 } else {
@@ -798,7 +1066,29 @@ PulseUtilsImpl.prototype = {
         this.l.logDebug('Answer from previewUpdateSet: ' + JSON.stringify(answer));
         return answer;
     },
-
+                
+    // Gets all manual actions in JSON format
+    getDeploymentActions: function(devRequest, targetInstanceID) {
+        this.l.logDebug('Starting getDeploymentActions[' + devRequest.getValue('number') + ',' + targetInstanceID + ']');
+        var answer = [];
+        var actions = new GlideRecord('x_wms_pulse_deployment_action');
+        actions.addQuery('dev_request', devRequest.sys_id + '');
+        actions.addQuery('instance', targetInstanceID + '');
+        actions.orderBy('order');
+        actions.query();
+        while (actions.next()) {
+            var action = {};
+            action.dev_request = devRequest.getValue('number');
+            action.target_scope = actions.target_scope.scope_id + '';
+            action.target_table = actions.target_table.name + '';
+            action.target_record = actions.target_sys_id + '';
+            action.target_field = actions.target_field.element + '';
+            action.value = actions.value + '';
+            answer.push(action);
+        }
+        return JSON.stringify(answer);
+    },
+                    
     // Called in order to call API on target environment to commit an Update Set
     remoteCommitUpdateSet: function(devRequest) {
         this.l.logDebug('Starting remoteCommitUpdateSet[' + devRequest.getValue('number') + ']');
@@ -806,50 +1096,68 @@ PulseUtilsImpl.prototype = {
             success : false,
             message : ''
         };
-
+                        
         var restoringBackup = devRequest.getValue('state') == DevRequestStates.RESTORING;
-        //if (this.isProduction()) {
+        if (this.isProduction()) {
             var targetEnv = this.getTargetEnvironment(devRequest);
             if (restoringBackup) {
                 targetEnv = this.getDevelopmentEnvironment(devRequest);
             }
             if (targetEnv) {
                 if (targetEnv.active) {
-                    usObj = JSON.parse(devRequest.getValue('update_set_json'));
-                    path = '/api/x_wms_pulse/pulse/updateset/commit/' + usObj[targetEnv.getValue('name')].retrieved;
-                    operation = 'post';
-                    var body = '';
+                    var usObj = JSON.parse(devRequest.getValue('update_set_json'));
+                    var path = '/api/x_wms_pulse/pulse/updateset/commit/' + usObj[targetEnv.getValue('name')].retrieved;
+                    var operation = 'post';
+                    var body = this.getDeploymentActions(devRequest, targetEnv.sys_id);
                     answer = this.callAPI(targetEnv.sys_id, path, operation, body);
-
+                                    
                     if (answer.success) {
-                        usObj[targetEnv.getValue('name')].local = answer.local_sys_id;
+                        usObj[targetEnv.getValue('name')].local = answer.lus_sysid;
                         devRequest.setValue('update_set_json', JSON.stringify(usObj));
-                        devRequest.setValue('current_instance', targetEnv.sys_id);
-                        // What should be the next state of this Dev Request?
-                        // - If the environment it went to requires testing, ready for testing
-                        // If it doesn't, check if it have another instance to go to
-                        // - If yes, move to In Review (in case it have approvals, they need to be considered)
-                        // - If no, guess it's Done!
-                        if (!restoringBackup) {
-                            var targetInstanceConfig = this.getInstanceApplication(devRequest, targetEnv.sys_id);
-                            if (targetInstanceConfig) {
-                                if (targetInstanceConfig.requires_testing) {
-                                    devRequest.setValue('state', DevRequestStates.READY_FOR_TESTING);
-                                } else {
-                                    var futureTarget = this.getTargetEnvironment(devRequest);
-                                    if (futureTarget) {
-                                        devRequest.setValue('state', DevRequestStates.IN_REVIEW);
-                                    } else {
-                                        devRequest.setValue('state', DevRequestStates.CLOSING_CHANGE);
-                                    }
-                                }
-                            } else {
-                                answer.message = 'Committed update set, but missing configuration for application on this instance! Can\'t find next step.';
-                            }
-                            this.kickOffChildren(devRequest);
+                        if (answer.duration) {
+                            devRequest.setValue('calendar_duration', answer.duration);
+                            devRequest.setValue('work_start', answer.start);
+                            devRequest.setValue('work_end', answer.end);
                         }
-                    } else {
-                        answer.message = 'Failure during commit: ' + answer.message;
+                        if (answer.hold) {
+                            // This means it didn't finish commiting yet
+                            // Wait for the next iteration of the job (1 minute)
+                        } else {
+                            // What should be the next state of this Dev Request?
+                            // - If the environment it went to requires testing, ready for testing
+                            // If it doesn't, check if it have another instance to go to
+                            // - If yes, move to In Review (in case it have approvals, they need to be considered)
+                            // - If no, guess it's Done!
+                            devRequest.setValue('current_instance', targetEnv.sys_id);
+                            if (!restoringBackup) {
+                                var targetInstanceConfig = this.getInstanceApplication(devRequest, targetEnv.sys_id);
+                                if (targetInstanceConfig) {
+                                    if (targetInstanceConfig.requires_testing) {
+                                        // If this dev request has a remediation, wait for it
+                                        var hasRemediation = new GlideRecord('x_wms_pulse_dev_request');
+                                        hasRemediation.addQuery('remediation_for', devRequest.sys_id + '');
+                                        hasRemediation.addQuery('current_instance', '!=', devRequest.current_instance + '');
+                                        hasRemediation.addQuery('active', 'true');
+                                        hasRemediation.query();
+                                        if (hasRemediation.next()) {
+                                            devRequest.setValue('state', DevRequestStates.AWAITING_REMEDIATION);
+                                        } else {
+                                            devRequest.setValue('state', DevRequestStates.READY_FOR_TESTING);
+                                        }
+                                    } else {
+                                        var futureTarget = this.getTargetEnvironment(devRequest);
+                                        if (futureTarget) {
+                                            devRequest.setValue('state', DevRequestStates.IN_REVIEW);
+                                        } else {
+                                            devRequest.setValue('state', DevRequestStates.CLOSING_CHANGE);
+                                        }
+                                    }
+                                } else {
+                                    answer.message = 'Committed update set, but missing configuration for application on this instance! Can\'t find next step.';
+                                }
+                                this.kickOffChildren(devRequest);
+                            }
+                        }
                     }
                 } else {
                     answer.message = 'Target environment not active!';
@@ -857,13 +1165,13 @@ PulseUtilsImpl.prototype = {
             } else {
                 answer.message = 'Target environment not found!';
             }
-        //} else {
-        //    answer.message = 'You cannot perform this action in a NON-PROD Environment! Only in Production.';
-        //}
+        } else {
+            answer.message = 'You cannot perform this action in a NON-PROD Environment! Only in Production.';
+        }
         this.l.logDebug('Answer from remoteCommitUpdateSet: ' + JSON.stringify(answer));
         return answer;
     },
-
+                    
     // Once an update set is committed, kick off the children too to promote to the same environment
     kickOffChildren: function(devRequest) {
         this.l.logDebug('Starting kickOffChildren: ' + devRequest.getValue('number'));
@@ -873,26 +1181,38 @@ PulseUtilsImpl.prototype = {
         child.addQuery('state', DevRequestStates.AWAITING_PARENT);
         child.query();
         while (child.next()) {
-			this.localMoveToPromoting(child);
+            this.localMoveToPromoting(child);
         }
     },
-	
-	// Called from the function above and also from the scheduled job
-	localMoveToPromoting: function(devRequest) {
-		devRequest.setValue('state', DevRequestStates.PROMOTING);
-		devRequest.update();
-	},
-
+                    
+    // Called from the function above and also from the scheduled job
+    localMoveToPromoting: function(devRequest) {
+        // This can be called once it's in TEST environment (and it's probably a remediation)
+        // Or it's a simple dependency
+        // So, depending on the objective, this needs to move to Testing Preview or this can also be moved
+        // directly to PROMOTING, it depends on the target environment configuration
+                        
+        if (devRequest.getValue('dev_instance') == devRequest.getValue('current_instance')) {
+            devRequest.setValue('state', DevRequestStates.TESTING_PREVIEW);
+        } else {
+            // to double-check if we need approvals
+            devRequest.setValue('state', DevRequestStates.IN_REVIEW);
+        }
+                        
+                        
+        devRequest.update();
+    },
+                    
     // Given a update set sys_id, grab the retrieved update set and commit (as long as it's previewed)
     // If the update set is already committed, grab the update set sys_id for the local copy.
-    localCommitUpdateSet: function(setID) {
+    localCommitUpdateSet: function(setID, actions) {
         this.l.logDebug('Starting localCommitUpdateSet[' + setID + ']');
         var answer = {
             success : false,
             local_sys_id : '',
             message : ''
         };
-
+                        
         // Grab update set to be committed
         var remoteUpdateSet = new GlideRecord('sys_remote_update_set');
         var qc = remoteUpdateSet.addQuery('remote_sys_id', setID);
@@ -901,56 +1221,93 @@ PulseUtilsImpl.prototype = {
         remoteUpdateSet.query();
         if (remoteUpdateSet.next()) {
             var localID = remoteUpdateSet.getValue('sys_id');
-
+                            
             var previewRecords = new GlideRecord('sys_update_preview_problem');
             previewRecords.addEncodedQuery('remote_update_set='+localID+'^status=');
             previewRecords.query();
-
+                            
             if (previewRecords.next()) {
                 answer.message = 'Update set has preview records not addressed, cannot be committed: ' + setID;
             } else {
-                if (remoteUpdateSet.getValue('state') != 'previewed') {
-                    if (remoteUpdateSet.getValue('state') == 'committed') {
-                        this.l.logDebug('Update set already committed.');
-                        var lusGR = new GlideRecord('sys_update_set');
-                        lusGR.addQuery('remote_sys_id', remoteUpdateSet.getValue('sys_id'));
-                        lusGR.query();
-                        if (lusGR.next()) {
-                            answer.message = 'Update set already committed, local copy found.';
-                            answer.success = true;
-                            answer.local_sys_id = lusGR.getValue('sys_id');
-                        } else {
-                            answer.message = 'Update set is already committed and no local version found: ' + remoteUpdateSet.getValue('sys_id');
-                        }
-                    } else {
-                        answer.message = 'Current state is not valid for committing records: ' + remoteUpdateSet.getDisplayValue('state');
-                    }
-                } else {
-                    var commitObj = this.pulseGlobal.commitUpdateSet(this.l, remoteUpdateSet);
-                    var lus_sysid = commitObj.lus_sysid;
-                    var progressID = commitObj.progressID;
-                    var remoteUpdateCheck = new GlideRecord('sys_remote_update_set');
-                    remoteUpdateCheck.addQuery('sys_id', localID);
-                    remoteUpdateCheck.addQuery('state', 'committed'); // Check that it is really committed
-                    remoteUpdateCheck.query();
-
-                    if (remoteUpdateCheck.next()) {
-                        answer.success = true;
-                        answer.local_sys_id = lus_sysid;
-                        answer.progressID = progressID;
-                        answer.message = 'Update Set Committed.';
-                    } else {
-                        answer.message = 'Update Set commit failed on commit step: ' + setID;
-                    }
+                if (remoteUpdateSet.getValue('state') == 'previewed') {
+                    answer = this.pulseGlobal.commitUpdateSet(this.l, remoteUpdateSet);
                 }
+                answer = this.localCommitStatus(localID);
             }
         } else {
             answer.message = 'Update Set not found: ' + setID;
         }
+                        
+        if (answer.success && !answer.hold) {
+            // Success, apply actions
+            for (var actIdx = 0; actIdx < actions.length; actIdx++) {
+                var actDevRequest = actions[actIdx].dev_request;
+                var actScope = actions[actIdx].target_scope;
+                var actTbl = actions[actIdx].target_table;
+                var actRecord = actions[actIdx].target_record;
+                var actField = actions[actIdx].target_field;
+                var actValue = actions[actIdx].value;
+                this.pulseGlobal.createUpdateJob(actDevRequest, actScope, actTbl, actRecord, actField, actValue);
+            }
+        }
         this.l.logDebug('Answer from localCommitUpdateSet: ' + JSON.stringify(answer));
         return answer;
     },
+                    
+    // Given a update set sys_id, grab the retrieved update set and check if it's being committed
+    // If it's done already, return the duration of the deployment.
+    localCommitStatus: function(setID) {
+        this.l.logDebug('Starting localCommitStatus[' + setID + ']');
+        var answer = {
+            success : false,
+            hold : false,
+            lus_sysid : '',
+            message : '',
+            duration : null,
+            start : null,
+            end : null
+        };
 
+        var localUpdate = new GlideRecord('sys_update_set');
+        localUpdate.addQuery('remote_sys_id', setID);
+        localUpdate.query();
+        if (localUpdate.next()) {
+            answer.lus_sysid = localUpdate.sys_id + '';
+            var startedCommit = new GlideRecord('sys_update_set_log');
+            startedCommit.addQuery('update_set', answer.lus_sysid);
+            startedCommit.addQuery('log', 'STARTSWITH', 'Starting update load');
+            startedCommit.query();
+            if (startedCommit.next()) {
+                answer.hold = true;
+                answer.success = true; // Being committed, consider a success
+                answer.start = startedCommit.getValue('sys_created_on');
+                answer.message = 'Update set commit is in progress.';
+                var finishedCommit = new GlideRecord('sys_update_set_log');
+                finishedCommit.addQuery('update_set', answer.lus_sysid);
+                finishedCommit.addQuery('log', 'Finished update load from database');
+                finishedCommit.query();
+                if (finishedCommit.next()) {
+                    answer.end = finishedCommit.getValue('sys_created_on');
+                    answer.message = 'Update set is committed.';
+                }
+            } else {
+                answer.hold = true; // Logs takes a while to show, so, keep on "committing"
+                answer.success = true; 
+                answer.message = 'Waiting for update set commit logs...';
+            }
+        } else {
+            answer.message = 'Update set is NOT committing. No local version found!';
+        }
+                        
+                        
+        if (answer.start && answer.end) {
+            answer.hold = false;
+            answer.duration = GlideDateTime.subtract(new GlideDateTime(answer.start), new GlideDateTime(answer.end)).getValue();
+        }
+                        
+        return answer;
+    },
+                    
     // This function is called in PROD to call the Scripted rest API on the target environment to get an update set created
     remoteCreateUpdateSet: function(devRequest) {
         this.l.logDebug('Starting remoteCreateUpdateSet[' + devRequest.getValue('number') + ']');
@@ -958,63 +1315,79 @@ PulseUtilsImpl.prototype = {
             success : false,
             message : ''
         };
-
-        // Safety Checks
-        if (devRequest.getValue('dev_instance')) {
-            var usObj;
-            if (devRequest.getValue('update_set_json')) {
-                this.l.logDebug('JSON Object already exists[' + devRequest.getValue('update_set_json') + ']');
-                usObj = JSON.parse(devRequest.getValue('update_set_json'));
-            } else {
-                usObj = {
-                };
-                usObj[devRequest.getDisplayValue('dev_instance')] = {
-                    'local' : '',
-                    'retrieved' : ''
-                };
-                this.l.logDebug('JSON Object created[' + JSON.stringify(usObj) + ']');
-            }
-            
-            if (usObj[devRequest.getDisplayValue('dev_instance')].local == '' || !(this.updateSetExists(usObj[devRequest.getDisplayValue('dev_instance')].local, 'sys_update_set', 'sys_id', devRequest.dev_instance)).exist) {
-                //set variables
-                var path = '/api/x_wms_pulse/pulse/updateset/create';
-                var operation = 'post';
-                var body = {
-                    name : devRequest.getValue('update_set_name'),
-                    scope : devRequest.getElement('scope.scope_id').toString(),
-                    description : 'Update set generated by ' + devRequest.getValue('number')
-                };
-                //call the api
-                this.l.logDebug('Environment name: ' + devRequest.getElement('dev_instance.name'));
-                this.l.logDebug('Environment URL: ' + devRequest.getElement('dev_instance.url'));
-                var answerAPI = this.callAPI(devRequest.dev_instance, path, operation, JSON.stringify(body));
-                if (answerAPI.updateSetID && answerAPI.updateSetID != '') {
-                    devRequest.setValue('state', DevRequestStates.IN_DEVELOPMENT);
-                    usObj[devRequest.getDisplayValue('dev_instance')].local = answerAPI.updateSetID + '';
-                    devRequest.update_set_json = JSON.stringify(usObj);
-                    devRequest.root_sys_id = answerAPI.updateSetID + '';
-                    devRequest.current_instance = devRequest.dev_instance;
-                    answer.success = true;
-                    if (answerAPI.message) {
-                        answer.message = answerAPI.message;
+                        
+        if (this.isProduction()) {
+            // Safety Checks
+            if (devRequest.getValue('dev_instance')) {
+                // Check if environment is in code freeze
+                var appInstanceConfig = this.getInstanceApplication(devRequest, devRequest.getValue('dev_instance'));
+                if (appInstanceConfig) {
+                    if (!appInstanceConfig.code_freeze) {
+                        var usObj;
+                        if (devRequest.getValue('update_set_json')) {
+                            this.l.logDebug('JSON Object already exists[' + devRequest.getValue('update_set_json') + ']');
+                            usObj = JSON.parse(devRequest.getValue('update_set_json'));
+                        } else {
+                            usObj = {
+                            };
+                            usObj[devRequest.getDisplayValue('dev_instance')] = {
+                                'local' : '',
+                                'retrieved' : ''
+                            };
+                            this.l.logDebug('JSON Object created[' + JSON.stringify(usObj) + ']');
+                        }
+                                        
+                        if (usObj[devRequest.getDisplayValue('dev_instance')].local == '' || !(this.updateSetExists(usObj[devRequest.getDisplayValue('dev_instance')].local, 'sys_update_set', 'sys_id', devRequest.dev_instance)).exist) {
+                            //set variables
+                            var path = '/api/x_wms_pulse/pulse/updateset/create';
+                            var operation = 'post';
+                            var body = {
+                                name : devRequest.getValue('update_set_name'),
+                                scope : devRequest.getElement('scope.scope_id').toString(),
+                                description : 'Update set generated by ' + devRequest.getValue('number')
+                            };
+                            //call the api
+                            this.l.logDebug('Environment name: ' + devRequest.getElement('dev_instance.name'));
+                            this.l.logDebug('Environment URL: ' + devRequest.getElement('dev_instance.url'));
+                            var answerAPI = this.callAPI(devRequest.dev_instance, path, operation, JSON.stringify(body));
+                            if (answerAPI.updateSetID && answerAPI.updateSetID != '') {
+                                devRequest.setValue('state', DevRequestStates.IN_DEVELOPMENT);
+                                usObj[devRequest.getDisplayValue('dev_instance')].local = answerAPI.updateSetID + '';
+                                devRequest.update_set_json = JSON.stringify(usObj);
+                                devRequest.root_sys_id = answerAPI.updateSetID + '';
+                                devRequest.current_instance = devRequest.dev_instance;
+                                answer.success = true;
+                                if (answerAPI.message) {
+                                    answer.message = answerAPI.message;
+                                } else {
+                                    answer.message = 'Update set created successfully! sys_id: ' + answerAPI.updateSetID;
+                                }
+                            } else {
+                                answer.message = 'Update set creation failed with error: ' + answerAPI.message;
+                            }
+                        } else {
+                            answer.message = 'Update set already exists in target instance!';
+                            answer.success = true;
+                            devRequest.setValue('state', DevRequestStates.IN_DEVELOPMENT);
+                        }
                     } else {
-                        answer.message = 'Update set created successfully! sys_id: ' + answerAPI.updateSetID;
+                        answer.message = 'CODE FREEZE: Environment is on freeze due to maintenance. Update set creation will resume once maintenance is completed.';
+                        answer.success = true;
+                        devRequest.setValue('state', DevRequestStates.ON_HOLD);
                     }
                 } else {
-                    answer.message = 'Update set creation failed with error: ' + answerAPI.message;
+                    answer.message = 'Application doesn\'t have configuration for the dev environment.';
                 }
             } else {
-                answer.message = 'Update set already exists in target instance!';
-                answer.success = true;
-                devRequest.setValue('state', DevRequestStates.IN_DEVELOPMENT);
+                answer.message = 'Development Instance not set on this request!';
             }
         } else {
-            answer.message = 'Development Instance not set on this request!';
+            answer.message = 'Creation of update sets can only be called in Production!';
         }
         this.l.logDebug('Answer from remoteCreateUpdateSet: ' + JSON.stringify(answer));
         return answer;
     },
-
+                    
     // Creates a local update set (called from the scripted rest API)
     localCreateUpdateSet: function(name, scope, description) {
         this.l.logDebug('Starting localCreateUpdateSet[ name[' + name + '] scope[' + scope + '] description[' + description + '] ]');
@@ -1023,17 +1396,22 @@ PulseUtilsImpl.prototype = {
             message : '',
             updateSetID : ''
         };
-
+                        
         var checkScope = new GlideRecord('sys_scope');
         checkScope.addQuery('sys_id', scope);
         checkScope.query();
-
+                        
         if (checkScope.next()) {
+            if (checkScope.scope == 'global') {
+                // For Global scope apps, use global as scope
+                // For example, "Pulse - Global", should be global
+                scope = 'global';
+            }
             var checkSet = new GlideRecord('sys_update_set');
             checkSet.addQuery('name', name);
             checkSet.addQuery('application', scope);
             checkSet.query();
-
+                            
             if (!checkSet.next()) {
                 var newSetID = this.pulseGlobal.createUpdateSet(this.l, name, scope, description);
                 answer.updateSetID = newSetID;
@@ -1054,7 +1432,7 @@ PulseUtilsImpl.prototype = {
         this.l.logDebug('Answer from localCreateUpdateSet: ' + JSON.stringify(answer));
         return answer;
     },
-
+                    
     // Generic function to call API
     callAPI: function(env, path, operation, body) {
         this.l.logDebug('Starting callAPI[' + env + ',' + path + ',' + operation + ',' + body + ']');
@@ -1062,7 +1440,7 @@ PulseUtilsImpl.prototype = {
             success : false,
             message : ''
         };
-
+                        
         try {
             var environment = new GlideRecord('x_wms_pulse_sn_instance');
             environment.query('sys_id', env);
@@ -1075,12 +1453,12 @@ PulseUtilsImpl.prototype = {
                     r.setBasicAuth(environment.getValue('user'), environment.password.getDecryptedValue());
                     r.setHttpMethod(operation);
                     if (operation != 'get') {
+                        body = body.replace(/\$\{/g, '[[PULSE_' + 'AMP]]');
                         r.setRequestBody(body);
                     }
                     var response = r.execute();
                     var responseBody = response.getBody();
                     this.l.logDebug('responseBody:' + responseBody);
-                    var httpStatus = response.getStatusCode();
                     if (responseBody != '') {
                         answer = JSON.parse(responseBody);
                         //return answer.result;
@@ -1102,8 +1480,8 @@ PulseUtilsImpl.prototype = {
             return answer;
         }
     },
-
-
+                    
+                    
     // Function called to create an update set XML based on the current content on the lower environment
     remoteBackupDevelopment: function(devRequest) {
         this.l.logDebug('Starting remoteBackupDevelopment[' + devRequest.getValue('number') + ']');
@@ -1119,8 +1497,8 @@ PulseUtilsImpl.prototype = {
             if (copy_sys_id != '') {
                 var operation = 'get';
                 var gdt = new GlideDateTime();
-                var filename = devRequest.getValue('update_set_name').substr(0,74) + ' (' + gdt.getDisplayValue() + ').xml';
-                var endPoint = environment.getValue('url') + "/export_update_set.do?sysparm_sys_id=" + copy_sys_id + "&sysparm_delete_when_done=true";
+                var filename = devRequest.getValue('update_set_name').substr(0,71) + ' (' + gdt.getDisplayValue() + ').xml';
+                var endPoint = environment.getValue('url') + '/export_update_set.do?sysparm_sys_id=' + copy_sys_id + '&sysparm_delete_when_done=true';
                 var r = new sn_ws.RESTMessageV2();
                 r.setEndpoint(endPoint);
                 r.setBasicAuth(environment.getValue('user'), environment.password.getDecryptedValue());
@@ -1131,30 +1509,50 @@ PulseUtilsImpl.prototype = {
                 if (httpStatus == '200') {
                     answer.success = true;
                     answer.message = 'Update set saved: ' + filename;
+                    devRequest.setValue('state', DevRequestStates.ON_HOLD);
+                    devRequest.setValue('work_notes', answer.message);
+                    // Get date of last update
+                    var attachId = response.getResponseAttachmentSysid();
+                    this.l.logDebug('SysID of the attachment (backup):' + attachId);
+                    if (attachId && attachId != '') {
+                        var attachment = this.parseAttachmentToObject(attachId);
+                        if (attachment) {
+                            var date = '';
+                            if (attachment.sys_update_xml && attachment.sys_update_xml.length) {
+                                date = attachment.sys_update_xml[0].sys_updated_on + '';
+                                for (var v in attachment.sys_update_xml) {
+                                    date = attachment.sys_update_xml[v].sys_updated_on > date ? attachment.sys_update_xml[v].sys_updated_on + '' : date;
+                                }
+                            } else if (attachment.sys_update_xml) {
+                                date = attachment.sys_update_xml.sys_updated_on + '';
+                            }
+                            var currDate = new GlideDateTime();
+                            currDate.setValue(devRequest.expected_start);
+                            if (devRequest.expected_start == '' || currDate.getDisplayValueInternal() < date) {
+                                devRequest.setValue('expected_start', date);
+                            }
+                        }
+                    }
                 } else {
                     answer.success = false;
                     answer.message = 'Error! Error message attached to the record.';
                 }
             }
         }
-        if (answer.success) {
-            devRequest.setValue('state', DevRequestStates.ON_HOLD);
-            devRequest.setValue('comments', answer.message);
-        }
         this.l.logDebug('Answer from remoteBackupDevelopment: ' + JSON.stringify(answer));
         return answer;
     },
-
+                    
     // Calls the Development instance and grab the whole content of the update set
     remoteGenerateCopy: function(devRequest) {
         this.l.logDebug('Starting remoteGenerateCopy[' + devRequest.getValue('number') + ']');
         var copy_sys_id = '';
-
+                        
         var environment = new GlideRecord('x_wms_pulse_sn_instance');
         environment.query('sys_id', devRequest.getValue('dev_instance'));
         if (environment.next()) {
-
-            var path = 'api/x_wms_pulse/pulse/updateset/getxml/';
+                            
+            var path = '/api/x_wms_pulse/pulse/updateset/getxml/';
             var operation = 'get';
             var usObj = JSON.parse(devRequest.getValue('update_set_json'));
             path += usObj[environment.getValue('name')].local;
@@ -1166,18 +1564,19 @@ PulseUtilsImpl.prototype = {
         this.l.logDebug('remoteGenerateCopy return: ' + copy_sys_id);
         return copy_sys_id;
     },
-
+                    
     // Moves record to review in this environment
     // This should only be done in PROD
-    handleFindings: function(environment, setID, findings) {
-        this.l.logDebug('Starting moveToReview environment[' + environment + '] setID[' + setID + ']');
+    handleFindings: function(environment, setID, findings, coders) {
+        this.l.logDebug('Starting handleFindings environment[' + environment + '] setID[' + setID + ']');
         var answer = {
             success : false,
             message : ''
         };
-
+                        
         findings = findings || [];
-
+        coders = coders || [];
+                        
         if (this.isProduction()) {
             // Check enviroment the request is from
             var env = new GlideRecord('x_wms_pulse_sn_instance');
@@ -1202,7 +1601,7 @@ PulseUtilsImpl.prototype = {
                                     currFindings.setValue('state', 'history');
                                     currFindings.update();
                                 }
-                                
+                                                
                                 // Insert Findings
                                 for (var x = 0; x < findings.length; x++) {
                                     var newFinding = new GlideRecord('x_wms_pulse_sn_scan_finding');
@@ -1216,7 +1615,30 @@ PulseUtilsImpl.prototype = {
                                     newFinding.setValue('update_xml_sys_id', findings[x].update_xml_sys_id);
                                     newFinding.insert();
                                 }
-
+                                                
+                                // Update the coders for the dev request
+                                if (coders && coders.primary) {
+                                    var primary = this.getUserByID(coders.primary);
+                                    if (primary && devRequest.getValue('assigned_to') != primary) {
+                                        devRequest.setValue('assigned_to', primary);
+                                    }
+                                                    
+                                    var currList = devRequest.getValue('additional_assignee_list') || '';
+                                    for (var userIdx = 0; userIdx < coders.secondaries.length; userIdx++) {
+                                        var usr = this.getUserByID(coders.secondaries[userIdx]);
+                                        if (usr && usr != primary && currList.indexOf(usr) < 0) {
+                                            if (currList != '') {
+                                                currList += ',';
+                                            }
+                                            currList += usr;
+                                        }
+                                    }
+                                    if (devRequest.getValue('additional_assignee_list') != currList) {
+                                        devRequest.setValue('additional_assignee_list', currList);
+                                    }
+                                    devRequest.update();
+                                }
+                                                
                                 answer.success = true;
                                 answer.message = 'Findings included!';
                             } else {
@@ -1240,17 +1662,28 @@ PulseUtilsImpl.prototype = {
         this.l.logDebug('Answer from moveToReview: ' + JSON.stringify(answer));
         return answer;
     },
-
+                    
+    getUserByID: function(userID) {
+        var usr = new GlideRecord('sys_user');
+        if (usr.get('user_name', userID)) {
+            return usr.sys_id + '';
+        }
+        return false;
+    },
+                    
     handleSchedule: function(devRequest) {
         this.l.logDebug('Starting handleSchedule[' + devRequest.getValue('number') + ']');
         var answer = {
             success : false,
             message : ''
         };
-
+                        
         answer = this.pulseGlobal.scheduleInstallation(this.l, devRequest);
-
+                        
         if (answer.success) {
+            if (answer.remove_rfc) {
+                devRequest.setValue('change_request', '');
+            }
             if (answer.time) {
                 devRequest.setValue('due_date', answer.time);
             }
@@ -1260,6 +1693,19 @@ PulseUtilsImpl.prototype = {
         }
     },
 
+    // Function to make sure the release date is a future date. If it's not, clear it
+    checkPastSchedule: function(devRequest) {
+        this.l.logDebug('Starting checkPastSchedule[' + devRequest.getValue('number') + ']');
+        var actualDateTime = new GlideDateTime();
+        var plannedDateTime = new GlideDateTime();
+        plannedDateTime.setDisplayValue(devRequest.due_date.getDisplayValue());
+        if (plannedDateTime.getNumericValue() < actualDateTime.getNumericValue()) {
+            // Clear out the deployment date
+            devRequest.setValue('due_date', '');
+            devRequest.work_notes = 'Clearing out Release date since it was scheduled in the past before test.';
+        }
+    },
+                    
     // Function called from PROD environment calling DEV (Scripted REST API) to tell an update set should be reopened
     remoteIgnoreUpdateSet: function(devRequest) {
         this.l.logDebug('Starting remoteIgnoreUpdateSet[' + devRequest.getValue('number') + ']');
@@ -1267,7 +1713,7 @@ PulseUtilsImpl.prototype = {
             success : false,
             message : ''
         };
-
+                        
         var currentEnv = this.getCurrentEnvironment(devRequest);
         var usObj = JSON.parse(devRequest.getValue('update_set_json'));
         var usID = usObj[currentEnv.name].local;
@@ -1285,7 +1731,7 @@ PulseUtilsImpl.prototype = {
         this.l.logDebug('Answer from remoteIgnoreUpdateSet: ' + JSON.stringify(answer));
         return answer;
     },
-
+                    
     // Moves a local update set to ignored
     localIgnoreUpdateSet: function(setID) {
         this.l.logDebug('Starting localIgnoreUpdateSet[' + setID + ']');
@@ -1297,11 +1743,11 @@ PulseUtilsImpl.prototype = {
         this.pulseGlobal.setValue(this.l, 'sys_update_set', setID, 'state', 'ignore');
         answer.success = true;
         answer.message = 'Update set ignored.';
-
+                        
         this.l.logDebug('Answer from localIgnoreUpdateSet: ' + JSON.stringify(answer));
         return answer;
     },
-
+                    
     // Function called from PROD environment calling DEV (Scripted REST API) to tell an update set should be reopened
     remoteReopenUpdateSet: function(devRequest) {
         this.l.logDebug('Starting remoteReopenUpdateSet[' + devRequest.getValue('number') + ']');
@@ -1309,7 +1755,7 @@ PulseUtilsImpl.prototype = {
             success : false,
             message : ''
         };
-
+                        
         var currentEnv = this.getCurrentEnvironment(devRequest);
         var usObj = JSON.parse(devRequest.getValue('update_set_json'));
         var usID = usObj[this.getDevelopmentEnvironment(devRequest).name].local;
@@ -1327,7 +1773,7 @@ PulseUtilsImpl.prototype = {
         this.l.logDebug('Answer from remoteReopenUpdateSet: ' + JSON.stringify(answer));
         return answer;
     },
-
+                    
     // Set a local update set to In Progress
     localReopenUpdateSet: function(setID) {
         this.l.logDebug('Starting localReopenUpdateSet[' + setID + ']');
@@ -1342,11 +1788,11 @@ PulseUtilsImpl.prototype = {
         } else {
             answer.message = 'Update set not found: ' + setID;
         }
-
+                        
         this.l.logDebug('Answer from localReopenUpdateSet: ' + JSON.stringify(answer));
         return answer;
     },
-
+                    
     // Calculates the next step when it moves to test passed
     localMoveToInReview: function(devRequest) {
         this.l.logDebug('Starting localMoveToInReview[' + devRequest.getValue('number') + ']');
@@ -1373,7 +1819,7 @@ PulseUtilsImpl.prototype = {
         }
         return answer;
     },
-
+                    
     // Generates a Change Request
     generateChange: function(devRequest) {
         this.l.logDebug('Starting generateChange[' + devRequest.getValue('number') + ']');
@@ -1381,14 +1827,14 @@ PulseUtilsImpl.prototype = {
             success : false,
             message : ''
         };
-
+                        
         // Check if the Dev Request requires a Change Request right now
         // If the environment it's going to is the last one and
         // the system property have something, it means it requires a change
         var templateID = gs.getProperty('x_wms_pulse.change_request_template');
         var targetEnv = this.getTargetEnvironment(devRequest);
         if (targetEnv && targetEnv.getValue('type') == 'prod' && templateID) {
-            var answer = this.pulseGlobal.generateChange(this.l, devRequest);
+            answer = this.pulseGlobal.generateChange(this.l, devRequest);
             if (answer.rfc != '') {
                 this.l.logDebug('Setting RFC to:' + answer.rfc);
                 devRequest.setValue('change_request', answer.rfc);
@@ -1397,37 +1843,34 @@ PulseUtilsImpl.prototype = {
             // Doesn't need a change request
             answer.success = true;
         }
-
+                        
         if (answer.success) {
             devRequest.setValue('state', DevRequestStates.SCHEDULED);
         } else {
             devRequest.setValue('state', DevRequestStates.AUTOMATION_FAILURE);
         }
-
+                        
         return answer;
     },
-
+                    
     // Close a Change Request
     closeChange: function(devRequest) {
         var answer = this.pulseGlobal.closeChange(this.l, devRequest);
-
+                        
         if (answer.success) {
             devRequest.setValue('state', DevRequestStates.DONE);
         }
-
+                        
         return answer;
     },
-
+                    
     createRemediation: function(devRequest) {
         this.l.logDebug('Starting createRemediation[' + devRequest.getValue('number') + ']');
-        var answer = {
-            success : false,
-            message : ''
-        };
         var newDevReq = new GlideRecord('x_wms_pulse_dev_request');
         newDevReq.initialize();
         newDevReq.setValue('remediation_for', devRequest.getValue('sys_id'));
         newDevReq.setValue('short_description', devRequest.getValue('short_description'));
+        newDevReq.setValue('description', devRequest.getValue('description'));
         newDevReq.setValue('auto_promote', devRequest.getValue('auto_promote'));
         newDevReq.setValue('type', devRequest.getValue('type'));
         newDevReq.setValue('application', devRequest.getValue('application'));
@@ -1444,7 +1887,7 @@ PulseUtilsImpl.prototype = {
         var version = parseInt(devRequest.getValue('version'));
         newDevReq.setValue('version', version + 1);
         var id = newDevReq.insert();
-
+                        
         if (id.length == 32) {
             devRequest.setValue('state', DevRequestStates.AWAITING_REMEDIATION);
             devRequest.update();
@@ -1453,7 +1896,7 @@ PulseUtilsImpl.prototype = {
             gs.addInfoMessage('Error while creating remediation.');
         }
     },
-
+                    
     // Function called in order to see if there is any update set to install right now
     checkNextInSchedule: function() {
         if (!this.isProduction()) {
@@ -1461,84 +1904,100 @@ PulseUtilsImpl.prototype = {
         }
         // First check if there is any running, we shouldn't start any in parallel
         // We only care about the ones being promoted to Prod
-
+        var isPromotingMap = {};
+        var promotingNow = new GlideRecord('x_wms_pulse_dev_request');
+        promotingNow.addQuery('state', 'IN', [DevRequestStates.PROMOTING, DevRequestStates.COMMITTING]);
+        promotingNow.query();
+        while (promotingNow.next()) {
+            this.l.logDebug('There is one request being promoted already: ' + promotingNow.number);
+            isPromotingMap[promotingNow.getValue('current_instance')] = true;
+        }
+                            
         var prodInstance = new GlideRecord('x_wms_pulse_sn_instance');
         prodInstance.addQuery('name', this.production_instance);
+        prodInstance.addQuery('active', 'true');
         prodInstance.query();
         if (prodInstance.next()) {
-            var prodSource = new GlideRecord('x_wms_pulse_sn_instance');
-            prodSource.addQuery('parent', prodInstance.sys_id + '');
-            prodSource.query();
-            if (prodSource.next()) {
-                var promotingNow = new GlideRecord('x_wms_pulse_dev_request');
-                promotingNow.addQuery('current_instance', prodSource.sys_id + '');
-                var stateCond = promotingNow.addQuery('state', DevRequestStates.PROMOTING);
-                stateCond.addOrCondition('state', DevRequestStates.COMMITTING);
-                promotingNow.query();
-                if (promotingNow.next()) {
-                    this.l.logDebug('There is one request being promoted already: ' + promotingNow.number);
-                } else {
-                    // It's free to start a new promotion
-
-                    //TODO: Check if progress workers / sys_mutex are fine and we really don't have anything committing now
-                    var gdt = new GlideDateTime(); // Right now
-                    var nextDev = new GlideRecord('x_wms_pulse_dev_request');
-                    nextDev.addQuery('active', 'true');
-                    nextDev.addQuery('state', DevRequestStates.SCHEDULED);
-                    nextDev.addQuery('due_date', '<', gdt);
-                    nextDev.orderBy('due_date');
-                    nextDev.query();
-                    if (nextDev.next()) {
+            // Check for timeouts first
+            // Only commit timeouts, preview timeouts to be treated on a later version
+                                
+            var timeouts = new GlideRecord('x_wms_pulse_dev_request');
+            timeouts.addQuery('state', DevRequestStates.COMMITTING);
+            var timeoutTime = new GlideDateTime();
+            timeoutTime.addSeconds(-60); // 1 minutes
+            timeouts.addQuery('sys_updated_on', '<', timeoutTime);
+            timeouts.query();
+            if (timeouts.next()) {
+                this.handleStateChange(timeouts);
+            } else {
+                // No timeouts to treat
+                var gdt = new GlideDateTime(); // Right now
+                var nextDev = new GlideRecord('x_wms_pulse_dev_request');
+                nextDev.addQuery('active', 'true');
+                nextDev.addQuery('state', DevRequestStates.SCHEDULED);
+                nextDev.addQuery('due_date', '<', gdt);
+                nextDev.orderBy('due_date');
+                nextDev.query();
+                while (nextDev.next()) {
+                    if (isPromotingMap[nextDev.getValue('current_instance')]) {
+                        this.l.logDebug('Already promoting something from this environment, cannot start: ' + nextDev.getValue('number'));
+                        continue;
+                    } else {
+                        // It's free to start a new promotion
+                        isPromotingMap[nextDev.getValue('current_instance')] = true;
                         this.l.logDebug('Promoting: ' + nextDev.getValue('number'));
                         nextDev.setValue('state', DevRequestStates.PROMOTING);
                         nextDev.update();
                     }
                 }
+                                    
             }
+        } else {
+            this.l.logDebug('No Active production environment configured.');
         }
     },
-
+                        
     // TODO - Review Notifications
     sendNotification: function(channel, message) {
         this.l.logDebug('Starting sendNotification(' + channel + ',' + message + ')');
         // Only send notifications in PROD
-
+                            
         /* MESSAGES
-        * When moved to In Review:
-        * (To servicenow_codereview) :checking: New <Code Review Required>(link to devreq) - Update set Name (with Link) - Developed by <name>
-        * (To s_now_functional_rev) :checking: New <Functional Review Required>(link to devreq) - Update set Name (with Link) - Developed by <name>
-        *
-        * When Review Actions:
-        * (Channel depends on the role of who sent to review)
-        * :under-construction: <@dev> Actions Required on Update set Name (with Link). Your update set was reopened. \nComments: <comments>
-        * 
-        * When Ready for Testing:
-        * (to PO) :computerrage: Development is ready to be tested in CERT (link). Please review and take action on <DEVxxx>
-        *
-        * When Test Failed:
-        * (to s_now_functional_rev) :sad_mac: :bug: <@dev> Test failed on Update set Name (with Link). Create a new development request (link) to remediate the failure. Comments: <comments>
-        * 
-        * Done:
-        * (to PO) :yey: <@po> YEY! New <type> (us / link) is now in PROD!
-        *
-        * Problems:
-        * (to servicenow_devs) :crazy: Automation failed! I knew it was going to happen! <devxxx - link>
-        */
-
+                             * When moved to In Review:
+                             * (To servicenow_codereview) :checking: New <Code Review Required>(link to devreq) - Update set Name (with Link) - Developed by <name>
+                             * (To s_now_functional_rev) :checking: New <Functional Review Required>(link to devreq) - Update set Name (with Link) - Developed by <name>
+                             *
+                             * When Review Actions:
+                             * (Channel depends on the role of who sent to review)
+                             * :under-construction: <@dev> Actions Required on Update set Name (with Link). Your update set was reopened. \nComments: <comments>
+                             *
+                             * When Ready for Testing:
+                             * (to PO) :computerrage: Development is ready to be tested in CERT (link). Please review and take action on <DEVxxx>
+                             *
+                             * When Test Failed:
+                             * (to s_now_functional_rev) :sad_mac: :bug: <@dev> Test failed on Update set Name (with Link). Create a new development request (link) to remediate the failure. Comments: <comments>
+                             *
+                             * Done:
+                             * (to PO) :yey: <@po> YEY! New <type> (us / link) is now in PROD!
+                             *
+                             * Problems:
+                             * (to servicenow_devs) :crazy: Automation failed! I knew it was going to happen! <devxxx - link>
+                             */
+                            
         if (this.isProduction() && channel != '') {
             var r = new sn_ws.RESTMessageV2('SlackNotification', 'POST');
             r.setStringParameterNoEscape('channel', channel);
             r.setStringParameterNoEscape('text', message);
             r.execute();
         } else {
-           this.l.logDebug('sendNotification: Notifications only are sent in PROD');
+            this.l.logDebug('sendNotification: Notifications only are sent in PROD');
         }
     },
-
+                        
     // TODO - Code Scan Stuff
     printCodeScan: function(setID) {
         this.l.logDebug('Starting printCodeScan [ ' + setID + ']');
-        result = this.codeScan(setID);
+        var result = this.codeScan(setID);
         var scanMessage = 'Code Scan Results:\n';
         if (result.length == 0) {
             scanMessage = 'No results from Code Scan.';
@@ -1566,11 +2025,15 @@ PulseUtilsImpl.prototype = {
         }
         gs.addInfoMessage(scanMessage);
     },
-
+                        
     codeScan: function(setID) {
         return this.pulseGlobal.codeScan(this.l, setID);
     },
-
+                        
+    getCoders: function(setID) {
+        return this.pulseGlobal.getCoders(this.l, setID);
+    },
+                        
     // Restores a backed up development
     remoteRestoreBackup: function(devRequest) {
         this.l.logDebug('Starting remoteRestoreBackup - DevRequest [' + devRequest.getValue('number') + ']');
@@ -1578,100 +2041,132 @@ PulseUtilsImpl.prototype = {
             success : false,
             message : 'Request could not be completed. Contact your system administrator.'
         };
-
+                            
         if (this.isProduction()) {
-
+                                
             // Before restoring a backed out development, we should
             // - Check if there is already a update set in the lower instance with the sys_id of the one you're trying to create
             //  -- If yes - Check if it was already promoted to the parent instance
             //    --- If yes - Error out saying that the update set is already promoted
             //    --- If no  - Sync the sys_id of the dev request and re-open the update set (if it's not alreayd opened)
-            //  -- If no 
+            //  -- If no
             //   - Create the new update set as retrieved
             //   - Preview and Commit, update the sys_id of the dev request to the local copy, open the us and done
-
+                                
             var usObj = JSON.parse(devRequest.getValue('update_set_json'));
-
-            if (usObj[this.production_instance].local == '') {
-                if (usObj[this.production_instance].retrieved == '') {
-                    var attachId = this.getAttachmentBackup(devRequest);
-                    this.l.logDebug('Attachment with backup:' + attachId);
-                    if (attachId) {
-                        var uSetObj = this.parseAttachmentToObject(attachId, answer);
-                        if (uSetObj) {
-                            var environment = this.getDevelopmentEnvironment(devRequest);
-                            if (environment) {
-                                var path = '/api/x_wms_pulse/pulse/remoteupdateset/create';
-                                var operation = 'post';
-                                var body = JSON.stringify(uSetObj.sys_remote_update_set);
-                                answer = this.callAPI(environment.sys_id, path, operation, body);
-                            }
-
-                            if (!usObj[environment.getValue('name')]) {
-                                usObj[environment.getValue('name')] = {};
-                            }
-                            if (answer.local_sys_id) {
-                                usObj[environment.getValue('name')].local = answer.local_sys_id;
-                            }
-                            if (answer.remote_sys_id) {
-                                usObj[environment.getValue('name')].retrieved = answer.remote_sys_id;
-                            }
-                            if (answer.local_sys_id || answer.remote_sys_id) {
-                                devRequest.update_set_json = JSON.stringify(usObj);
-                            }
-
-                            if (answer.success && answer.created) {
-                                var usObjSysId = answer.local_sys_id;
-                                var usObjRemoteSysId = answer.remote_sys_id + '';
-                                if (usObjRemoteSysId.length == 32 && usObjRemoteSysId.length == 32) {
-                                    var countRecords = this.getUpdatesCount(usObjRemoteSysId, devRequest.dev_instance);
-                                    if (countRecords > 0) {
-                                        this.l.logDebug('The update set already have records!');
-                                        if (countRecords == uSetObj.sys_update_xml.length) {
-                                            if (answer.state == 'loaded') {
-                                                answer.retrieved_sys_id = usObj.sys_id;
-                                                answer.sys_id = usObjSysId;
-                                                answer.remote_sys_id = usObjRemoteSysId;
-                                                answer.errorMessage = '';
-                                                answer.message = 'Retrieved update set found as loaded and record count match.';
-                                                answer.success = true;
+                                
+            if (!usObj[this.production_instance] || usObj[this.production_instance].local == '') {
+                if (!usObj[this.production_instance] || usObj[this.production_instance].retrieved == '') {
+                    var environment = this.getDevelopmentEnvironment(devRequest);
+                    // Check if environment is on code freeze
+                    var appInstanceConfig = this.getInstanceApplication(devRequest, environment.sys_id + '');
+                    if (appInstanceConfig) {
+                        if (!appInstanceConfig.code_freeze) {
+                            var attachId = this.getAttachmentBackup(devRequest);
+                            this.l.logDebug('Attachment with backup:' + attachId);
+                            if (attachId) {
+                                var uSetObj = this.parseAttachmentToObject(attachId);
+                                if (uSetObj) {
+                                    if (uSetObj.sys_update_xml) {
+                                        // Update set has content
+                                        if (environment) {
+                                            var path = '/api/x_wms_pulse/pulse/remoteupdateset/create';
+                                            var operation = 'post';
+                                            // Overwrite root sys_id
+                                            uSetObj.sys_remote_update_set.u_root_sys_id = devRequest.getValue('root_sys_id');
+                                            var body = JSON.stringify(uSetObj.sys_remote_update_set);
+                                            answer = this.callAPI(environment.sys_id, path, operation, body);
+                                        }
+                                                            
+                                        if (!usObj[environment.getValue('name')]) {
+                                            usObj[environment.getValue('name')] = {};
+                                        }
+                                        if (answer.local_sys_id) {
+                                            usObj[environment.getValue('name')].local = answer.local_sys_id;
+                                        }
+                                        if (answer.remote_sys_id) {
+                                            usObj[environment.getValue('name')].retrieved = answer.remote_sys_id;
+                                        }
+                                        if (answer.local_sys_id || answer.remote_sys_id) {
+                                            devRequest.update_set_json = JSON.stringify(usObj);
+                                        }
+                                                                
+                                        if (answer.success && answer.created) {
+                                            var usObjSysId = answer.local_sys_id;
+                                            var usObjRemoteSysId = answer.remote_sys_id + '';
+                                            if (usObjRemoteSysId.length == 32 && usObjRemoteSysId.length == 32) {
+                                                var countRecords = this.getUpdatesCount(usObjRemoteSysId, devRequest.dev_instance);
+                                                if (countRecords > 0) {
+                                                    this.l.logDebug('The update set already have records!');
+                                                    if (countRecords == uSetObj.sys_update_xml.length) {
+                                                        if (answer.state == 'loaded') {
+                                                            answer.retrieved_sys_id = usObj.sys_id;
+                                                            answer.sys_id = usObjSysId;
+                                                            answer.remote_sys_id = usObjRemoteSysId;
+                                                            answer.errorMessage = '';
+                                                            answer.message = 'Retrieved update set found as loaded and record count match.';
+                                                            answer.success = true;
+                                                        } else {
+                                                            answer.message = 'Update set needs to be checked manually - content match but it\'s not in loaded state. Something is wrong.';
+                                                        }
+                                                    } else {
+                                                        answer.message = 'Update set already have content and number of updates doesn\'t match!';
+                                                    }
+                                                } else {
+                                                    // Load all changes
+                                                    answer = this.remoteInsertUpdateSetContent(usObjRemoteSysId, uSetObj.sys_update_xml, devRequest);
+                                                    if (answer.success) {
+                                                        devRequest.update(); // Making sure the sys_ids are in place
+                                                        answer = this.remotePromoteUpdateSet(devRequest, false);
+                                                        if (answer.success) {
+                                                            answer = this.remoteCommitUpdateSet(devRequest);
+                                                            if (answer.success) {
+                                                                gs.eventQueue('x_wms_pulse.restoring', devRequest, gs.getUserID(), devRequest.getValue('application'));
+                                                                devRequest.work_notes = 'Development restored.';
+                                                                devRequest.setValue('state', DevRequestStates.REVIEW_ACTIONS);
+                                                                devRequest.update();
+                                                            }
+                                                        }
+                                                    }
+                                                }
                                             } else {
-                                                answer.message = 'Update set needs to be checked manually - content match but it\'s not in loaded state. Something is wrong.';
+                                                answer.message = answer.message || 'Error getting/generating retrieved update set!';
                                             }
                                         } else {
-                                            answer.message = 'Update set already have content and number of updates doesn\'t match!';
-                                        }
-                                    } else {
-                                        // Load all changes
-                                        var answer = this.remoteInsertUpdateSetContent(usObjRemoteSysId, uSetObj.sys_update_xml, devRequest);
-                                        if (answer.success) {
-                                            devRequest.update(); // Making sure the sys_ids are in place
-                                            answer = this.remotePromoteUpdateSet(devRequest, false);
                                             if (answer.success) {
-                                                answer = this.remoteCommitUpdateSet(devRequest);
-                                                if (answer.success) {
-                                                    devRequest.comments = 'Development restored.';
-                                                    devRequest.setValue('state', DevRequestStates.REVIEW_ACTIONS);
-                                                    devRequest.update();
-                                                }
+                                                answer.message = 'Update set not created. It\'s already there. Reopening.';
+                                                devRequest.setValue('state', DevRequestStates.REVIEW_ACTIONS);
+                                                devRequest.update();
+                                            } else {
+                                                answer.message = 'Error while creating update set.';
                                             }
                                         }
+                                    } else {
+                                        // Update set is empty, just create a brand new update set.
+                                        answer.success = true;
+                                        answer.message = 'Update set empty - Recreating a brand new update set.';
+                                        devRequest.setValue('update_set_json', '');
+                                        devRequest.setValue('state', DevRequestStates.NEW);
+                                        devRequest.update();
                                     }
                                 } else {
-                                    answer.message = answer.message || 'Error getting/generating retrieved update set!';
+                                    answer.message = 'Not able to get attachment content!';
                                 }
                             } else {
-                                if (answer.success) {
-                                    answer.message = 'Update set not created. It\'s already there.';
-                                } else {
-                                    answer.message = 'Error while creating update set.';
-                                }
+                                answer.message = 'Attached update set not found! Creating a brand new one.';
+                                answer.success = true;
+                                devRequest.setValue('update_set_json', '');
+                                devRequest.setValue('state', DevRequestStates.NEW);
+                                devRequest.update();
                             }
                         } else {
-                            answer.message = 'Not able to get attachment content!';
+                            answer.success = true;
+                            answer.message = 'CODE FREEZE: Environment is on freeze due to maintenance. Update set creation will resume once maintenance is completed.';
+                            devRequest.setValue('state', DevRequestStates.ON_HOLD);
+                            devRequest.update();
                         }
                     } else {
-                        answer.message = 'Attached update set not found!';
+                        answer.message = 'Application doesn\'t have configuration for the dev environment.';
                     }
                 } else {
                     answer.message = 'The update set was already retrieved in PROD!';
@@ -1685,7 +2180,7 @@ PulseUtilsImpl.prototype = {
         this.l.logDebug('Answer from remoteRestoreBackup: ' + JSON.stringify(answer));
         return answer;
     },
-
+                            
     getAttachmentBackup: function(devRequest) {
         this.l.logDebug('Starting getAttachmentBackup - Attachment [' + devRequest.getValue('number') + ']');
         var answer = false;
@@ -1700,25 +2195,25 @@ PulseUtilsImpl.prototype = {
         }
         return answer;
     },
-
-    parseAttachmentToObject: function(attachment_sysid, answer) {
+                            
+    parseAttachmentToObject: function(attachment_sysid) {
         this.l.logDebug('Starting parseAttachmentToObject - Attachment [' + attachment_sysid + ']');
         var result = false;
-        var grAttach = new GlideRecord("sys_attachment");
+        var grAttach = new GlideRecord('sys_attachment');
         grAttach.addQuery('sys_id', attachment_sysid);
         grAttach.query();
         if (grAttach.next()) {
-          var ga = new GlideSysAttachment();
-          var strData = ga.getContent(grAttach);
-          result = this.pulseGlobal.xmlToObject(strData);
+            var ga = new GlideSysAttachment();
+            var strData = ga.getContent(grAttach);
+            result = this.pulseGlobal.xmlToObject(strData);
         }
         return result;
     },
-
+                            
     localCreateRemoteUpdateSet: function(payload) {
         return this.pulseGlobal.localCreateRemoteUpdateSet(this.l, payload);
     },
-
+                            
     updateSetExists: function(setID, tbl, field, env) {
         this.l.logDebug('Starting updateSetExists - setID ['+setID+'] tbl ['+tbl+'] field ['+field+'] environment [' + env + ']');
         var answer = {
@@ -1728,9 +2223,9 @@ PulseUtilsImpl.prototype = {
             remote_sys_id : '',
             state : ''
         };
-
-        var answerAPI = this.callAPI(env, '/api/now/table/' + tbl + '?sysparm_query=' + field + '=' + setID, 'get', null);
-
+                                
+        var answerAPI = this.callAPI(env, '/api/now/table/' + tbl + '?sysparm_query=' + field + '%3D' + setID, 'get', null);
+                                
         if (answerAPI[0] && answerAPI[0][field] == setID) {
             answer.success = true;
             answer.exist = true;
@@ -1748,11 +2243,11 @@ PulseUtilsImpl.prototype = {
                 answer.message = 'Update set does not exist.';
             }
         }
-
+                                
         this.l.logDebug('Response from updateSetExists: ' + JSON.stringify(answer));
         return answer;
     },
-
+                            
     remoteInsertUpdateSetContent: function(setID, uptXMLArray, devRequest) {
         this.l.logDebug('Starting insertUpdateSetContent - setID [' + setID + ']');
         var answer = {
@@ -1769,188 +2264,235 @@ PulseUtilsImpl.prototype = {
         this.l.logDebug('Response from remoteInsertUpdateSetContent: ' + JSON.stringify(answer));
         return answer;
     },
-
+                            
     localInsertUpdateSetContent: function(setID, payload) {
         return this.pulseGlobal.localInsertUpdateSetContent(this.l, setID, payload);
     },
-
+                            
     getUpdateSet: function(usObj, instanceGR) {
-      var updateSetId = usObj.getValue('sys_id');
-      var remoteSetId = usObj.remote_sys_id + '';
-      var commitTime = usObj.commit_time + '';
-      this.l.logDebug('Starting getUpdateSet - setID [' + updateSetId + '] - Environment [' + instanceGR.u_name + '] - remoteSetId [' + remoteSetId + ']');
-      var answer = {
-        success : false,
-        updateSetId : updateSetId,
-        errorMessage : ''
-      };
-
-      if (updateSetId && instanceGR != '') {
-        // First check if this update set came from this instance
-        if (remoteSetId) {
-          var retrievedUS = this.updateSetExists(remoteSetId, 'sys_remote_update_set', 'sys_id', instanceGR);
-          if (retrievedUS.exist && retrievedUS.remote_sys_id) {
-            var localSets = new GlideRecord('sys_update_set');
-            localSets.addQuery('sys_id', retrievedUS.remote_sys_id);
-            localSets.query();
-            if (localSets.next()) {
-              // This is the origin of this update set, skip it!
-              gs.setProperty('update_set_utils.slack.last_pull', commitTime + '');
-              answer.sameEnvironment = true;
-              return answer;
+        var updateSetId = usObj.getValue('sys_id');
+        var remoteSetId = usObj.remote_sys_id + '';
+        var commitTime = usObj.commit_time + '';
+        this.l.logDebug('Starting getUpdateSet - setID [' + updateSetId + '] - Environment [' + instanceGR.u_name + '] - remoteSetId [' + remoteSetId + ']');
+        var answer = {
+            success : false,
+            updateSetId : updateSetId,
+            errorMessage : ''
+        };
+                                
+        if (updateSetId && instanceGR != '') {
+            // First check if this update set came from this instance
+            if (remoteSetId) {
+                var retrievedUS = this.updateSetExists(remoteSetId, 'sys_remote_update_set', 'sys_id', instanceGR);
+                if (retrievedUS.exist && retrievedUS.remote_sys_id) {
+                    var localSets = new GlideRecord('sys_update_set');
+                    localSets.addQuery('sys_id', retrievedUS.remote_sys_id);
+                    localSets.query();
+                    if (localSets.next()) {
+                        // This is the origin of this update set, skip it!
+                        gs.setProperty('update_set_utils.slack.last_pull', commitTime + '');
+                        answer.sameEnvironment = true;
+                        return answer;
+                    }
+                }
             }
-          }
-        }
-
-        var remoteSets = new GlideRecord('sys_remote_update_set');
-        remoteSets.addEncodedQuery('sys_class_name=sys_remote_update_set^remote_sys_id=' + updateSetId);
-        remoteSets.query();
-        
-        if (remoteSets.next()) {
-          this.l.logDebug('Retrieved update set found in this instance.');
-          if (remoteSets.state == 'loaded' || remoteSets.state == 'loading' || remoteSets.state == 'previewed') {
-            // Means we can delete it
-            this.l.logDebug('Can be deleted.');
-            remoteSets.deleteRecord();
-          } else {
-            this.l.logDebug('Cannot be deleted.');
-            if (remoteSets.state == 'committed') {
-              gs.setProperty('update_set_utils.slack.last_pull', commitTime + '');
-              answer.sameEnvironment = true;
-              return answer;
+                                    
+            var remoteSets = new GlideRecord('sys_remote_update_set');
+            remoteSets.addEncodedQuery('sys_class_name=sys_remote_update_set^remote_sys_id=' + updateSetId);
+            remoteSets.query();
+                                    
+            if (remoteSets.next()) {
+                this.l.logDebug('Retrieved update set found in this instance.');
+                if (remoteSets.state == 'loaded' || remoteSets.state == 'loading' || remoteSets.state == 'previewed') {
+                    // Means we can delete it
+                    this.l.logDebug('Can be deleted.');
+                    remoteSets.deleteRecord();
+                } else {
+                    this.l.logDebug('Cannot be deleted.');
+                    if (remoteSets.state == 'committed') {
+                        gs.setProperty('update_set_utils.slack.last_pull', commitTime + '');
+                        answer.sameEnvironment = true;
+                        return answer;
+                    }
+                                            
+                    answer.errorMessage = 'The update set could not be loaded. There is already an update set on state ' + remoteSets.state;
+                    return answer;
+                }
             }
-
-            answer.errorMessage = 'The update set could not be loaded. There is already an update set on state ' + remoteSets.state;
-            return answer;
-          }
+                                    
+            this.l.logDebug('Calling WS ['+ instanceGR.getValue('url') + '/api/now/table/sys_update_set/' + updateSetId + ']');
+            var requestWS = new sn_ws.RESTMessageV2();
+            requestWS.setEndpoint(instanceGR.getValue('url') + '/api/now/table/sys_update_set/' + updateSetId);
+            requestWS.setHttpMethod('GET');
+                                    
+            var user = instanceGR.getValue('user');
+            var password = instanceGR.password.getDecryptedValue();
+            requestWS.setBasicAuth(user,password);
+            requestWS.setRequestHeader('Accept','application/json');
+                                    
+            var responseWS = requestWS.execute();
+            var respBody = responseWS.getBody();
+                                    
+            var updtXML = JSON.parse(respBody);
+            if (typeof updtXML.result != 'undefined' && typeof updtXML.result.sys_id != 'undefined' &&  updtXML.result.sys_id != '') {
+                var uptXMLObj = updtXML.result;
+                                        
+                var retrievedUpdateSet = new GlideRecord('sys_remote_update_set');
+                retrievedUpdateSet.initialize();
+                retrievedUpdateSet.description = uptXMLObj.description;
+                retrievedUpdateSet.name = 'AutoSync: ' + uptXMLObj.name;
+                retrievedUpdateSet.release_date = uptXMLObj.release_date;
+                retrievedUpdateSet.remote_sys_id = uptXMLObj.getValue('sys_id');
+                retrievedUpdateSet.application = uptXMLObj.application.value;
+                retrievedUpdateSet.origin_sys_id = uptXMLObj.origin_sys_id;
+                retrievedUpdateSet.update_source = instanceGR.getValue('sys_id');
+                                        
+                var scopeGr = new GlideRecord('sys_scope');
+                scopeGr.get(uptXMLObj.application.value);
+                if (scopeGr.isValid()) {
+                    retrievedUpdateSet.application_name = scopeGr.name;
+                    retrievedUpdateSet.application_scope = scopeGr.scope;
+                    retrievedUpdateSet.application_version = scopeGr.version;
+                }
+                                        
+                retrievedUpdateSet.state = 'loading';
+                                        
+                var sysidRemote = retrievedUpdateSet.insert();
+                answer.remote_sys_id = sysidRemote;
+                                        
+                this.l.logDebug('Calling WS for Details ['+ instanceGR.getValue('url') + '/api/now/table/sys_update_xml?sysparm_query=update_set%3D' + updateSetId + '&sysparm_display_value=false' + ']');
+                var requestWSXML = new sn_ws.RESTMessageV2();
+                requestWSXML.setEndpoint(instanceGR.getValue('url') + '/api/now/table/sys_update_xml?sysparm_query=update_set%3D' + updateSetId + '&sysparm_display_value=false');
+                requestWSXML.setHttpMethod('GET');
+                requestWSXML.setBasicAuth(user,password);
+                requestWSXML.setRequestHeader('Accept','application/json');
+                                        
+                var responseWSXML = requestWSXML.execute();
+                var respBodyXML = responseWSXML.getBody();
+                                        
+                var updtXMLItens = JSON.parse(respBodyXML);
+                for (var x = 0; x < updtXMLItens.result.length; x++) {
+                    var inObj = updtXMLItens.result[x];
+                    var newXMLRec = new GlideRecord('sys_update_xml');
+                    newXMLRec.initialize();
+                    newXMLRec.update_set = '';
+                    newXMLRec.comments = inObj.comments;
+                    newXMLRec.target_name = inObj.target_name;
+                    newXMLRec.sys_mod_count = inObj.sys_mod_count;
+                    newXMLRec.replace_on_upgrade = inObj.replace_on_upgrade;
+                    newXMLRec.sys_updated_on = inObj.sys_updated_on;
+                    newXMLRec.sys_tags = inObj.sys_tags;
+                    newXMLRec.type = inObj.type;
+                    newXMLRec.view = inObj.view;
+                    newXMLRec.sys_updated_by = inObj.sys_updated_by;
+                    newXMLRec.application = inObj.application.value;
+                    newXMLRec.payload = inObj.payload;
+                    newXMLRec.sys_created_on = inObj.sys_created_on;
+                    newXMLRec.name = inObj.name;
+                    newXMLRec.remote_update_set = sysidRemote;
+                    newXMLRec.action = inObj.action;
+                    newXMLRec.update_domain = inObj.update_domain.value;
+                    newXMLRec.category = inObj.category;
+                    newXMLRec.sys_created_by = inObj.sys_created_by;
+                    newXMLRec.table = inObj.table;
+                    newXMLRec.autoSysFields(false);
+                    newXMLRec.insert();
+                }
+                                        
+                retrievedUpdateSet.state = 'loaded';
+                retrievedUpdateSet.update();
+                answer.success = true;
+            }
+        } else {
+            answer.errorMessage = 'Missing parameter.';
         }
-        
-        this.l.logDebug('Calling WS ['+ instanceGR.getValue('url') + '/api/now/table/sys_update_set/' + updateSetId + ']');
-        var requestWS = new sn_ws.RESTMessageV2();
-        requestWS.setEndpoint(instanceGR.getValue('url') + '/api/now/table/sys_update_set/' + updateSetId);
-        requestWS.setHttpMethod('GET');
-        
-        var user = instanceGR.getValue('user');
-        var password = instanceGR.password.getDecryptedValue();
-        requestWS.setBasicAuth(user,password);
-        requestWS.setRequestHeader("Accept","application/json");
-        
-        var responseWS = requestWS.execute();
-        var respBody = responseWS.getBody();
-        
-        var updtXML = JSON.parse(respBody);
-        if (typeof updtXML.result != 'undefined' && typeof updtXML.result.sys_id != 'undefined' &&  updtXML.result.sys_id != '') {
-          var uptXMLObj = updtXML.result;
-
-          var retrievedUpdateSet = new GlideRecord('sys_remote_update_set');
-          retrievedUpdateSet.initialize();
-          retrievedUpdateSet.description = uptXMLObj.description;
-          retrievedUpdateSet.name = 'AutoSync: ' + uptXMLObj.name;
-          retrievedUpdateSet.release_date = uptXMLObj.release_date;
-          retrievedUpdateSet.remote_sys_id = uptXMLObj.getValue('sys_id');
-          retrievedUpdateSet.application = uptXMLObj.application.value;
-          retrievedUpdateSet.origin_sys_id = uptXMLObj.origin_sys_id;
-          retrievedUpdateSet.update_source = instanceGR.getValue('sys_id');
-          
-          var scopeGr = new GlideRecord('sys_scope');
-          scopeGr.get(uptXMLObj.application.value);
-          if (scopeGr.isValid()) {
-            retrievedUpdateSet.application_name = scopeGr.name;
-            retrievedUpdateSet.application_scope = scopeGr.scope;
-            retrievedUpdateSet.application_version = scopeGr.version;
-          }
-          
-          retrievedUpdateSet.state = "loading";
-          
-          var sysidRemote = retrievedUpdateSet.insert();
-          answer.remote_sys_id = sysidRemote;
-          
-          this.l.logDebug('Calling WS for Details ['+ instanceGR.getValue('url') + '/api/now/table/sys_update_xml?sysparm_query=update_set%3D' + updateSetId + '&sysparm_display_value=false' + ']');
-          var requestWSXML = new sn_ws.RESTMessageV2();
-          requestWSXML.setEndpoint(instanceGR.getValue('url') + '/api/now/table/sys_update_xml?sysparm_query=update_set%3D' + updateSetId + '&sysparm_display_value=false');
-          requestWSXML.setHttpMethod('GET');
-          requestWSXML.setBasicAuth(user,password);
-          requestWSXML.setRequestHeader("Accept","application/json");
-          
-          var responseWSXML = requestWSXML.execute();
-          var respBodyXML = responseWSXML.getBody();
-          
-          var updtXMLItens = JSON.parse(respBodyXML);
-          for (var x = 0; x < updtXMLItens.result.length; x++) {
-            var inObj = updtXMLItens.result[x];
-            var newXMLRec = new GlideRecord('sys_update_xml');
-            newXMLRec.initialize();
-            newXMLRec.update_set = '';
-            newXMLRec.comments = inObj.comments;
-            newXMLRec.target_name = inObj.target_name;
-            newXMLRec.sys_mod_count = inObj.sys_mod_count;
-            newXMLRec.replace_on_upgrade = inObj.replace_on_upgrade;
-            newXMLRec.sys_updated_on = inObj.sys_updated_on;
-            newXMLRec.sys_tags = inObj.sys_tags;
-            newXMLRec.type = inObj.type;
-            newXMLRec.view = inObj.view;
-            newXMLRec.sys_updated_by = inObj.sys_updated_by;
-            newXMLRec.application = inObj.application.value;
-            newXMLRec.payload = inObj.payload;
-            newXMLRec.sys_created_on = inObj.sys_created_on;
-            newXMLRec.name = inObj.name;
-            newXMLRec.remote_update_set = sysidRemote;
-            newXMLRec.action = inObj.action;
-            newXMLRec.update_domain = inObj.update_domain.value;
-            newXMLRec.category = inObj.category;
-            newXMLRec.sys_created_by = inObj.sys_created_by;
-            newXMLRec.table = inObj.table;
-            newXMLRec.autoSysFields(false);
-            newXMLRec.insert();
-          }
-          
-          retrievedUpdateSet.state = 'loaded';
-          retrievedUpdateSet.update();
-          answer.success = true;
-        }
-      } else {
-        answer.errorMessage = 'Missing parameter.';
-      }
-      return answer;
-      
+        return answer;
+                                
     },
-
+                            
     getUpperEnvironment: function () {
         this.l.logDebug('Starting getUpperEnvironment');
         var answer;
         var upperGR = new GlideRecord('x_wms_pulse_sn_instance');
         upperGR.addQuery('u_name', this.currInstance);
         upperGR.query();
-
+                                
         if (upperGR.next()) {
             answer = upperGR.u_parent_instance;
         }
         return answer;
     },
 
+    getApprovers: function(devRequest) {
+        var answer = '';
+        var targetEnv = this.getTargetEnvironment(devRequest);
+        var usObj = JSON.parse(devRequest.update_set_json + '');
+        if (!usObj[targetEnv.name] || !usObj[targetEnv.name].approved) {
+            var appInstanceConfig = this.getInstanceApplication(devRequest, targetEnv.sys_id);
+            
+            if (appInstanceConfig) {
+                if (this.requiresTechnicalReview(devRequest)) {
+                    answer = appInstanceConfig.tech_approvers.toString();
+                }
+                if (appInstanceConfig.additional_approvers != '' ) {
+                    if (answer != '') {
+                        answer += ',';
+                    }
+                    answer += appInstanceConfig.additional_approvers;
+                }
+            }
+        }
+        return answer;
+    },
+
+    requiresTechnicalReview: function(devRequest) {
+        var answer = true;
+        var codeScanRule = gs.getProperty('x_wms_pulse.autoapprove_scanrule');
+        if (codeScanRule != '') {
+            var noCodeFinding = new GlideRecord('x_wms_pulse_sn_scan_finding');
+            noCodeFinding.addQuery('dev_request', devRequest);
+            noCodeFinding.addQuery('state', 'current');
+            noCodeFinding.addQuery('rule', codeScanRule);
+            noCodeFinding.query();
+            if (noCodeFinding.next()) {
+                // Only doesnt require approval if the ONLY finding is that one
+                var otherFindings = new GlideRecord('x_wms_pulse_sn_scan_finding');
+                otherFindings.addQuery('dev_request', devRequest);
+                otherFindings.addQuery('state', 'current');
+                otherFindings.addQuery('rule', '!=', codeScanRule);
+                otherFindings.addQuery('rule.impact_type', '!=', 'info');
+                otherFindings.query();
+                if (!otherFindings.next()) {
+                    answer = false;
+                }
+            }
+        }
+        return answer;
+    },
+                            
     getUpdateSetToPull: function(environment) {
         this.l.logDebug('Starting getUpdateSetToPull');
         var answer = {};
         var lastPull = gs.getProperty('update_set_utils.slack.last_pull', '');
         if (lastPull != '') {
-          // lastPull at this point contains it UTC
-          var currentPassword = environment.password.getDecryptedValue();
-          var remoteGR = new GlideRemoteGlideRecord(environment.getValue('url'), 'sys_update_set');
-          remoteGR.setBasicAuth(environment.getValue('user'), currentPassword);
-          remoteGR.addQuery('completed_on', '>', lastPull);
-          remoteGR.addQuery('remote_sys_id', '!=', '');
-          remoteGR.addQuery('state', 'complete');
-          remoteGR.orderBy('completed_on');
-          remoteGR.query();
-          if (remoteGR.next()) {
-            answer.sys_id = remoteGR.getValue('sys_id') + '';
-            answer.commit_time = remoteGR.getValue('install_date') + '';
-            answer.remote_sys_id = remoteGR.getValue('remote_sys_id') + '';
-          }
+            // lastPull at this point contains it UTC
+            var currentPassword = environment.password.getDecryptedValue();
+            var remoteGR = new GlideRemoteGlideRecord(environment.getValue('url'), 'sys_update_set');
+            remoteGR.setBasicAuth(environment.getValue('user'), currentPassword);
+            remoteGR.addQuery('completed_on', '>', lastPull);
+            remoteGR.addQuery('remote_sys_id', '!=', '');
+            remoteGR.addQuery('state', 'complete');
+            remoteGR.orderBy('completed_on');
+            remoteGR.query();
+            if (remoteGR.next()) {
+                answer.sys_id = remoteGR.getValue('sys_id') + '';
+                answer.commit_time = remoteGR.getValue('install_date') + '';
+                answer.remote_sys_id = remoteGR.getValue('remote_sys_id') + '';
+            }
         }
         return answer;
     },
-
+                                
     treatPullFailure: function(usFailed) {
         this.l.logDebug('Starting treatPullFailure: ' + usFailed);
         var grFailed = new GlideRecord('sys_update_set');
@@ -1958,92 +2500,92 @@ PulseUtilsImpl.prototype = {
         grFailed.addQuery('remote_sys_id', usFailed + '');
         grFailed.query();
         if (grFailed.next()) {
-          // Failure is taken care of
-          gs.setProperty('auto-pull-failure', '');
-          gs.setProperty('auto-pull-failure-retry', '0');
+            // Failure is taken care of
+            gs.setProperty('auto-pull-failure', '');
+            gs.setProperty('auto-pull-failure-retry', '0');
         } else {
-          var retryCount = parseInt(gs.getProperty('auto-pull-failure-retry', '0'));
-          // Each 5 failures, notify on slack
-          var notifyEach = parseInt(gs.getProperty('update_set_utils.slack.last_pull_notify_each', '5'));
-          if (retryCount % notifyEach == 0) {
-            // Notify on slack!
-            this.notifyPullFailure(usFailed);
-          }
-          gs.setProperty('auto-pull-failure-retry', retryCount + 1);
+            var retryCount = parseInt(gs.getProperty('auto-pull-failure-retry', '0'));
+            // Each 5 failures, notify on slack
+            var notifyEach = parseInt(gs.getProperty('update_set_utils.slack.last_pull_notify_each', '5'));
+            if (retryCount % notifyEach == 0) {
+                // Notify on slack!
+                this.notifyPullFailure(usFailed);
+            }
+            gs.setProperty('auto-pull-failure-retry', retryCount + 1);
         }
     },
-
+                                
     notifyPullFailure: function(usFailed) {
         var message = 'Pull Process: ' + this.currInstance + ' has problems. Tech leads, please check <' + gs.getProperty('glide.servlet.uri')+'nav_to.do?uri=sys_remote_update_set.do?sys_id=' + usFailed + '|this update set>. Once the update set is commmitted, pull will continue.';
         var channel = gs.getProperty('update_set_utils.slack.problems');
         if (channel) {
-          var r = new sn_ws.RESTMessageV2('SlackNotification', 'POST');
-          r.setStringParameterNoEscape('channel', channel);
-          r.setStringParameterNoEscape('text', message);
-          r.execute();
+            var r = new sn_ws.RESTMessageV2('SlackNotification', 'POST');
+            r.setStringParameterNoEscape('channel', channel);
+            r.setStringParameterNoEscape('text', message);
+            r.execute();
         }
     },
-
+                                
     checkForPulls: function() {
-      this.l.logDebug('Starting checkForPulls');
-      var upperEnv = this.getUpperEnvironment();
-      if (upperEnv) {
-        // At this point, it have an upper environment
-        // Do we have a current pull with problems?
-        var autoPullFailure = gs.getProperty('auto-pull-failure', '');
-        this.l.logDebug('autoPullFailure:' + autoPullFailure);
-        if (autoPullFailure) {
-          this.treatPullFailure(autoPullFailure);
-        } else {
-          var usToGet = this.getUpdateSetToPull(upperEnv);
-          if (usToGet && usToGet.getValue('sys_id')) { // If it's false, no update set to retrieve
-            // usToGet contain the 'remote_sys_id' of the local version of the update set
-            this.l.logDebug('usToGet:' + usToGet.getValue('sys_id'));
-            var loadResult = this.getUpdateSet(usToGet, upperEnv);
-            this.l.logDebug('loadResult:' + JSON.stringify(loadResult));
-            if (loadResult.success) {
-              if (loadResult.updateSetId) {
-                var previewResult = this.previewUpdateSet(loadResult.updateSetId+ '');
-                this.l.logDebug('previewResult:' + JSON.stringify(previewResult));
-                if (previewResult.success) {
-                  var commitResult = this.commitUpdateSet(loadResult.updateSetId + '');
-                  this.l.logDebug('commitResult:' + JSON.stringify(commitResult));
-                  if (commitResult.success) {
-                    // previewed and committed, set to ignore now
-                    var grCommitted = new GlideRecord('sys_update_set');
-                    grCommitted.addQuery('sys_id', commitResult.local_sys_id + '');
-                    grCommitted.query();
-
-                    if (grCommitted.next()) {
-                      // This will fail for scoped apps, but do it anyway
-                      grCommitted.state = 'ignore';
-                      grCommitted.update();
-                    }
-
-                    gs.setProperty('update_set_utils.slack.last_pull', usToGet.commit_time + '');
-                  } else {
-                    gs.setProperty('auto-pull-failure', loadResult.remote_sys_id);
-                    this.notifyPullFailure(loadResult.remote_sys_id);
-                  }
-                } else {
-                  gs.setProperty('auto-pull-failure', loadResult.remote_sys_id);
-                  this.notifyPullFailure(loadResult.remote_sys_id);
-                }
-              }
+        this.l.logDebug('Starting checkForPulls');
+        var upperEnv = this.getUpperEnvironment();
+        if (upperEnv) {
+            // At this point, it have an upper environment
+            // Do we have a current pull with problems?
+            var autoPullFailure = gs.getProperty('auto-pull-failure', '');
+            this.l.logDebug('autoPullFailure:' + autoPullFailure);
+            if (autoPullFailure) {
+                this.treatPullFailure(autoPullFailure);
             } else {
-              // Failed during load
-              if (!loadResult.sameEnvironment) {
-                this.notifyPullFailure(usToGet.getValue('sys_id'));
-              }
+                var usToGet = this.getUpdateSetToPull(upperEnv);
+                if (usToGet && usToGet.getValue('sys_id')) { // If it's false, no update set to retrieve
+                    // usToGet contain the 'remote_sys_id' of the local version of the update set
+                    this.l.logDebug('usToGet:' + usToGet.getValue('sys_id'));
+                    var loadResult = this.getUpdateSet(usToGet, upperEnv);
+                    this.l.logDebug('loadResult:' + JSON.stringify(loadResult));
+                    if (loadResult.success) {
+                        if (loadResult.updateSetId) {
+                            var previewResult = this.previewUpdateSet(loadResult.updateSetId+ '');
+                            this.l.logDebug('previewResult:' + JSON.stringify(previewResult));
+                            if (previewResult.success) {
+                                var commitResult = this.commitUpdateSet(loadResult.updateSetId + '');
+                                this.l.logDebug('commitResult:' + JSON.stringify(commitResult));
+                                if (commitResult.success) {
+                                    // previewed and committed, set to ignore now
+                                    var grCommitted = new GlideRecord('sys_update_set');
+                                    grCommitted.addQuery('sys_id', commitResult.local_sys_id + '');
+                                    grCommitted.query();
+                                                                
+                                    if (grCommitted.next()) {
+                                        // This will fail for scoped apps, but do it anyway
+                                        grCommitted.state = 'ignore';
+                                        grCommitted.update();
+                                    }
+                                                                
+                                    gs.setProperty('update_set_utils.slack.last_pull', usToGet.commit_time + '');
+                                } else {
+                                    gs.setProperty('auto-pull-failure', loadResult.remote_sys_id);
+                                    this.notifyPullFailure(loadResult.remote_sys_id);
+                                }
+                            } else {
+                                gs.setProperty('auto-pull-failure', loadResult.remote_sys_id);
+                                this.notifyPullFailure(loadResult.remote_sys_id);
+                            }
+                        }
+                    } else {
+                        // Failed during load
+                        if (!loadResult.sameEnvironment) {
+                            this.notifyPullFailure(usToGet.getValue('sys_id'));
+                        }
+                    }
+                }
             }
-          }
         }
-      }
     },
-
+                                
     getUpdatesCount: function (setID, environment) {
         this.l.logDebug('Starting getUpdatesCount [' + setID + '] - Current Instance [' + environment + ']');
-        
+                                    
         if (environment) {
             var path = '/api/x_wms_pulse/pulse/updateset/count/' + setID;
             var operation = 'get';
@@ -2052,10 +2594,41 @@ PulseUtilsImpl.prototype = {
                 return parseInt(answer.count);
             }
         }
-
+                                    
         return 0;
     },
 
+    /* Given a root_sys_id, get the latest change from the developer */
+    getLastUpdate: function(setID) {
+        this.l.logDebug('Starting getLastUpdate [' + setID + ']');
+        var answer = {
+            success : false,
+            errorMessage : '',
+            last_change : ''
+        };
+        
+        if (setID != '') {
+            var changes = new GlideRecord('sys_update_xml');
+            changes.addQuery('update_set.u_root_sys_id', setID);
+            changes.query();
+            while (changes.next()) {
+                if (changes.payload.indexOf('<sys_updated_on>') >= 0) {
+                    var date = changes.payload.substr(changes.payload.indexOf('<sys_updated_on>') + 16, 19);
+                    if (answer.last_change == '') {
+                        answer.last_change = date;
+                    }
+                    if (date > answer.last_change) {
+                        answer.last_change = date;
+                    }
+                    answer.success = true;
+                }
+            }
+        } else {
+            answer.errorMessage = 'Root SYS ID provided is blank.';
+        }
+        return answer;
+    },
+                                
     getProductionInstance: function() {
         var prodInstance = new GlideRecord('x_wms_pulse_sn_instance');
         prodInstance.addQuery('active', true);
@@ -2065,32 +2638,32 @@ PulseUtilsImpl.prototype = {
             return prodInstance.name + '';
         }
     },
-
+                                
     isProduction: function() {
-        this.l.logDebug('Starting isProduction - Production [' + this.production_instance + '] - Current Instance [' + this.currInstance + ']');
         if (this.production_instance == this.currInstance) {
             return true;
         }
         return false;
     },
-
+                                
     setDebug: function(onoff) {
         if (onoff) {
-            this.l.setLevel("debug");
+            this.l.setLevel('debug');
         } else {
-            this.l.setLevel("info");
+            this.l.setLevel('info');
         }
     },
 
     type: 'PulseUtilsImpl'
 };
+
 ]]></script>
         <sys_class_name>sys_script_include</sys_class_name>
         <sys_created_by>mmoreli</sys_created_by>
         <sys_created_on>2018-08-07 21:43:44</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>910e5311dbf3130089fb2fb748961988</sys_id>
-        <sys_mod_count>307</sys_mod_count>
+        <sys_mod_count>439</sys_mod_count>
         <sys_name>PulseUtilsImpl</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy>read</sys_policy>
@@ -2098,6 +2671,6 @@ PulseUtilsImpl.prototype = {
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_script_include_910e5311dbf3130089fb2fb748961988</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-06-27 20:22:46</sys_updated_on>
+        <sys_updated_on>2020-04-08 14:26:55</sys_updated_on>
     </sys_script_include>
 </record_update>

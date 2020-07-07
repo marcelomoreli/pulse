@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_choice action="INSERT_OR_UPDATE" field="impact_level" table="x_wms_pulse_sn_scan_rule" version="3">
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>impact_level</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>High</label>
+            <language>en</language>
+            <name>x_wms_pulse_sn_scan_rule</name>
+            <sequence>1</sequence>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-02-07 21:58:19</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>6d060f6cdb236300cbdfd6aa48961995</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-02-07 21:58:19</sys_updated_on>
+            <value>high</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>impact_level</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Medium</label>
+            <language>en</language>
+            <name>x_wms_pulse_sn_scan_rule</name>
+            <sequence>2</sequence>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-02-07 21:58:30</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>5c260b6cdb236300cbdfd6aa489619e3</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-02-07 21:58:30</sys_updated_on>
+            <value>medium</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>impact_level</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Low</label>
+            <language>en</language>
+            <name>x_wms_pulse_sn_scan_rule</name>
+            <sequence>3</sequence>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-02-07 21:58:38</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>0a264f6cdb236300cbdfd6aa48961960</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-02-07 21:58:38</sys_updated_on>
+            <value>low</value>
+        </sys_choice>
+        <sys_choice_set action="INSERT_OR_UPDATE">
+            <element>impact_level</element>
+            <name>x_wms_pulse_sn_scan_rule</name>
+            <sys_class_name>sys_choice_set</sys_class_name>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-02-07 21:58:19</sys_created_on>
+            <sys_customer_update>false</sys_customer_update>
+            <sys_id>0f411a09dbd277c433a7581bdc9619ba</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>impact_level</sys_name>
+            <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+            <sys_policy/>
+            <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+            <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+            <sys_update_name>sys_choice_x_wms_pulse_sn_scan_rule_impact_level</sys_update_name>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-02-07 21:58:19</sys_updated_on>
+        </sys_choice_set>
+    </sys_choice>
+</record_update>

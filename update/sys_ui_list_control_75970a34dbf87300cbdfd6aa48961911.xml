@@ -18,6 +18,9 @@
         <new_condition/>
         <new_roles/>
         <omit_columns_if_empty>false</omit_columns_if_empty>
+        <omit_count>false</omit_count>
+        <omit_count_views>false</omit_count_views>
+        <omit_count_views_list/>
         <omit_drilldown_link>false</omit_drilldown_link>
         <omit_edit_button>false</omit_edit_button>
         <omit_filters>false</omit_filters>

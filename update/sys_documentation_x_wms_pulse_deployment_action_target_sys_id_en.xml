@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_documentation element="target_sys_id" label="Target Record SYS ID" language="en" table="x_wms_pulse_deployment_action">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element>target_sys_id</element>
+            <help/>
+            <hint/>
+            <label>Target Record SYS ID</label>
+            <language>en</language>
+            <name>x_wms_pulse_deployment_action</name>
+            <plural>Target Record SYS IDs</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-07-25 16:17:19</sys_created_on>
+            <sys_customer_update>false</sys_customer_update>
+            <sys_id>1c23cbeadbb2fb4035137f698c961948</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>Target Record SYS ID</sys_name>
+            <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+            <sys_policy/>
+            <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+            <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+            <sys_update_name>sys_documentation_x_wms_pulse_deployment_action_target_sys_id_en</sys_update_name>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-07-25 16:17:19</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>

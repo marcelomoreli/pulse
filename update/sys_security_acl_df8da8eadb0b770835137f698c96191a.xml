@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_security_acl">
+    <sys_security_acl action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <admin_overrides>true</admin_overrides>
+        <advanced>true</advanced>
+        <condition/>
+        <description>Allow write for assigned_to in x_wms_pulse_dev_request, if the ACL script returns true.</description>
+        <name>x_wms_pulse_dev_request.assigned_to</name>
+        <operation display_value="write">write</operation>
+        <script><![CDATA[answer = current.state == DevRequestStates.NEW || current.state == DevRequestStates.IN_DEVELOPMENT || gs.hasRole('x_wms_pulse.sn_admin');]]></script>
+        <sys_class_name>sys_security_acl</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-08-06 15:39:29</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>df8da8eadb0b770835137f698c96191a</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>x_wms_pulse_dev_request.assigned_to</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sys_security_acl_df8da8eadb0b770835137f698c96191a</sys_update_name>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2019-08-06 15:41:20</sys_updated_on>
+        <type display_value="record">record</type>
+    </sys_security_acl>
+</record_update>

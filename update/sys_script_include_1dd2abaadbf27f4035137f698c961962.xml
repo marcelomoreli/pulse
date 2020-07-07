@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_wms_pulse.PulseIntegrationJIRA</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>PulseIntegrationJIRA</name>
+        <script><![CDATA[var PulseIntegrationJIRA = Class.create();
+PulseIntegrationJIRA.prototype = {
+    initialize: function() {
+        this.enabled = gs.getProperty('persist.sn_dev.jira_enabled') + '';
+        this.host = gs.getProperty('persist.sn_dev.jira_env') + '';
+        this.mid = gs.getProperty('persist.JIRA_mid_server') + '';
+        this.creds = gs.getProperty('persist.integration.basic_auth_profile.jira_global') + '';
+        this.transitions = {
+            IN_PROGRESS_DEV: 221,
+            DEV_COMPLETE: 231,
+            IN_PROGRESS_QA: 241,
+            RETURNED: 81,
+            READY_FOR_REVIEW: 251,
+            BLOCKED: 11,
+            DONE: 301
+        };
+        this.stateToTransition = {};
+        this.stateToTransition[DevRequestStates.IN_DEVELOPMENT] = 'IN_PROGRESS_DEV';
+        this.stateToTransition[DevRequestStates.IN_REVIEW] = 'DEV_COMPLETE';
+        this.stateToTransition[DevRequestStates.IN_REVIEW_PROBLEMS] = 'DEV_COMPLETE';
+        this.stateToTransition[DevRequestStates.READY_FOR_TESTING] = 'IN_PROGRESS_QA';
+        this.stateToTransition[DevRequestStates.TEST_FAILED] = 'RETURNED';
+        this.stateToTransition[DevRequestStates.SCHEDULED] = 'READY_FOR_REVIEW';
+        this.stateToTransition[DevRequestStates.ON_HOLD] = 'BLOCKED';
+        this.stateToTransition[DevRequestStates.DONE] = 'DONE';
+    },
+
+    process: function(devRequest) {
+        var devState = devRequest.getValue('state');
+        if (this.enabled == 'true') {
+            if (this.stateToTransition[devState]) {
+                var body = {
+                    update: {
+                        comment: [{
+                            add: {
+                                body: "Development Request (" + devRequest.getValue('number') + ") moved to " + devRequest.getDisplayValue('state')
+                            }
+                        }]
+                    },
+                    transition: {
+                        id: this.transitions[this.stateToTransition[devState]] + ''
+                    }
+                };
+                if (this.stateToTransition[devState] == 'IN_PROGRESS_QA') {
+                    body.fields = {
+                        customfield_21240: [{
+                            name: devRequest.assigned_to.user_name + ''
+                        }]
+                    };
+                }
+                if (this.stateToTransition[devState] == 'RETURNED') {
+                    body.fields = {
+                        customfield_21268: JSON.stringify(devRequest.work_notes.getJournalEntry(5)) + ''
+                    };
+                }
+                if (this.stateToTransition[devState] == 'BLOCKED') {
+                    body.fields = {
+                        customfield_21200: 'Development Request (' + devRequest.getValue('number') + ') moved to "On Hold"'
+                    };
+                }
+                if (this.stateToTransition[devState] == 'DONE') {
+                    body.fields = {
+                        customfield_21201: {
+                            id: '26200'
+                        } // This means 'Done' on Close Resolution
+                    };
+                    var versions = JSON.parse(gs.getProperty('x_wms_pulse.JIRAVersionsToday'));
+                    var application = devRequest.application.name + '';
+                    //only if the application is opted in to this automation
+                    if (versions.optIn.indexOf(application) !== -1) {
+                        var date = new GlideDate().getByFormat("yyyy-MM-dd");
+                        var JSONChanged = false;
+                        //if the last version is from a past day, clear the values
+                        if (versions.releases && new GlideDateTime(versions.releases.slice(-10)).getDate().getValue() < new GlideDate().getValue()) {
+                            JSONChanged = true;
+                            versions.releases = '';
+                        }
+                        var versionName = application + ' ' + date;
+                        body.update.fixVersions = [{
+                            "add": {
+                                "name": versionName
+                            }
+                        }];
+
+                        if (versions.releases.indexOf(versionName) === -1) {
+                            var versionAdded = this.callAPI('/rest/api/latest/version', 'post', '{"name": "' + versionName + '","released": "true", "releaseDate": "' + date + '", "project":"SMO"}');
+                            if (versionAdded) {
+                                versions.releases += versionName;
+                                JSONChanged = true;
+                            }
+
+                        }
+                        if (JSONChanged)
+                            gs.setProperty('x_wms_pulse.JIRAVersionsToday', JSON.stringify(versions));
+                    }
+                }
+                var path = '/rest/api/latest/issue/' + devRequest.getValue('source_id') + '/transitions';
+                var response = this.callAPI(path, 'post', JSON.stringify(body));
+
+                //return 'JIRA Response:\n' + JSON.stringify(response);
+                return ''; // Returning blank not to write into logs.
+            }
+        }
+    },
+
+    escapeHtml: function(txt) {
+        return txt.replace(/[&<>"'\/]/g, function(s) {
+            var entityMap = {
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': '&quot;',
+                "'": '&#39;',
+                "/": '&#x2F;'
+            };
+
+            return entityMap[s];
+        });
+    },
+
+    callAPI: function(path, operation, body) {
+        var answer = {
+            success: false,
+            message: ''
+        };
+
+        try {
+            if (this.host && path != '' && operation != '') {
+                // Since this is an async call (The business rule that triggers this is async), it's common that it will call JIRA Twice, for this reason we're querying ecc queue table before calling it again so we don't have duplicated calls.
+                // Query ecc queue for a similar call on past 5 minutes
+                var gdtCall = new GlideDateTime();
+                gdtCall.addSeconds(60 * 5 * -1);
+                var endPoint = this.host + path;
+
+                var bodyTxt = this.escapeHtml(JSON.stringify(body));
+                var existingCall = new GlideRecord('ecc_queue');
+                existingCall.addQuery('sys_created_on', '>=', gdtCall);
+                existingCall.addQuery('source', endPoint);
+                existingCall.addQuery('payload', 'CONTAINS', bodyTxt);
+                existingCall.query();
+
+                if (!existingCall.hasNext()) {
+
+                    var r = new sn_ws.RESTMessageV2();
+                    r.setEndpoint(endPoint);
+                    r.setAuthenticationProfile('basic', this.creds);
+                    r.setHttpMethod(operation);
+                    r.setMIDServer(this.mid);
+                    r.setRequestHeader('Content-Type', 'application/json');
+                    r.setRequestHeader('Accept', 'application/json');
+                    if (operation != 'get') {
+                        r.setRequestBody(body);
+                    }
+                    var response = r.executeAsync();
+                    var responseBody = response.getBody();
+                    var httpStatus = response.getStatusCode();
+                    if (responseBody != '') {
+                        answer = JSON.parse(responseBody);
+                    }
+                }
+            } else {
+                answer.message = 'Missing parameter!';
+            }
+
+        } catch (e) {
+            answer.message = 'Error on callAPI: ' + e;
+        }
+        if (answer && answer.result) {
+            return answer.result;
+        } else {
+            return answer;
+        }
+    },
+
+    type: 'PulseIntegrationJIRA'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-07-25 18:36:04</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>1dd2abaadbf27f4035137f698c961962</sys_id>
+        <sys_mod_count>109</sys_mod_count>
+        <sys_name>PulseIntegrationJIRA</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sys_script_include_1dd2abaadbf27f4035137f698c961962</sys_update_name>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2020-06-03 15:33:38</sys_updated_on>
+    </sys_script_include>
+</record_update>

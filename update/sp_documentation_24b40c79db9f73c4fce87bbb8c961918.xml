@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_documentation">
+    <sp_documentation action="INSERT_OR_UPDATE">
+        <content>#Frequently Asked Questions:#&#13;
+&#13;
+* [Do I get notifications?](#do-i-get-notifications-)&#13;
+* [How do I subscribe to notifications?](#how-do-i-subscribe-to-notifications-)&#13;
+* [Where do I start?](#where-do-i-start-)&#13;
+* [What is an Update Set?](#what-is-an-update-set-)&#13;
+* [How do I create an Update Set?](#how-do-i-create-an-update-set-)&#13;
+* [How do I know what environment to use?](#how-do-i-know-what-environment-to-use-)&#13;
+* [How to select my current update set?](#how-to-select-my-current-update-set-)&#13;
+* [My development is completed, what do I do now?](#my-development-is-completed-what-do-i-do-now-)&#13;
+* [How to check status of a review?](#how-to-check-status-of-a-review-)&#13;
+* [What is done in a review?](#what-is-done-in-a-review-)&#13;
+* [My code was rejected! Did I lose all my work?](#my-code-was-rejected-did-i-lose-all-my-work-)&#13;
+* [How is it pushed to Cert?](#how-is-it-pushed-to-cert-)&#13;
+* [Test failed in Cert! What do I do now?](#test-failed-in-cert-what-do-i-do-now-)&#13;
+* [Testing passed in Cert! What are the next steps?](#testing-passed-in-cert-what-are-the-next-steps-)&#13;
+* [What do I need to go to Production?](#what-do-i-need-to-go-to-production-)&#13;
+* [What about the Change Request?](#what-about-the-change-request-)&#13;
+* [How is it pushed to Production?](#how-is-it-pushed-to-production-)&#13;
+* [What do I do with my remediation?](#what-do-i-do-with-my-remediation-)&#13;
+* [I have dependencies - How do I set them up?](#i-have-dependencies-how-do-i-set-them-up-)&#13;
+* [Automation has failed. What do I do?](#automation-has-failed-what-do-i-do-)&#13;
+* [How do I change system properties?](#how-do-i-change-system-properties-)&#13;
+&#13;
+Relax, we changed this process to make your and our lives easier so that we have visibility on what is currently being worked on, and remove bottlenecks.&#13;
+&#13;
+### Do I get notifications?&#13;
+  This version of Pulse sends the notifications by e-mail. Notifications are:&#13;
+  * Awaiting Justification - Developers and app owner&#13;
+  * Backed up - Developers&#13;
+  * Comments added - Developers and approvers&#13;
+  * Preview Problems - Developers&#13;
+  * Restored - Developers&#13;
+  * Rejected - Developers&#13;
+  * Ready for Testing - Developers and app owner&#13;
+  * Pending Schedule - Developersr and app owner&#13;
+  * Scheduled - Developers and app owner&#13;
+  * Done - Developers and app owner&#13;
+  * Discarded - Developers&#13;
+  * Automation Failure - Tech leads and developers&#13;
+&#13;
+In addition to those, we also have subscribable notifications, where you subscribe based on the application:&#13;
+  * New Dev Request&#13;
+  * Scheduled&#13;
+  * Done&#13;
+  * Discarded&#13;
+&#13;
+### How do I subscribe to notifications?&#13;
+  For the notifications that you can subscribe (list on previous question), here is the step-by-step on how to subscribe:&#13;
+  ![Screenshot](subscribeProfile.png)&#13;
+  * Go to profile in production, by clicking your name and "Profile"&#13;
+  ![Screenshot](subscribeRelatedLinks.png)&#13;
+  * Click on the "Notification Preferences" related link&#13;
+  ![Screenshot](subscribeSubscriptions.png)&#13;
+  * Click on the "Subscriptions" tab on the page that opened&#13;
+  ![Screenshot](subscribeAddPersonal.png)&#13;
+  * Click on the "Add Personal Subscription" to create a new Subscription&#13;
+  ![Screenshot](subscribeForm.png)&#13;
+  * Pick a name for you subscription and the Notification (start by typing "dev" to show the options)&#13;
+  ![Screenshot](subscribeForm2.png)&#13;
+  * Click on the magnifying glass on "Affected record" to pick the application you want to subscribe to&#13;
+  ![Screenshot](subscribeForm3.png)&#13;
+  * Pick table "ServiceNow Application [x_wms_pulse_sn_application]" and select the application on the "Document" field and click "OK"&#13;
+  ![Screenshot](subscribeForm4.png)&#13;
+  * You can add additional conditions if needed and click "Submit" - Done, you are now subscribed&#13;
+&#13;
+### Where do I start?&#13;
+Go to "Pulse" -&gt; "Create New" on Production, that will generate an update set for you and you can start your work.&#13;
+For more details click "Creating a Development Request" in this documentation&#13;
+&#13;
+### What is an Update Set?&#13;
+A package that contains all your changes. If you want to learn more about update sets you can start here: &lt;a href="https://docs.servicenow.com/search?q=Get+started+with+update+sets" target="_blank"&gt;Get Started with Update Sets&lt;/a&gt;&#13;
+### How do I create an Update Set?&#13;
+The only way to create an update set is creating a new Development Request using Pulse.&#13;
+For more details click "Creating a Development Request" in this documentation&#13;
+&#13;
+### How do I know what environment to use?&#13;
+Depending on the application you will change in ServiceNow, it will automatically tell you what the environment is for that when creating a new Development Request. If it doesn't auto-populate it means that the application selected has more than one possible development environment. If you don't know which one to pick, talk to the application owner.&#13;
+&#13;
+### How to select my current update set?&#13;
+Go to the update set (Local Update Sets module on the Dev environment), click your update set, and click "Make This My Current Set" related link.&#13;
+&#13;
+### My development is completed, what do I do now?&#13;
+After all your development is completed, move the state of your update set to "Completed" and click on the button "Send to Review" to start the Code review process.&#13;
+Make sure to run the Code Scan and fix any finding before sending it to review.&#13;
+&#13;
+### How to check status of a review?&#13;
+You can go to your development request in PROD and check the current state (Pulse -&gt; My Active Development).&#13;
+&#13;
+### What is done in a review?&#13;
+Click "The Review Phase" on this documentation to see some more details on the review phase.&#13;
+&#13;
+### My code was rejected! Did I lose all my work?&#13;
+No, you don't lose what you did. When your code was rejected, your update set gets reopened automagically. All you have to do is set it as your current update set again and make the appropriate fixes. You should see the rejection reason on the development notes and on the notifications. Once you are done with the fixes, follow the same process to request review again (Close update set and click "Send to Review").&#13;
+&#13;
+### How is it pushed to Cert?&#13;
+Once your code passes the review phase, it will be automagically promoted to Cert. No action is needed from the developer.&#13;
+&#13;
+### Test failed in Cert! What do I do now?&#13;
+If testing fails in Cert you cannot reopen the same update set since it was already promoted. However, creating a remediation for your updates is quite easy. Open the development request and click "Create Remediation". It will automagically fill all the information you need and will create another version of the update set for you to do the incremental fixes.&#13;
+* When you finish your incremental fixes you'll need to go through the code review process again.&#13;
+* When testing is passed in Cert and your update sets are moving to prod both will be promoted automatically.&#13;
+&#13;
+### Testing passed in Cert! What are the next steps?&#13;
+Now that testing are passed in Cert, you will need:&#13;
+* To double-check the Release Notes so it contains valuable information&#13;
+* A release date/time to go to Production. Please discuss with your Application Owner.&#13;
+Having the above completed, the Process Owner can schedule the release to go to Production.&#13;
+Once scheduled, it will be released automagically.&#13;
+&#13;
+### What do I need to go to Production?&#13;
+Please check previous answer&#13;
+&#13;
+### What about the Change Request?&#13;
+No worries. The change request is generated and updated automatically.&#13;
+&#13;
+### How is it pushed to Production?&#13;
+When the Product Owner schedules the release the promotion to Production is done automatically&#13;
+&#13;
+### What do I do with my remediation?&#13;
+The Remediation will move together with the original development as long as it's in the correct stage (reviewed/tested/etc). When you schedule the parent to go to prod, make sure the remediation is on "Awaiting Parent" state and you're good.&#13;
+&#13;
+### I have dependencies - How do I set them up?&#13;
+Use the "Parent" field to set up dependencies between development requests. That will prevent the child update sets to go to the next environment if it doesn't have the parent development request.&#13;
+Notice that if it's not a remediation, if it's just marked as dependency, it does NOT automatically promote it when the parent is promoted. For that to happen you still need to pick a Release Date.&#13;
+So, in summary:&#13;
+* If the child is a remediation - does not need to be scheduled as long as it's 'Awaiting Parent'&#13;
+* If the child is NOT a remediation and it's 'Awaiting Parent', instead of promoting it automatically it will move to "Pending Schedule", unless it have a release date, make sure to put a release date.&#13;
+&#13;
+### Automation has failed. What do I do?&#13;
+You don't need to do anything. The Global ServiceNow team will be notified upon any automation failure and will act accordingly, your release may be delayed a bit due to manual actions needed.&#13;
+&#13;
+### How do I change system properties?&#13;
+The development requests have what we call "Deployment actions" that can be configured for each environment.&#13;
+![Screenshot](deployActionNew.png)&#13;
+&#13;
+On your development request you have a related list called "ServiceNow Deployment Actions", you can create actions while the development request is "In Development", to do so, just click "New" on the related list. If you can't see the "New" button, your development request is probably in the wrong state.&#13;
+&#13;
+![Screenshot](deployActionForm.png)&#13;
+Fill the form as follows:&#13;
+1. The Scope of the property. Majority of times it's Global.&#13;
+2. Target Table. System properties is not the only table available here, but it's the most common.&#13;
+3. Target Field. For Properties it's 'Value'&#13;
+4. Sys_ID OR Name of the system property.&#13;
+5. Value to set the property to&#13;
+6. Instance to set this property to. You may create one record per instance having different values per instance.&#13;
+7. Where it matters, set the order. If it doesn't matter, keep it with the original value (100).&#13;
+8. Put some comments for the Reviews to know what this action is about.</content>
+        <sys_class_name>sp_documentation</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-08-16 15:01:15</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>24b40c79db9f73c4fce87bbb8c961918</sys_id>
+        <sys_mod_count>23</sys_mod_count>
+        <sys_name>3000|FAQ</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sp_documentation_24b40c79db9f73c4fce87bbb8c961918</sys_update_name>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2019-08-21 18:57:19</sys_updated_on>
+        <title>3000|FAQ</title>
+    </sp_documentation>
+</record_update>

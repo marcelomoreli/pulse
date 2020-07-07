@@ -1,156 +1,156 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update>
     <sys_ui_section caption="" section_id="c6388e34dbf87300cbdfd6aa4896191b" sys_domain="global" table="x_wms_pulse_m2m_sn_app_instance" version="3" view="">
         <sys_ui_element action="INSERT_OR_UPDATE">
-            <element>.begin_split</element>
+            <element>sn_application</element>
             <position>0</position>
             <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2019-04-22 16:18:20</sys_created_on>
-            <sys_id>3aed3a14db413300cbdfd6aa4896193d</sys_id>
+            <sys_created_on>2019-07-26 21:17:31</sys_created_on>
+            <sys_id>7761dd07db363b80fce87bbb8c9619ed</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_m2m_sn_app_instance" sys_domain="global" view="Default view">c6388e34dbf87300cbdfd6aa4896191b</sys_ui_section>
             <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2019-04-22 16:18:20</sys_updated_on>
-            <sys_user/>
-            <type>.begin_split</type>
-        </sys_ui_element>
-        <sys_ui_element action="INSERT_OR_UPDATE">
-            <element>sn_application</element>
-            <position>1</position>
-            <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2019-04-22 16:18:20</sys_created_on>
-            <sys_id>baed3a14db413300cbdfd6aa4896193d</sys_id>
-            <sys_mod_count>0</sys_mod_count>
-            <sys_ui_formatter/>
-            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_m2m_sn_app_instance" sys_domain="global" view="Default view">c6388e34dbf87300cbdfd6aa4896191b</sys_ui_section>
-            <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2019-04-22 16:18:20</sys_updated_on>
+            <sys_updated_on>2019-07-26 21:17:31</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>auto_approve</element>
-            <position>2</position>
+            <position>1</position>
             <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2019-04-22 16:18:20</sys_created_on>
-            <sys_id>3eed3a14db413300cbdfd6aa4896193d</sys_id>
+            <sys_created_on>2019-07-26 21:17:31</sys_created_on>
+            <sys_id>3f61dd07db363b80fce87bbb8c9619ed</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_m2m_sn_app_instance" sys_domain="global" view="Default view">c6388e34dbf87300cbdfd6aa4896191b</sys_ui_section>
             <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2019-04-22 16:18:20</sys_updated_on>
+            <sys_updated_on>2019-07-26 21:17:31</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>auto_promote</element>
-            <position>3</position>
+            <position>2</position>
             <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2019-04-22 16:18:20</sys_created_on>
-            <sys_id>beed3a14db413300cbdfd6aa4896193d</sys_id>
+            <sys_created_on>2019-07-26 21:17:31</sys_created_on>
+            <sys_id>bf61dd07db363b80fce87bbb8c9619ed</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_m2m_sn_app_instance" sys_domain="global" view="Default view">c6388e34dbf87300cbdfd6aa4896191b</sys_ui_section>
             <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2019-04-22 16:18:20</sys_updated_on>
-            <sys_user/>
-            <type/>
-        </sys_ui_element>
-        <sys_ui_element action="INSERT_OR_UPDATE">
-            <element>.split</element>
-            <position>4</position>
-            <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2019-04-22 16:18:20</sys_created_on>
-            <sys_id>32ed3a14db413300cbdfd6aa4896193e</sys_id>
-            <sys_mod_count>0</sys_mod_count>
-            <sys_ui_formatter/>
-            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_m2m_sn_app_instance" sys_domain="global" view="Default view">c6388e34dbf87300cbdfd6aa4896191b</sys_ui_section>
-            <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2019-04-22 16:18:20</sys_updated_on>
-            <sys_user/>
-            <type>.split</type>
-        </sys_ui_element>
-        <sys_ui_element action="INSERT_OR_UPDATE">
-            <element>sn_instance</element>
-            <position>5</position>
-            <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2019-04-22 16:18:20</sys_created_on>
-            <sys_id>b2ed3a14db413300cbdfd6aa4896193e</sys_id>
-            <sys_mod_count>0</sys_mod_count>
-            <sys_ui_formatter/>
-            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_m2m_sn_app_instance" sys_domain="global" view="Default view">c6388e34dbf87300cbdfd6aa4896191b</sys_ui_section>
-            <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2019-04-22 16:18:20</sys_updated_on>
-            <sys_user/>
-            <type/>
-        </sys_ui_element>
-        <sys_ui_element action="INSERT_OR_UPDATE">
-            <element>tech_approvers</element>
-            <position>6</position>
-            <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2019-04-22 16:18:20</sys_created_on>
-            <sys_id>36ed3a14db413300cbdfd6aa4896193e</sys_id>
-            <sys_mod_count>0</sys_mod_count>
-            <sys_ui_formatter/>
-            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_m2m_sn_app_instance" sys_domain="global" view="Default view">c6388e34dbf87300cbdfd6aa4896191b</sys_ui_section>
-            <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2019-04-22 16:18:20</sys_updated_on>
-            <sys_user/>
-            <type/>
-        </sys_ui_element>
-        <sys_ui_element action="INSERT_OR_UPDATE">
-            <element>additional_approvers</element>
-            <position>7</position>
-            <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2019-04-22 16:18:20</sys_created_on>
-            <sys_id>b6ed3a14db413300cbdfd6aa4896193e</sys_id>
-            <sys_mod_count>0</sys_mod_count>
-            <sys_ui_formatter/>
-            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_m2m_sn_app_instance" sys_domain="global" view="Default view">c6388e34dbf87300cbdfd6aa4896191b</sys_ui_section>
-            <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2019-04-22 16:18:20</sys_updated_on>
-            <sys_user/>
-            <type/>
-        </sys_ui_element>
-        <sys_ui_element action="INSERT_OR_UPDATE">
-            <element>.end_split</element>
-            <position>8</position>
-            <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2019-04-22 16:18:20</sys_created_on>
-            <sys_id>3aed3a14db413300cbdfd6aa4896193e</sys_id>
-            <sys_mod_count>0</sys_mod_count>
-            <sys_ui_formatter/>
-            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_m2m_sn_app_instance" sys_domain="global" view="Default view">c6388e34dbf87300cbdfd6aa4896191b</sys_ui_section>
-            <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2019-04-22 16:18:20</sys_updated_on>
-            <sys_user/>
-            <type>.end_split</type>
-        </sys_ui_element>
-        <sys_ui_element action="INSERT_OR_UPDATE">
-            <element>requires_testing</element>
-            <position>9</position>
-            <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2019-04-26 20:00:46</sys_created_on>
-            <sys_id>04379039db49f300cbdfd6aa48961986</sys_id>
-            <sys_mod_count>0</sys_mod_count>
-            <sys_ui_formatter/>
-            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_m2m_sn_app_instance" sys_domain="global" view="Default view">c6388e34dbf87300cbdfd6aa4896191b</sys_ui_section>
-            <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2019-04-26 20:00:46</sys_updated_on>
+            <sys_updated_on>2019-07-26 21:17:31</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>code_freeze</element>
-            <position>10</position>
+            <position>3</position>
             <sys_created_by>mmoreli</sys_created_by>
-            <sys_created_on>2019-05-01 13:46:57</sys_created_on>
-            <sys_id>70917cd7db49f700cbdfd6aa48961961</sys_id>
+            <sys_created_on>2019-07-26 21:17:31</sys_created_on>
+            <sys_id>3361dd07db363b80fce87bbb8c9619ee</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_m2m_sn_app_instance" sys_domain="global" view="Default view">c6388e34dbf87300cbdfd6aa4896191b</sys_ui_section>
             <sys_updated_by>mmoreli</sys_updated_by>
-            <sys_updated_on>2019-05-01 13:46:57</sys_updated_on>
+            <sys_updated_on>2019-07-26 21:17:31</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>requires_testing</element>
+            <position>4</position>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-07-26 21:17:31</sys_created_on>
+            <sys_id>b361dd07db363b80fce87bbb8c9619ee</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_m2m_sn_app_instance" sys_domain="global" view="Default view">c6388e34dbf87300cbdfd6aa4896191b</sys_ui_section>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-07-26 21:17:31</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>.split</element>
+            <position>5</position>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-07-26 21:17:31</sys_created_on>
+            <sys_id>3761dd07db363b80fce87bbb8c9619ee</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_m2m_sn_app_instance" sys_domain="global" view="Default view">c6388e34dbf87300cbdfd6aa4896191b</sys_ui_section>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-07-26 21:17:31</sys_updated_on>
+            <sys_user/>
+            <type>.split</type>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>sn_instance</element>
+            <position>6</position>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-07-26 21:17:31</sys_created_on>
+            <sys_id>b761dd07db363b80fce87bbb8c9619ee</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_m2m_sn_app_instance" sys_domain="global" view="Default view">c6388e34dbf87300cbdfd6aa4896191b</sys_ui_section>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-07-26 21:17:31</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>tech_approvers</element>
+            <position>7</position>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-07-26 21:17:31</sys_created_on>
+            <sys_id>3b61dd07db363b80fce87bbb8c9619ee</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_m2m_sn_app_instance" sys_domain="global" view="Default view">c6388e34dbf87300cbdfd6aa4896191b</sys_ui_section>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-07-26 21:17:31</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>additional_approvers</element>
+            <position>8</position>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-07-26 21:17:31</sys_created_on>
+            <sys_id>bb61dd07db363b80fce87bbb8c9619ee</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_m2m_sn_app_instance" sys_domain="global" view="Default view">c6388e34dbf87300cbdfd6aa4896191b</sys_ui_section>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-07-26 21:17:31</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>federated_request</element>
+            <position>9</position>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-07-26 21:17:31</sys_created_on>
+            <sys_id>3f61dd07db363b80fce87bbb8c9619ee</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_m2m_sn_app_instance" sys_domain="global" view="Default view">c6388e34dbf87300cbdfd6aa4896191b</sys_ui_section>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-07-26 21:17:31</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>access_groups</element>
+            <position>10</position>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2019-07-26 21:17:31</sys_created_on>
+            <sys_id>bf61dd07db363b80fce87bbb8c9619ee</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_wms_pulse_m2m_sn_app_instance" sys_domain="global" view="Default view">c6388e34dbf87300cbdfd6aa4896191b</sys_ui_section>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2019-07-26 21:17:31</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>

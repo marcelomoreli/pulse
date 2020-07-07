@@ -16,7 +16,7 @@
         <description/>
         <execute_function>false</execute_function>
         <filter_condition table="x_wms_pulse_preview_problem">developer_commentsISNOTEMPTY^dev_request.state=18^EQ<item endquery="false" field="developer_comments" goto="false" newquery="false" operator="ISNOTEMPTY" or="false" value=""/>
-            <item endquery="false" field="dev_request.state" goto="false" newquery="false" operator="=" or="false" value="18"/>
+            <item display_value="18" endquery="false" field="dev_request.state" goto="false" newquery="false" operator="=" or="false" value="18"/>
             <item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/>
         </filter_condition>
         <is_rest>false</is_rest>

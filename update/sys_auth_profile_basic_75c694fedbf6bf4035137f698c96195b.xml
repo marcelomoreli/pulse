@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_auth_profile_basic">
+    <sys_auth_profile_basic action="INSERT_OR_UPDATE">
+        <name>JIRA-Moreli</name>
+        <password>I7malKfg6oqlzIdSX1fGhA==</password>
+        <sys_class_name>sys_auth_profile_basic</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-07-25 22:23:02</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>75c694fedbf6bf4035137f698c96195b</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>JIRA-Moreli</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sys_auth_profile_basic_75c694fedbf6bf4035137f698c96195b</sys_update_name>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2019-07-25 22:23:02</sys_updated_on>
+        <username>mmoreli</username>
+    </sys_auth_profile_basic>
+</record_update>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sysevent_register">
+    <sysevent_register action="INSERT_OR_UPDATE">
+        <caller_access/>
+        <description>To be used for notifications when needed</description>
+        <event_name>x_wms_pulse.ready_for_testing</event_name>
+        <fired_by>Script include during State change</fired_by>
+        <queue/>
+        <suffix>ready_for_testing</suffix>
+        <sys_class_name>sysevent_register</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-07-02 21:28:40</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>4ddde15bdbdeb74887ff568bdc961901</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_wms_pulse.ready_for_testing</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sysevent_register_4ddde15bdbdeb74887ff568bdc961901</sys_update_name>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2019-07-02 21:28:40</sys_updated_on>
+        <table>x_wms_pulse_dev_request</table>
+    </sysevent_register>
+</record_update>

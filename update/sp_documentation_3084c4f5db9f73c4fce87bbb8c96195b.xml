@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_documentation">
+    <sp_documentation action="INSERT_OR_UPDATE">
+        <content>#Developing Your Changes&#13;
+##Update Set&#13;
+An update set is a group of configuration changes that can be moved from one instance to another, they track changes you do on the development environment.&#13;
+Make sure you set the update set that was generated as your current one before doing any change to make sure everything you're doing is being captured.&#13;
+&#13;
+##Code Quality&#13;
+Please make sure you go through the Technical Best Practices recommendations by ServiceNow. They will be taken into account by the code reviewer.&#13;
+* &lt;a href="https://developer.servicenow.com/app.do#!/catlist/technical_best_practices" target="_blank"&gt;ServiceNow Technical Best Practices&lt;/a&gt;&#13;
+&#13;
+##Code Scan&#13;
+&#13;
+![Screenshot](updateSetCodeScan.png)&#13;
+At any point during your development you can go to your update set and click "Code Scan" to run the automated scans we have in place and go through each finding (details on the next section), it's higly recommended that you deal with all findings before sending the code for review, since the reviewers will always be looking for the scan findings too.&#13;
+&#13;
+##Done - What now?&#13;
+Once you complete your development and addressed all the findings you could you will send your code for review. Once you complete the update set, you'll see a new UI Action called "Send to Review".&#13;
+&#13;
+![Screenshot](updateSetSendToReview.png)&#13;
+&#13;
+The "Send to Review" will gather all findings and preview problems and include that information on the development request for the reviewers to have full access to all they need to execute a review. Please check the next two sections on this document to see how to address Scan Findings and Preview Problems.</content>
+        <sys_class_name>sp_documentation</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-08-16 15:00:27</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>3084c4f5db9f73c4fce87bbb8c96195b</sys_id>
+        <sys_mod_count>9</sys_mod_count>
+        <sys_name>2100|Developing Your Changes</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sp_documentation_3084c4f5db9f73c4fce87bbb8c96195b</sys_update_name>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2020-02-04 20:37:57</sys_updated_on>
+        <title>2100|Developing Your Changes</title>
+    </sp_documentation>
+</record_update>

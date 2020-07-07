@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
+    <sys_properties action="INSERT_OR_UPDATE">
+        <choices/>
+        <description>Tables allowed in the Deployment Action</description>
+        <ignore_cache>true</ignore_cache>
+        <is_private>false</is_private>
+        <name>x_wms_pulse.deployment_action_tables</name>
+        <read_roles/>
+        <suffix>deployment_action_tables</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-07-22 20:01:50</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>bfb95471dbbab7c087ff568bdc961978</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name>x_wms_pulse.deployment_action_tables</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sys_properties_bfb95471dbbab7c087ff568bdc961978</sys_update_name>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2019-07-26 21:22:58</sys_updated_on>
+        <type>string</type>
+        <value>{"sys_properties":"value,ignore_cache","sc_cat_item":"active", "sn_hr_core_service" : "active", "sn_hr_core_topic_category" : "active", "sn_hr_core_topic_detail" : "active"}</value>
+        <write_roles/>
+    </sys_properties>
+    <sys_translated_text action="delete_multiple" query="documentkey=bfb95471dbbab7c087ff568bdc961978"/>
+</record_update>

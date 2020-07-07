@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_macro">
+    <sys_ui_macro action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <category>general</category>
+        <description>Open a new window with the update set loaded.</description>
+        <media_type/>
+        <name>code_review_update_set</name>
+        <scoped_name>x_wms_pulse_code_review_update_set</scoped_name>
+        <sys_class_name>sys_ui_macro</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-11-08 15:30:07</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>ded0f4f0dbc1c850fc9e5c77dc961936</sys_id>
+        <sys_mod_count>8</sys_mod_count>
+        <sys_name>code_review_update_set</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sys_ui_macro_ded0f4f0dbc1c850fc9e5c77dc961936</sys_update_name>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2019-11-08 18:39:13</sys_updated_on>
+        <xml><![CDATA[<?xml version="1.0" encoding="utf-8" ?>
+<j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null">
+<g:evaluate var="jvar_guid" expression="gs.generateGUID(this);" />
+<j:set var="jvar_n" value="go_to_update_set_${jvar_guid}:${ref}"/>
+<g:reference_decoration id="${jvar_n}" field="${ref}"
+  onclick="codeReviewUpdateSet('${ref}'); "
+  title="${gs.getMessage('Open the retrieved update set in a new tab/window')}" icon="icon-script-check"/>
+<script>
+function codeReviewUpdateSet(reference) {
+	try {
+		var gaURL = new GlideAjax('x_wms_pulse.PulseAjax');
+		gaURL.addParam('sysparm_sys_id', g_form.getUniqueValue());
+		gaURL.addParam('sysparm_name', 'getReviewLink');
+		gaURL.getXMLAnswer(pulseLink);
+
+		function pulseLink(content) {
+			if (content $[AND] content != '') {
+				window.open(content);
+			}
+		}
+
+	} catch (e) {
+		jslog('error showing updateSet code review decoration');
+		jslog(e);
+	}
+}
+
+</script>
+</j:jelly> ]]></xml>
+    </sys_ui_macro>
+</record_update>

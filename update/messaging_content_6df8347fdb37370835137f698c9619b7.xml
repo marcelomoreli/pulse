@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="messaging_content">
+    <messaging_content action="INSERT_OR_UPDATE">
+        <buttons>1c6fa1917f0013007f005212bdfa91bd,c66fa1917f0013007f005212bdfa91c7</buttons>
+        <fields>number,update_set_name,current_instance,assignment_group,assigned_to,additional_assignee_list,description</fields>
+        <message>${URI_REF} has been restored
+</message>
+        <message_heading>Development Request restored.</message_heading>
+        <name>Dev: Restored</name>
+        <script><![CDATA[(function runAction(
+                /*GlideRecord of messaging_application*/ application, 
+                /*GlideRecord of messaging_inbound*/ current,
+                /*Map<String, String> of each named action*/ actions,
+                /*GlideRecord of target table this action is a response to*/ target,
+                /*String of raw action json*/ raw) {
+
+ // Implement action script here
+
+})(application, current, actions, target, raw);]]></script>
+        <sys_class_name>messaging_content</sys_class_name>
+        <sys_created_by>j0s039z</sys_created_by>
+        <sys_created_on>2019-09-16 20:28:50</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>6df8347fdb37370835137f698c9619b7</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>Dev: Restored</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>messaging_content_6df8347fdb37370835137f698c9619b7</sys_update_name>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2020-02-25 21:14:13</sys_updated_on>
+        <target_table>x_wms_pulse_dev_request</target_table>
+        <type>simple</type>
+    </messaging_content>
+</record_update>

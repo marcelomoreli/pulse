@@ -1,20 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sp_documentation">
     <sp_documentation action="INSERT_OR_UPDATE">
-        <content>#Create a Development Request</content>
+        <content>#Create a Development Request&#13;
+* Search for *Pulse* in the application menu&#13;
+* Click *Create New*&#13;
+* Select the *Application*, *Scope*, and *Type* for the development&#13;
+* Set the *Source* and *Source ID*&#13;
+* Set *Sync to source* if desired  **Note**: this requires an integration to an agile board system&#13;
+&#13;
+![Screenshot](devRequestOptions1a.png)&#13;
+&#13;
+* Enter a *Short description* - **Note**: the short description should be concise but descriptive of the development&#13;
+* Select a *Dev instance* - **Note**: if only one dev instance is available for the environment/scope combination, it will auto-populate&#13;
+* Select the *Developer group*&#13;
+* Select the *Developer* - **Note**: This will be replaced automatically when the development is sent to review with the person that did most changes on the update set&#13;
+* Enter the *Release Notes* with something that explains the functionality included in the request&#13;
+![Screenshot](devRequestOptions2.png)&#13;
+&#13;
+* Save the development request&#13;
+* Upon saving the state will change to *In Development* once the update set is created, for the update set link to work you'll have to refresh your form&#13;
+* Reload the form and and click the button next to *Update set name* to open the update set in the current environment&#13;
+&#13;
+![Screenshot](updateSetTextDecoration.png)&#13;
+&#13;
+## Other fields&#13;
+* *Auto Promote*: It's checked by default. Unchecking this means it will not be automatically promoted to environments that don't require schedule. Usually means that once it get approved it will move to "Awaiting Schedule" before going to the upper environment (CERT for example). Used when some functionality can only be promoted on a certain point in time.&#13;
+* *Parent*: Automatically set in case of remediations and can be manually set to identify dependencies. If you development request needs to wait for another one to be promoted, use this field.&#13;
+</content>
         <sys_class_name>sp_documentation</sys_class_name>
         <sys_created_by>jgbox</sys_created_by>
         <sys_created_on>2019-06-01 22:03:34</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>ba6cc295dbbdf700cbdfd6aa4896194f</sys_id>
-        <sys_mod_count>1</sys_mod_count>
-        <sys_name>2000|Create a Development Request</sys_name>
+        <sys_mod_count>30</sys_mod_count>
+        <sys_name>2000|Creating a Development Request</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy/>
         <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sp_documentation_ba6cc295dbbdf700cbdfd6aa4896194f</sys_update_name>
-        <sys_updated_by>jgbox</sys_updated_by>
-        <sys_updated_on>2019-06-01 22:03:53</sys_updated_on>
-        <title>2000|Create a Development Request</title>
+        <sys_updated_by>pgmarti</sys_updated_by>
+        <sys_updated_on>2019-08-20 14:56:29</sys_updated_on>
+        <title>2000|Creating a Development Request</title>
     </sp_documentation>
 </record_update>

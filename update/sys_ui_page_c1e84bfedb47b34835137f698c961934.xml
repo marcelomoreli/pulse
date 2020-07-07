@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_page">
+    <sys_ui_page action="INSERT_OR_UPDATE">
+        <category>general</category>
+        <client_script><![CDATA[	]]></client_script>
+        <description/>
+        <direct>false</direct>
+        <endpoint>x_wms_pulse_pulseDoc.do</endpoint>
+        <html><![CDATA[<?xml version="1.0" encoding="utf-8" ?>
+<j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null">
+	<g:evaluate jelly="true">
+		var url = '';
+		url = '/' + gs.getProperty('x_wms_pulse.documentation.portal') + '?id=pulse_docs';
+	</g:evaluate>
+	<script>
+		document.observe("dom:loaded", function() {
+		window.open('${url}');
+		});
+	</script>
+</j:jelly>
+]]></html>
+        <name>pulseDoc</name>
+        <processing_script/>
+        <sys_class_name>sys_ui_page</sys_class_name>
+        <sys_created_by>jgbox</sys_created_by>
+        <sys_created_on>2019-08-07 21:44:02</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>c1e84bfedb47b34835137f698c961934</sys_id>
+        <sys_mod_count>13</sys_mod_count>
+        <sys_name>pulseDoc</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sys_ui_page_c1e84bfedb47b34835137f698c961934</sys_update_name>
+        <sys_updated_by>jgbox</sys_updated_by>
+        <sys_updated_on>2019-08-08 04:21:37</sys_updated_on>
+    </sys_ui_page>
+</record_update>

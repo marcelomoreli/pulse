@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties_category_m2m">
     <sys_properties_category_m2m action="INSERT_OR_UPDATE">
         <category display_value="Pulse Properties">39afdf11dbf3130089fb2fb748961959</category>
-        <order>400</order>
+        <order>500</order>
         <property display_value="x_wms_pulse.disable_commit" name="x_wms_pulse.disable_commit">3f54398edb3b530089fb2fb74896192e</property>
         <sys_class_name>sys_properties_category_m2m</sys_class_name>
         <sys_created_by>mmoreli</sys_created_by>
@@ -16,6 +16,6 @@
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_properties_category_m2m_9034719cdba32300cbdfd6aa489619a3</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-06-27 20:17:23</sys_updated_on>
+        <sys_updated_on>2019-08-14 15:23:27</sys_updated_on>
     </sys_properties_category_m2m>
 </record_update>

@@ -5,8 +5,10 @@
         <assessment/>
         <content_page/>
         <device_type/>
-        <filter/>
-        <hint>All Development Requests</hint>
+        <filter table="x_wms_pulse_dev_request">active=true^EQ<item endquery="false" field="active" goto="false" newquery="false" operator="=" or="false" value="true"/>
+            <item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/>
+        </filter>
+        <hint>All Active Development Requests</hint>
         <homepage/>
         <image/>
         <link_type>LIST</link_type>
@@ -28,8 +30,8 @@
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>8ec849b6db33d30089fb2fb748961964</sys_id>
-        <sys_mod_count>3</sys_mod_count>
-        <sys_name>All Developments</sys_name>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name>Active Developments</sys_name>
         <sys_overrides/>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy/>
@@ -37,9 +39,9 @@
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_app_module_8ec849b6db33d30089fb2fb748961964</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-06-04 20:09:27</sys_updated_on>
+        <sys_updated_on>2019-07-16 15:39:50</sys_updated_on>
         <timeline_page/>
-        <title>All Developments</title>
+        <title>Active Developments</title>
         <uncancelable>false</uncancelable>
         <view_name/>
         <window_name/>

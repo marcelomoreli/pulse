@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
+    <sys_properties action="INSERT_OR_UPDATE">
+        <choices/>
+        <description>JIRA versions that have been created today.</description>
+        <ignore_cache>false</ignore_cache>
+        <is_private>false</is_private>
+        <name>x_wms_pulse.JIRAVersionsToday</name>
+        <read_roles>x_wms_pulse.cab_member,x_wms_pulse.developer,x_wms_pulse.developer_lead,x_wms_pulse.manual_creation,x_wms_pulse.reader,x_wms_pulse.release_manager,x_wms_pulse.sn_admin</read_roles>
+        <suffix>JIRAVersionsToday</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>j0s039z</sys_created_by>
+        <sys_created_on>2020-03-31 19:56:54</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>06529bcb1bf7c810c54f0fe3cc4bcbc4</sys_id>
+        <sys_mod_count>6</sys_mod_count>
+        <sys_name>x_wms_pulse.JIRAVersionsToday</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sys_properties_06529bcb1bf7c810c54f0fe3cc4bcbc4</sys_update_name>
+        <sys_updated_by>j0s039z</sys_updated_by>
+        <sys_updated_on>2020-04-02 19:03:50</sys_updated_on>
+        <type>string</type>
+        <value>{"optIn":["Stability and Performance","Incident Management","Change Request","Knowledge Management","Reporting and Performance Analytics"],"releases":"Incident Management 2020-04-02"}</value>
+        <write_roles>x_wms_pulse.sn_admin,x_wms_pulse.release_manager,x_wms_pulse.manual_creation,x_wms_pulse.developer,x_wms_pulse.cab_member,x_wms_pulse.developer_lead</write_roles>
+    </sys_properties>
+    <sys_translated_text action="delete_multiple" query="documentkey=06529bcb1bf7c810c54f0fe3cc4bcbc4"/>
+    <sys_translated_text action="INSERT_OR_UPDATE">
+        <documentkey name="x_wms_pulse.JIRAVersionsToday" tablename="sys_properties">06529bcb1bf7c810c54f0fe3cc4bcbc4</documentkey>
+        <fieldname>description</fieldname>
+        <language>pb</language>
+        <sys_created_by>j0s039z</sys_created_by>
+        <sys_created_on>2020-04-01 17:45:59</sys_created_on>
+        <sys_id>6a7e7f9b1bf78050c54f0fe3cc4bcbc2</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>j0s039z</sys_updated_by>
+        <sys_updated_on>2020-04-01 17:45:59</sys_updated_on>
+        <tablename>sys_properties</tablename>
+        <value>JIRA versions that have been created today.</value>
+    </sys_translated_text>
+</record_update>

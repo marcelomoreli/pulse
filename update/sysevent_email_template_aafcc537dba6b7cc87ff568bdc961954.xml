@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sysevent_email_template">
+    <sysevent_email_template action="INSERT_OR_UPDATE">
+        <collection/>
+        <email_layout display_value="Pulse notifications">9e8d81b7dba6b7cc87ff568bdc9619ed</email_layout>
+        <message/>
+        <message_html/>
+        <message_list/>
+        <message_text/>
+        <name>Pulse - Dev Request Notifications</name>
+        <sms_alternate/>
+        <subject/>
+        <sys_class_name>sysevent_email_template</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-07-16 18:38:38</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>aafcc537dba6b7cc87ff568bdc961954</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>Pulse - Dev Request Notifications</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sysevent_email_template_aafcc537dba6b7cc87ff568bdc961954</sys_update_name>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2019-07-16 18:42:00</sys_updated_on>
+        <sys_version>2</sys_version>
+    </sysevent_email_template>
+</record_update>

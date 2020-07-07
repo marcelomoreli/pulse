@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_email">
+    <sys_script_email action="INSERT_OR_UPDATE">
+        <name>pulse_email_comments</name>
+        <new_lines_to_html>true</new_lines_to_html>
+        <script><![CDATA[(function runMailScript(/* GlideRecord */ current, /* TemplatePrinter */ template,
+          /* Optional EmailOutbound */ email, /* Optional GlideRecord */ email_action,
+          /* Optional GlideRecord */ event) {
+
+	template.print('<p><font size="3" color="#000000" face="helvetica"><strong>');
+	template.print(gs.getMessage('Comments') + ':');
+	template.print('</strong></font></p>');
+	template.print('<p><font size="3" color="#000000" face="helvetica">' + current.work_notes.getJournalEntry(-1) + '</font></p>');
+	
+})(current, template, email, email_action, event);]]></script>
+        <sys_class_name>sys_script_email</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-08-10 14:30:55</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>2824493bdb0bb38035137f698c96197b</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>pulse_email_comments</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sys_script_email_2824493bdb0bb38035137f698c96197b</sys_update_name>
+        <sys_updated_by>j0s039z</sys_updated_by>
+        <sys_updated_on>2019-09-17 20:15:18</sys_updated_on>
+    </sys_script_email>
+</record_update>

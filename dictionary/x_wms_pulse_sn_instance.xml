@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?><database>
-    <element label="ServiceNow Instance" max_length="40" name="x_wms_pulse_sn_instance" type="collection">
+    <element label="ServiceNow Instance" max_length="40" name="x_wms_pulse_sn_instance" sizeclass="16" type="collection">
         <element attributes="edge_encryption_enabled=true" default="true" label="Active" max_length="40" name="active" type="boolean"/>
         <element label="Name" mandatory="true" max_length="100" name="name" type="string"/>
-        <element attributes="edge_encryption_enabled=true,no_sort=true,slushbucket_ref_no_expand=true" label="Parent" max_length="1024" name="parent" reference="x_wms_pulse_sn_instance" reference_qual="active=true^EQ" reference_qual_condition="active=true^EQ" type="glide_list"/>
-        <element attributes="edge_encryption_enabled=true,no_data_replicate=true" label="Password" max_length="255" name="password" type="password2"/>
+        <element attributes="no_sort=true,slushbucket_ref_no_expand=true,edge_encryption_enabled=true" label="Parent" max_length="1024" name="parent" reference="x_wms_pulse_sn_instance" reference_qual="active=true^EQ" reference_qual_condition="active=true^EQ" type="glide_list"/>
+        <element attributes="no_data_replicate=true,edge_encryption_enabled=true" label="Password" max_length="255" name="password" type="password2"/>
         <element attributes="edge_encryption_enabled=true" choice="3" label="Type" mandatory="true" max_length="40" name="type" type="choice">
             <choice>
                 <element inactive_on_update="false" label="Development" sequence="100" value="dev"/>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="clone_data_exclude">
+    <clone_data_exclude action="DELETE">
+        <name>x_wms_pulse_m2m_sn_app_scope</name>
+        <sys_class_name>clone_data_exclude</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-07-03 15:12:11</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>b7312debdb1ab7ccbff63c9d7c961948</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_wms_pulse_m2m_sn_app_scope</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>clone_data_exclude_b7312debdb1ab7ccbff63c9d7c961948</sys_update_name>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2019-07-03 15:12:11</sys_updated_on>
+    </clone_data_exclude>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</application>
+        <file_path/>
+        <instance_id>06b28443dbacea402b157236bf961988</instance_id>
+        <instance_name>walmartglobal</instance_name>
+        <name>clone_data_exclude_b7312debdb1ab7ccbff63c9d7c961948</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="clone_data_exclude"><clone_data_exclude action="INSERT_OR_UPDATE"><name>x_wms_pulse_m2m_sn_app_scope</name><sys_class_name>clone_data_exclude</sys_class_name><sys_created_by>mmoreli</sys_created_by><sys_created_on>2019-07-03 15:12:11</sys_created_on><sys_customer_update>false</sys_customer_update><sys_id>b7312debdb1ab7ccbff63c9d7c961948</sys_id><sys_mod_count>0</sys_mod_count><sys_name>x_wms_pulse_m2m_sn_app_scope</sys_name><sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope><sys_update_name>clone_data_exclude_b7312debdb1ab7ccbff63c9d7c961948</sys_update_name><sys_updated_by>mmoreli</sys_updated_by><sys_updated_on>2019-07-03 15:12:11</sys_updated_on></clone_data_exclude></record_update>]]></payload>
+        <payload_hash>-1836647685</payload_hash>
+        <record_name>x_wms_pulse_m2m_sn_app_scope</record_name>
+        <reverted_from/>
+        <source>abce3761db9ab3c8bff63c9d7c96195f</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-07-03 15:12:11</sys_created_on>
+        <sys_id>bb312debdb1ab7ccbff63c9d7c961949</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>16bb864a4580000001</sys_recorded_at>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2019-07-03 15:12:11</sys_updated_on>
+        <type>Clone Exclude Table</type>
+        <update_guid>b3312deb021ab7cce6603a3368e80649</update_guid>
+        <update_guid_history>b3312deb021ab7cce6603a3368e80649:-1836647685</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">f739efc2db6ebb44bff63c9d7c9619f8</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-07-11 19:31:11</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_db_object display_value="" name="clone_data_exclude">clone_data_exclude</sys_db_object>
+        <sys_id>bd4ce5a0e8444db6b1d65e24f4cd3884</sys_id>
+        <sys_metadata>b7312debdb1ab7ccbff63c9d7c961948</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_wms_pulse_m2m_sn_app_scope</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_scope_delete display_value="">267924c4d50346b886164c0c8d2d6ca4</sys_scope_delete>
+        <sys_update_name>clone_data_exclude_b7312debdb1ab7ccbff63c9d7c961948</sys_update_name>
+        <sys_update_version display_value="clone_data_exclude_b7312debdb1ab7ccbff63c9d7c961948">bb312debdb1ab7ccbff63c9d7c961949</sys_update_version>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2019-07-11 19:31:11</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

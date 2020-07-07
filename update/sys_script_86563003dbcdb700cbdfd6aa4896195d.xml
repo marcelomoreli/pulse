@@ -16,8 +16,8 @@
         <description/>
         <execute_function>false</execute_function>
         <filter_condition table="x_wms_pulse_dev_request">due_dateVALCHANGES^ORstate=29^ORstateCHANGESFROM51^EQ<item endquery="false" field="due_date" goto="false" newquery="false" operator="VALCHANGES" or="false" value=""/>
-            <item endquery="false" field="state" goto="false" newquery="false" operator="=" or="true" value="29"/>
-            <item endquery="false" field="state" goto="false" newquery="false" operator="CHANGESFROM" or="true" value="51"/>
+            <item display_value="Pending Schedule" endquery="false" field="state" goto="false" newquery="false" operator="=" or="true" value="29"/>
+            <item display_value="Scheduled" endquery="false" field="state" goto="false" newquery="false" operator="CHANGESFROM" or="true" value="51"/>
             <item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/>
         </filter_condition>
         <is_rest>false</is_rest>

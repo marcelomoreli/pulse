@@ -45,7 +45,7 @@
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>b65e6cd2db75bb00cbdfd6aa4896191d</sys_id>
-        <sys_mod_count>4</sys_mod_count>
+        <sys_mod_count>6</sys_mod_count>
         <sys_name>Auto-Populate Fields</sys_name>
         <sys_overrides/>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
@@ -54,7 +54,7 @@
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_script_client_b65e6cd2db75bb00cbdfd6aa4896191d</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-06-04 19:17:23</sys_updated_on>
+        <sys_updated_on>2019-06-27 21:17:57</sys_updated_on>
         <table>x_wms_pulse_dev_request</table>
         <type>onChange</type>
         <ui_type>0</ui_type>

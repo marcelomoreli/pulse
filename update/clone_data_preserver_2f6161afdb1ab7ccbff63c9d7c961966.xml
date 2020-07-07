@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="clone_data_preserver">
+    <clone_data_preserver action="INSERT_OR_UPDATE">
+        <condition/>
+        <name>ServiceNow Instances (Pulse)</name>
+        <sys_class_name>clone_data_preserver</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-07-03 15:13:18</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>2f6161afdb1ab7ccbff63c9d7c961966</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>ServiceNow Instances (Pulse)</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>clone_data_preserver_2f6161afdb1ab7ccbff63c9d7c961966</sys_update_name>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2019-07-03 15:13:18</sys_updated_on>
+        <table>x_wms_pulse_sn_instance</table>
+        <theme>false</theme>
+    </clone_data_preserver>
+</record_update>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sysauto_script">
+    <sysauto_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <business_calendar/>
+        <condition/>
+        <conditional>false</conditional>
+        <entered_time/>
+        <name>Once - runDevReqDatesFix</name>
+        <run_as display_value="System Administrator">6816f79cc0a8016401c5a33be04be441</run_as>
+        <run_as_tz/>
+        <run_dayofmonth>1</run_dayofmonth>
+        <run_dayofweek>1</run_dayofweek>
+        <run_period/>
+        <run_start>2020-04-10 07:00:48</run_start>
+        <run_time>1970-01-01 06:00:00</run_time>
+        <run_type>once</run_type>
+        <script><![CDATA[function runDevReqDatesFix() {
+    var devReqs = new GlideRecord('x_wms_pulse_dev_request');
+    devReqs.addEncodedQuery('active=true^expected_start=NULL');
+    devReqs.query();
+    
+    while (devReqs.next()) {
+        devReqs.expected_start = devReqs.sys_created_on;
+        devReqs.update();
+    }
+}
+runDevReqDatesFix();
+]]></script>
+        <sys_class_name>sysauto_script</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2020-04-03 15:02:32</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>341ce1041b049c50b381fcc6cc4bcb3e</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name>Once - runDevReqDatesFix</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sysauto_script_341ce1041b049c50b381fcc6cc4bcb3e</sys_update_name>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2020-04-03 15:11:38</sys_updated_on>
+        <time_zone/>
+        <upgrade_safe>false</upgrade_safe>
+    </sysauto_script>
+</record_update>

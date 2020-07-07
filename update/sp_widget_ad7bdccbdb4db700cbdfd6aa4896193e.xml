@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
     <sp_widget action="INSERT_OR_UPDATE">
         <category>custom</category>
-        <client_script><![CDATA[function() {  /* widget controller */  var c = this;}]]></client_script>
+        <client_script><![CDATA[function($scope, $sce) {  /* widget controller */  
+	var c = this;
+	$scope.toHtml = function(text) {
+		text = text.replace(/&lt;/g,"<");
+		text = text.replace(/&gt;/g,">");
+		return $sce.trustAsHtml(text);
+	}
+}
+]]></client_script>
         <controller_as>c</controller_as>
         <css/>
         <data_table>sp_instance</data_table>
@@ -18,7 +26,7 @@
         <public>false</public>
         <roles/>
         <script><![CDATA[(function() {
-	data.sys_id = $sp.getParameter('sys_id');
+	data.sys_id = $sp.getParameter('sys_id') || '2b212003db8db700cbdfd6aa4896196b';
 	var sourceTable = options.source_table || 'sp_documentation';
 	if (!data.sys_id)
 		return;
@@ -36,21 +44,21 @@
         <sys_created_on>2019-04-30 17:31:51</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>ad7bdccbdb4db700cbdfd6aa4896193e</sys_id>
-        <sys_mod_count>8</sys_mod_count>
+        <sys_mod_count>23</sys_mod_count>
         <sys_name>Pulse Documentation</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy/>
         <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sp_widget_ad7bdccbdb4db700cbdfd6aa4896193e</sys_update_name>
-        <sys_updated_by>jgbox</sys_updated_by>
-        <sys_updated_on>2019-05-01 21:14:58</sys_updated_on>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2019-08-21 16:14:59</sys_updated_on>
         <template><![CDATA[<div>
   <div class="panel panel-default">
     <div class="panel-heading">
       <h4 class="panel-title">{{::options.title}}</h4>
     </div>
-    <div class="panel-body wrapper-lg markdown-body" ng-bind-html="data.content"></div>
+    <div class="panel-body wrapper-lg markdown-body" ng-bind-html="toHtml(data.content)"></div>
   </div>
 </div>]]></template>
     </sp_widget>

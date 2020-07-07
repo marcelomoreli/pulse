@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_email">
+    <sys_script_email action="INSERT_OR_UPDATE">
+        <name>pulse_copy_approvers</name>
+        <new_lines_to_html>false</new_lines_to_html>
+        <script><![CDATA[(function runMailScript(/* GlideRecord */ current, /* TemplatePrinter */ template,
+/* Optional EmailOutbound */ email, /* Optional GlideRecord */ email_action,
+/* Optional GlideRecord */ event) {
+	
+	// Send the notification to the approvers of this application
+	// First find the groups that approves
+	var config = new GlideRecord('x_wms_pulse_m2m_sn_app_instance');
+	config.addQuery('sn_application', current.application + '');
+	config.query();
+	
+	var groups = '';
+	while (config.next()) {
+		if (config.tech_approvers != '') {
+			if (groups != '') {
+				groups += ',';
+			}
+			groups += config.tech_approvers + '';
+		}
+		if (config.additional_approvers != '') {
+			if (groups != '') {
+				groups += ',';
+			}
+			groups += config.additional_approvers + '';
+		}
+	}
+	
+	// Now get members
+	if (groups != '') {
+		var grMem = new GlideRecord('sys_user_grmember');
+		grMem.addQuery('group', 'IN', groups);
+		grMem.addEncodedQuery('user.active=true^user.emailISNOTEMPTY');
+		grMem.query();
+		while (grMem.next()) {
+			email.addAddress("cc", grMem.user.email + '', grMem.user.getDisplayValue());
+		}
+	}
+	
+})(current, template, email, email_action, event);]]></script>
+        <sys_class_name>sys_script_email</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-08-10 14:45:02</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>8267c17bdb4fb38035137f698c96194c</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>pulse_copy_approvers</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sys_script_email_8267c17bdb4fb38035137f698c96194c</sys_update_name>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2019-08-10 14:57:58</sys_updated_on>
+    </sys_script_email>
+</record_update>

@@ -5,8 +5,8 @@
         <assessment/>
         <content_page/>
         <device_type/>
-        <filter table="x_wms_pulse_dev_request">state=100^ORstate=101^EQ<item endquery="false" field="state" goto="false" newquery="false" operator="=" or="false" value="100"/>
-            <item endquery="false" field="state" goto="false" newquery="false" operator="=" or="true" value="101"/>
+        <filter table="x_wms_pulse_dev_request">state=100^ORstate=101^EQ<item display_value="Automation Failure" endquery="false" field="state" goto="false" newquery="false" operator="=" or="false" value="100"/>
+            <item display_value="Preview Problems" endquery="false" field="state" goto="false" newquery="false" operator="=" or="true" value="101"/>
             <item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/>
         </filter>
         <hint>All Development Requests</hint>

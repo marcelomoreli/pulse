@@ -4,14 +4,18 @@
 Congratulations! You've already completed the first step by installing the Pulse application. You are well on your way to speeding up the development process. Before you create your first development request, there are a few settings you need to configure.&#13;
 ##Setting up Access&#13;
 Before beginning development, a system administrator will need to assign roles to the development team. Pulse provides the following roles, which will need to be assigned to the appropriate users:&#13;
-* **x_wms_pulse.sn_admin**: administrator of the Pulse application. A user with this role can configure Pulse options, add applications and instances, and has full access to the development requests.&#13;
+* **x_wms_pulse.reader**: can read the development request and other pulse records.&#13;
 * **x_wms_pulse.developer**: developers can create developer requests and use them to track their work.&#13;
-* **x_wms_pulse.developer_lead**: developer leads review the work of developers by completing code reviews. This role is intended for senior members of the development team. Developer leads can also create code scan rules.&#13;
+* **x_wms_pulse.developer_lead**: developer leads review the work of developers by completing code reviews. This role is intended for senior members of the development team. Developer leads can also create code scan rules, take actions on preview problems and put recommendations on the code scan findings.&#13;
+* **x_wms_pulse.release_manager**: can schedule development requests for release.&#13;
+* **x_wms_pulse.cab_member**: can update the CAB reviewed field on a development request.&#13;
+* **x_wms_pulse.sn_admin**: administrator of the Pulse application. A user with this role can configure Pulse options, add applications and instances, and has full access to the development requests.&#13;
+&#13;
 &#13;
 ##Configuring the Application&#13;
 Now that roles have been assigned, the next step is to configure the application. Take some time to configure the following options, which can be located in the application navigator under Pulse =&gt; Administration.&#13;
 ###Properties&#13;
-Navigate to Pulse =&gt; Administration =&gt; Properties to set some of the basic properties of the application. Set the instance name for production, the desired log level, and any other properties you wish to use.&#13;
+Navigate to Pulse =&gt; Administration =&gt; Properties to set some of the basic properties of the application. Set the instance name for production, the desired log level, if you want to allow self-approval and any other properties you wish to use.&#13;
 ###Instances&#13;
 Instances are used by Pulse to automate the creation and promotion of update sets as part of the development process. Take a moment to define the environment structure. Instances can be configured using types and parent-child relationships to mirror your structure. Three types of instances are available.&#13;
 * Development&#13;
@@ -21,11 +25,33 @@ Instances are used by Pulse to automate the creation and promotion of update set
 Instance configuration for promotion of development requests must be completed in the production environment.&#13;
 The production environment should be set up on the instances table on all non-prod environments too (Just the URL - Username and password are not needed).&#13;
 ###Scopes&#13;
-Scopes are used by Pulse to define the ServiceNow application scopes available for development requests. Pulse provides the Global scope as a starting point. Administrators will need to configure any additional scopes that are needed for development. For the 'Scope ID' field use the sys_id of the record on sys_scope.&#13;
+Scopes are used by Pulse to define the ServiceNow application scopes available for development requests. Pulse provides the Global scope as a starting point. Administrators will need to configure any additional scopes that are needed for development. For the 'Scope ID' field use the sys_id of the record on sys_scope. The scope doesn't need to exist in Production (yet), you can use the sys_id on the development environment.&#13;
 ###Applications&#13;
 Applications are used as logic dividers for development work. An application can reference only 1 scope but a scope may be referenced by many applications as desired. For instance, development against ITSM modules can be organized by one logical application 'ITSM', or can be spilt into multiple applications with their own product managers (e.g. Incident Management, Change Management, Service Catalog, etc...) all referencing the Global scope.&#13;
+###Application x Scopes&#13;
+Once your applications are created, you can relate an application to the scopes that application uses. That can be done using the related list on the Application table or on the related list from the Scope. An application can have as many scopes as needed and one scope can be in as many applications as needed as well.&#13;
 ###Application x Instance Config&#13;
 Application x Instance configurations are used to set the rules for applications by instance. An administrator can use these settings to control how the update sets move to each instance by application, if approval is needed, and who will approve.&#13;
+The setup is done on a related list on the application relating to an instance as well as on the related list on the instance showing all applications.&#13;
+Details of the setings that can be set on the configuration:&#13;
+* **Technical Approvers**: List of groups that needs to approve the code to get to this instance. Every group needs at least 1 approval.&#13;
+* **Additional Approvers**: List of groups that needs to approve the functinality to get to this instance. Every group needs at least 1 approval. This is often used for QA groups and Functional review.&#13;
+* **Auto Approve**: Security flag to block things to get to this environment if the approval groups are not configured or are empty. If this is unchecked, it's mandatory to have at least one approval to get to this environment.&#13;
+* **Auto Promote**: If this is checked as well as the Dev Request auto-promote flag, it doesn't need the development request to be approved to get to this environment once it's approved. If this is not checked the development request will move to "Awaiting Schedule".&#13;
+* **Code Freeze**: Blocks any development request to be scheduled to this instance while this is checked.&#13;
+* **Requires Testing**: If checked, once it gets to this environment it will be moved to "Ready for Testing", if not it will follow the flow to get to the next environment if any.&#13;
+&#13;
+###Minimum configuration&#13;
+* You need to install everything in at least two environments, one to act as production (that does all orchestration and automation) and another one to act as development environment.&#13;
+* Set the property **x_wms_pulse.production_instance** with your production name (on both environments)&#13;
+* Set up the instances on **x_wms_pulse_sn_instance**. Your PROD environment needs to have all other environments (including prod itself) while in the non-prod environments you just need one record with production (where username and password are not needed).&#13;
+* Create at least 1 scope on **x_wms_pulse_sn_scope**. Suggestion is name 'Global' and Scope ID 'global'. (Prod only)&#13;
+* Create at least 1 application on **x_wms_pulse_sn_application**, for example 'ITSM'. (Prod only)&#13;
+* Correlate the application with the scope (on the related list of one of them). (Prod only)&#13;
+* Correlate the application with the instances and set the flags accordingly to auto-approve and auto-promote or not. (Prod only)&#13;
+* Add the group type **sn_developer** to the groups that does SN Development. (Prod only)&#13;
+* Create a new Pulse Request in your prod environment. Pulse requests should only exist in Prod.&#13;
+ &#13;
 ###Additional Configurations&#13;
 Make sure the "Upgrade Source" of your instances are configured correctly. If you already use those instances on a normal update set proccess, you don't need to worry about this.</content>
         <sys_class_name>sp_documentation</sys_class_name>
@@ -33,15 +59,15 @@ Make sure the "Upgrade Source" of your instances are configured correctly. If yo
         <sys_created_on>2019-05-01 17:54:36</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>652a2513db0df700cbdfd6aa48961970</sys_id>
-        <sys_mod_count>23</sys_mod_count>
-        <sys_name>1000|Getting Started</sys_name>
+        <sys_mod_count>32</sys_mod_count>
+        <sys_name>1000|Getting Started|admin</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy/>
         <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sp_documentation_652a2513db0df700cbdfd6aa48961970</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-06-06 17:58:37</sys_updated_on>
-        <title>1000|Getting Started</title>
+        <sys_updated_on>2019-12-04 14:39:27</sys_updated_on>
+        <title>1000|Getting Started|admin</title>
     </sp_documentation>
 </record_update>

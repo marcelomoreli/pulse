@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_documentation">
+    <sp_documentation action="INSERT_OR_UPDATE">
+        <content>#Testing the Changes#&#13;
+##The Testing Phase&#13;
+It's expected that the initial testings for your development are done in the development environment (Unit testing), so you can fix them in the same update set and have quicker reactions.&#13;
+Once your code is on the CERT/UAT environment, make sure to run all test scenarios and test your changes end to end. The responsability to guarantee the tests were executed are usually from the process owner, but the test execution can be shared between process owner and the developers. It's also recommended to include end users in the testing to get extra testing scenarios.&#13;
+&#13;
+## Failing a Test&#13;
+![Screenshot](testingFailed.png)&#13;
+&#13;
+During the test phase your development request will be "Ready for Testing". During this state you'll have the option to click "Test Failed". By doing this action your development request will move to "Test Failed" state, which will enable the development request to have a remediation.&#13;
+&#13;
+![Screenshot](testingRemediation.png)&#13;
+&#13;
+Remediation is basically a child update set that should contain the code fixed.&#13;
+* A remediation does NOT need to contain all objects of the parent, only the ones that are modified.&#13;
+* Once the parent gets deployed to an environment, the remediation will also be deployed (When it's test passed).&#13;
+* The remediation does NOT skip the review phase. Every code that is modified will have to be reviewed again.&#13;
+When you create a remediation, the parent development request will be "Awaiting Remediation", that means that it will be in that environment until the remediation reaches same environment and get to "Test Passed". If a remediation also fails test, you can create a new remediation. We currently don't have a limit of how many remediations can be created for a development request, as long as the second remediation is a child of the first one, becoming a chain of development requests.&#13;
+&#13;
+##Passing a Test&#13;
+![Screenshot](testingPassed.png)&#13;
+&#13;
+If all your tests complete with satisfactory results, you can click "Test Passed" button to mark it on the development request. Once a development request gets to "Test Passed", it will automatically calculate the next step:&#13;
+* In Review: If the next target requires reviews&#13;
+* Pending Schedule: In case it needs to be scheduled for the next environment&#13;
+* Promoting: In case it doesn't need to be scheduled&#13;
+* Awaiting Parent: In case the parent is not in the target environment yet&#13;
+&#13;
+In majority of cases testing is done on the CERT/UAT environment and once testing is completed it will move to "Pending Schedule".</content>
+        <sys_class_name>sp_documentation</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2019-08-16 15:00:48</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>f5948c79db9f73c4fce87bbb8c9619b4</sys_id>
+        <sys_mod_count>8</sys_mod_count>
+        <sys_name>2500|Testing the Changes</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sp_documentation_f5948c79db9f73c4fce87bbb8c9619b4</sys_update_name>
+        <sys_updated_by>pgmarti</sys_updated_by>
+        <sys_updated_on>2019-08-20 15:18:54</sys_updated_on>
+        <title>2500|Testing the Changes</title>
+    </sp_documentation>
+</record_update>

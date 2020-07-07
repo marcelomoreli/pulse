@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_report_range">
+    <sys_report_range action="INSERT_OR_UPDATE">
+        <color/>
+        <color_name/>
+        <display>background-color:</display>
+        <element>sys_created_on</element>
+        <label>2 - 4 Weeks</label>
+        <name>x_wms_pulse_dev_request</name>
+        <order>200</order>
+        <sys_class_name>sys_report_range</sys_class_name>
+        <sys_created_by>d1black</sys_created_by>
+        <sys_created_on>2020-02-19 15:53:06</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>97d11ff5db038410b9a66275ca96191e</sys_id>
+        <sys_mod_count>6</sys_mod_count>
+        <sys_name>x_wms_pulse_dev_request</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sys_report_range_97d11ff5db038410b9a66275ca96191e</sys_update_name>
+        <sys_updated_by>d1black</sys_updated_by>
+        <sys_updated_on>2020-02-21 15:18:03</sys_updated_on>
+        <upper_value_duration>1970-01-30 23:59:59</upper_value_duration>
+        <upper_value_int/>
+        <value_list/>
+    </sys_report_range>
+    <sys_translated_text action="delete_multiple" query="documentkey=97d11ff5db038410b9a66275ca96191e"/>
+</record_update>

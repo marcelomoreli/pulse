@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element label="ServiceNow Deployment Action" max_length="40" name="x_wms_pulse_deployment_action" sizeclass="244" type="collection">
+        <element label="Developer Comments" max_length="4000" name="developer_comments" type="string_full_utf8"/>
+        <element attributes="edge_encryption_enabled=true" label="Development Request" mandatory="true" max_length="32" name="dev_request" reference="x_wms_pulse_dev_request" type="reference"/>
+        <element attributes="edge_encryption_enabled=true" label="Instance" mandatory="true" max_length="32" name="instance" reference="x_wms_pulse_sn_instance" type="reference"/>
+        <element attributes="edge_encryption_enabled=true" default="100" label="Order" max_length="40" name="order" type="integer"/>
+        <element attributes="edge_encryption_enabled=true" label="Target Field" mandatory="true" max_length="80" name="target_field" reference="sys_dictionary" reference_qual="javascript: { &#13;&#10;var config = JSON.parse(gs.getProperty('x_wms_pulse.deployment_action_tables'));&#13;&#10;var tbl = current.target_table.name + '';&#13;&#10;var answer = 'name=' + tbl + '^elementIN' + config[tbl];&#13;&#10;answer;&#13;&#10;}" type="reference" use_reference_qualifier="advanced"/>
+        <element attributes="edge_encryption_enabled=true" default="56ce9e91db92ff48bff63c9d7c961939" label="Target Scope" mandatory="true" max_length="32" name="target_scope" reference="x_wms_pulse_sn_scope" reference_qual="active=true^EQ" reference_qual_condition="active=true^EQ" type="reference"/>
+        <element label="Target Record SYS ID" mandatory="true" max_length="100" name="target_sys_id" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Target Table" mandatory="true" max_length="32" name="target_table" reference="sys_db_object" reference_qual="javascript: { &#13;&#10;var config = JSON.parse(gs.getProperty('x_wms_pulse.deployment_action_tables'));&#13;&#10;var answer = 'nameIN';&#13;&#10;for (var tbl in config) {&#13;&#10;  answer += tbl + ',';&#13;&#10;}&#13;&#10;answer;&#13;&#10;}" type="reference" use_reference_qualifier="advanced"/>
+        <element label="Value" max_length="4000" name="value" type="string_full_utf8"/>
+        <index name="index">
+            <element name="target_scope"/>
+        </index>
+        <index name="index2">
+            <element name="instance"/>
+        </index>
+        <index name="index3">
+            <element name="target_field"/>
+        </index>
+        <index name="index4">
+            <element name="target_table"/>
+        </index>
+        <index name="index5">
+            <element name="dev_request"/>
+        </index>
+    </element>
+</database>

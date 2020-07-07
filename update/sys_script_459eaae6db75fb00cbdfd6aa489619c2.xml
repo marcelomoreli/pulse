@@ -15,7 +15,7 @@
         <condition/>
         <description/>
         <execute_function>false</execute_function>
-        <filter_condition table="x_wms_pulse_dev_request">stateIN80,81,82^EQ<item endquery="false" field="state" goto="false" newquery="false" operator="IN" or="false" value="80,81,82"/>
+        <filter_condition table="x_wms_pulse_dev_request">stateIN80,81,82^EQ<item display_value="80,81,82" endquery="false" field="state" goto="false" newquery="false" operator="IN" or="false" value="80,81,82"/>
             <item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/>
         </filter_condition>
         <is_rest>false</is_rest>

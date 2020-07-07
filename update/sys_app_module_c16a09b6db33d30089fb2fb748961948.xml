@@ -5,7 +5,10 @@
         <assessment/>
         <content_page/>
         <device_type/>
-        <filter/>
+        <filter table="x_wms_pulse_dev_request">active=true^assignment_group=javascript:getMyGroups()^EQ<item endquery="false" field="active" goto="false" newquery="false" operator="=" or="false" value="true"/>
+            <item endquery="false" field="assignment_group" goto="false" newquery="false" operator="=" or="false" value="javascript:getMyGroups()"/>
+            <item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/>
+        </filter>
         <hint>Dev requests where I am a member of the development group</hint>
         <homepage/>
         <image/>
@@ -28,7 +31,7 @@
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>c16a09b6db33d30089fb2fb748961948</sys_id>
-        <sys_mod_count>3</sys_mod_count>
+        <sys_mod_count>4</sys_mod_count>
         <sys_name>My Groups Developments</sys_name>
         <sys_overrides/>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
@@ -37,7 +40,7 @@
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_app_module_c16a09b6db33d30089fb2fb748961948</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-06-04 20:09:39</sys_updated_on>
+        <sys_updated_on>2019-07-16 14:36:13</sys_updated_on>
         <timeline_page/>
         <title>My Groups Developments</title>
         <uncancelable>false</uncancelable>

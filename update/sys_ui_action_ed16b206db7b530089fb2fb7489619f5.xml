@@ -3,9 +3,11 @@
         <action_name>restore_to_dev</action_name>
         <active>true</active>
         <client>false</client>
-        <client_script_v2/>
+        <client_script_v2><![CDATA[function onClick(g_form) {
+
+}]]></client_script_v2>
         <comments/>
-        <condition>gs.hasRole('x_wms_pulse.developer') &amp;&amp; current.state == DevRequestStates.ON_HOLD</condition>
+        <condition>gs.hasRole('x_wms_pulse.developer') &amp;&amp; current.state == DevRequestStates.ON_HOLD &amp;&amp; current.dev_instance == current.current_instance</condition>
         <form_action>true</form_action>
         <form_button>true</form_button>
         <form_button_v2>false</form_button_v2>
@@ -29,10 +31,14 @@
         <script><![CDATA[restoreBackup();
 
 function restoreBackup() {
-	gs.addInfoMessage('Restore in progress. It can take time depending on the changes.');
-	current.state = DevRequestStates.RESTORING;
-	current.update();
-	action.setRedirectURL(current);
+	if (current.state == DevRequestStates.ON_HOLD) {
+		gs.addInfoMessage('Restore in progress. It can take time depending on the changes.');
+		current.state = DevRequestStates.RESTORING;
+		current.update();
+		action.setRedirectURL(current);
+	} else {
+		gs.addErrorMessage('Pulse Request in wrong state for this action. Refresh your form.');
+	}
 }]]></script>
         <show_insert>false</show_insert>
         <show_multiple_update>false</show_multiple_update>
@@ -45,7 +51,7 @@ function restoreBackup() {
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>ed16b206db7b530089fb2fb7489619f5</sys_id>
-        <sys_mod_count>2</sys_mod_count>
+        <sys_mod_count>4</sys_mod_count>
         <sys_name>Restore to Dev</sys_name>
         <sys_overrides/>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
@@ -54,7 +60,7 @@ function restoreBackup() {
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_ui_action_ed16b206db7b530089fb2fb7489619f5</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-05-28 21:08:37</sys_updated_on>
+        <sys_updated_on>2020-03-26 17:55:52</sys_updated_on>
         <table>x_wms_pulse_dev_request</table>
         <ui11_compatible>true</ui11_compatible>
         <ui16_compatible>false</ui16_compatible>

@@ -2,21 +2,28 @@
     <sp_documentation action="INSERT_OR_UPDATE">
         <content>#Welcome to Pulse!&#13;
 ##What is Pulse?&#13;
-Pulse is an application to help you manage ServiceNow development in a complex multi-instance environment using the tools already available within ServiceNow. It adheres to the principles of CI/CD, and allows developers, product managers, and management to track development efforts throughout the development lifecycle.</content>
+Pulse is an application to help you manage ServiceNow development in a complex multi-instance environment using the tools already available within ServiceNow. It adheres to the principles of CI/CD, and allows developers, product managers, and management to track development efforts throughout the development lifecycle.&#13;
+##Overview of a Development Request&#13;
+Pulse uses development requests to track all development work throughout the full lifecycle and to automate the promotion of update sets.&#13;
+&#13;
+![Screenshot](DevRequestMainView.png)&#13;
+&#13;
+![Screenshot](DevRequestProcessTab.png)&#13;
+</content>
         <sys_class_name>sp_documentation</sys_class_name>
         <sys_created_by>jgbox</sys_created_by>
         <sys_created_on>2019-04-30 17:57:17</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>2b212003db8db700cbdfd6aa4896196b</sys_id>
-        <sys_mod_count>5</sys_mod_count>
+        <sys_mod_count>9</sys_mod_count>
         <sys_name>0001|Welcome To Pulse</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy/>
         <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sp_documentation_2b212003db8db700cbdfd6aa4896196b</sys_update_name>
-        <sys_updated_by>jgbox</sys_updated_by>
-        <sys_updated_on>2019-06-01 20:57:31</sys_updated_on>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2019-08-21 18:58:59</sys_updated_on>
         <title>0001|Welcome To Pulse</title>
     </sp_documentation>
 </record_update>

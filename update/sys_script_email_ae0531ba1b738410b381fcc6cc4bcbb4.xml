@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_email">
+    <sys_script_email action="INSERT_OR_UPDATE">
+        <name>pulse_email_aged_body</name>
+        <new_lines_to_html>true</new_lines_to_html>
+        <script><![CDATA[(function runMailScript(/* GlideRecord */ current, /* TemplatePrinter */ template,
+/* Optional EmailOutbound */ email, /* Optional GlideRecord */ email_action,
+/* Optional GlideRecord */ event) {
+	
+	txt = '';
+	var config = JSON.parse(gs.getProperty('x_wms_pulse.aged_requests_config'));
+    var currDate = new GlideDateTime();
+    currDate.setValue(current.expected_start);
+    var discardDate = new GlideDateTime();
+	discardDate.setValue(current.expected_start);
+	discardDate.addDaysUTC(parseInt(config.discard_after));
+	
+	txt += 'For this development request, the last change of the related update set was on ' + currDate.getDate() + '. If no additional changes are made in the update set, the development request <b>will be automatically discarded on ' + discardDate.getDate() + '</b>. Development requests are automatically discarded when there are no changes for ' + config.discard_after + ' days.\n\n';
+	txt += 'If you do not wish to continue with this development at this time, please right-click in the header the Pulse request and select Discard Development.\n';
+	txt += 'If you still have the intention to continue with this development, these are your options:\n';
+	txt += ' - If this development request is not yet promoted to CERT, make a change to the content of the update set.\n';
+	txt += ' - If this development request is already promoted to CERT, click the "Extend expiration" related link on the Pulse request - this will extend it for ' + config.extend_for + ' more days.\n';
+	txt += ' - In case the development request expires and is discarded, the system will automatically backup the contents of the update set and attach it to the development request.\n\n';
+	
+	if (current.getValue('source_id')) {
+		txt += '<b>' + current.getValue('source_id') + ' ';
+	}
+	txt += current.getValue('short_description') + '</b>\n';
+	if (current.getValue('application')) {
+		txt += '\n<b>Update Set:</b> ' + current.getValue('update_set_name');
+	}
+	if (current.getValue('application')) {
+		txt += '\n<b>Application:</b> ' + current.getDisplayValue('application');
+	}
+	
+	if (current.getValue('assignment_group')) {
+		txt += '\n<b>Developed by:</b> ' + current.getDisplayValue('assignment_group');
+		if (current.getValue('assigned_to')) {
+			txt += ' / ' + current.getDisplayValue('assigned_to');
+		}
+	} else {
+		if (current.getValue('assigned_to')) {
+			txt += '\n<b>Developed by:</b> ' + current.getDisplayValue('assigned_to') + '\n';
+		}
+	}
+	if (current.getValue('additional_assignee_list')) {
+		txt += '\n<b>Additional Developers:</b> ' + current.getDisplayValue('additional_assignee_list') + '\n';
+	}
+	
+	txt += '\n<b>Dev Instance:</b> ' + current.getDisplayValue('dev_instance') + '\n';
+	txt += '<b>Current Instance:</b> ' + current.getDisplayValue('current_instance') + '\n';
+	
+	if (current.getValue('description')) {
+		txt += '\n<b>Release Notes:</b>\n' + current.getValue('description');
+	} else {
+		txt += '\n<b>Release Notes:</b> BLANK!!';
+	}
+	
+	template.print(txt);
+})(current, template, email, email_action, event);]]></script>
+        <sys_class_name>sys_script_email</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2020-03-30 18:28:33</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>ae0531ba1b738410b381fcc6cc4bcbb4</sys_id>
+        <sys_mod_count>10</sys_mod_count>
+        <sys_name>pulse_email_aged_body</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sys_script_email_ae0531ba1b738410b381fcc6cc4bcbb4</sys_update_name>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2020-03-30 19:52:23</sys_updated_on>
+    </sys_script_email>
+</record_update>
