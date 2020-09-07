@@ -8,6 +8,7 @@
         <description/>
         <name>PulseIntegrationJIRA</name>
         <script><![CDATA[var PulseIntegrationJIRA = Class.create();
+/* global Class, DevRequestStates, gs, GlideDate, GlideDateTime, GlideRecord, sn_ws */
 PulseIntegrationJIRA.prototype = {
     initialize: function() {
         this.enabled = gs.getProperty('persist.sn_dev.jira_enabled') + '';
@@ -42,7 +43,7 @@ PulseIntegrationJIRA.prototype = {
                     update: {
                         comment: [{
                             add: {
-                                body: "Development Request (" + devRequest.getValue('number') + ") moved to " + devRequest.getDisplayValue('state')
+                                body: 'Development Request (' + devRequest.getValue('number') + ') moved to ' + devRequest.getDisplayValue('state')
                             }
                         }]
                     },
@@ -68,16 +69,30 @@ PulseIntegrationJIRA.prototype = {
                     };
                 }
                 if (this.stateToTransition[devState] == 'DONE') {
-                    body.fields = {
-                        customfield_21201: {
-                            id: '26200'
-                        } // This means 'Done' on Close Resolution
-                    };
+                    if (devRequest.getValue('type') == '') {
+                        this.setDevRequestType(devRequest);
+                    }
+                    if (devRequest.getValue('type') == 'feature') {
+                        body.fields = {
+                            customfield_10228: {
+                                id: '17954'
+                            } // This means 'Done' on Close Resolution
+                        };
+                        body.fields.customfield_21258 = [{
+                            id: '26295'
+                        }]; // Reviewed Accepted By - Product Owner
+                    } else if (devRequest.getValue('type') == 'bug_fix') {
+                        body.fields = {
+                            customfield_21201: {
+                                id: '26200'
+                            } // This means 'Done' on Close Resolution
+                        };
+                    }
                     var versions = JSON.parse(gs.getProperty('x_wms_pulse.JIRAVersionsToday'));
                     var application = devRequest.application.name + '';
                     //only if the application is opted in to this automation
                     if (versions.optIn.indexOf(application) !== -1) {
-                        var date = new GlideDate().getByFormat("yyyy-MM-dd");
+                        var date = new GlideDate().getByFormat('yyyy-MM-dd');
                         var JSONChanged = false;
                         //if the last version is from a past day, clear the values
                         if (versions.releases && new GlideDateTime(versions.releases.slice(-10)).getDate().getValue() < new GlideDate().getValue()) {
@@ -86,8 +101,8 @@ PulseIntegrationJIRA.prototype = {
                         }
                         var versionName = application + ' ' + date;
                         body.update.fixVersions = [{
-                            "add": {
-                                "name": versionName
+                            'add': {
+                                'name': versionName
                             }
                         }];
 
@@ -104,23 +119,47 @@ PulseIntegrationJIRA.prototype = {
                     }
                 }
                 var path = '/rest/api/latest/issue/' + devRequest.getValue('source_id') + '/transitions';
-                var response = this.callAPI(path, 'post', JSON.stringify(body));
-
-                //return 'JIRA Response:\n' + JSON.stringify(response);
+                this.callAPI(path, 'post', JSON.stringify(body));
                 return ''; // Returning blank not to write into logs.
             }
         }
     },
 
+    setDevRequestType: function(devRequest) {
+        if (this.enabled == 'true') {
+            // Whenever the development has just started or type is empty, get the type based on JIRA
+            // if the card in JIRA is a bug, set it to 'bug_fix', if story set to 'feature' else uncheck sync to jira.
+            var path = '/rest/api/latest/issue/' + devRequest.getValue('source_id') + '?fields=issuetype';
+            var response = this.callAPI(path, 'get', '');
+            if (response && response.fields && response.fields.issuetype && response.fields.issuetype.name) {
+                if (response.fields.issuetype.name == 'Story') {
+                    devRequest.setValue('type', 'feature');
+                    devRequest.update();
+                } else {
+                    if (response.fields.issuetype.name == 'Bug') {
+                        devRequest.setValue('type', 'bug_fix');
+                        devRequest.update();
+                    } else {
+                        // It's not Story and it's not Bug
+                        devRequest.setValue('sync_to_source', false);
+                        devRequest.comments = 'Sync to source removed - Card is not Story and it is not Bug. No other card types are supported.';
+                        devRequest.update();
+                    }
+                }
+            }
+        }
+    },
+
     escapeHtml: function(txt) {
+        // eslint-disable-next-line no-useless-escape
         return txt.replace(/[&<>"'\/]/g, function(s) {
             var entityMap = {
-                "&": "&amp;",
-                "<": "&lt;",
-                ">": "&gt;",
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
                 '"': '&quot;',
-                "'": '&#39;',
-                "/": '&#x2F;'
+                '\'': '&#39;',
+                '/': '&#x2F;'
             };
 
             return entityMap[s];
@@ -162,7 +201,6 @@ PulseIntegrationJIRA.prototype = {
                     }
                     var response = r.executeAsync();
                     var responseBody = response.getBody();
-                    var httpStatus = response.getStatusCode();
                     if (responseBody != '') {
                         answer = JSON.parse(responseBody);
                     }
@@ -188,7 +226,7 @@ PulseIntegrationJIRA.prototype = {
         <sys_created_on>2019-07-25 18:36:04</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>1dd2abaadbf27f4035137f698c961962</sys_id>
-        <sys_mod_count>109</sys_mod_count>
+        <sys_mod_count>116</sys_mod_count>
         <sys_name>PulseIntegrationJIRA</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy>read</sys_policy>
@@ -196,6 +234,6 @@ PulseIntegrationJIRA.prototype = {
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_script_include_1dd2abaadbf27f4035137f698c961962</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2020-06-03 15:33:38</sys_updated_on>
+        <sys_updated_on>2020-07-24 20:25:24</sys_updated_on>
     </sys_script_include>
 </record_update>

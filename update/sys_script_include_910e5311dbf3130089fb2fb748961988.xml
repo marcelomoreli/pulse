@@ -426,6 +426,12 @@ PulseUtilsImpl.prototype = {
                                                         retrieved: '',
                                                     };
                                                 }
+												if (!usObj[currEnv.name]) {
+                                                    usObj[currEnv.name] = {
+                                                        local: '',
+                                                        retrieved: '',
+                                                    };
+                                                }
                                                 usObj[targetEnv.name].retrieved = answer.remote_sys_id;
                                                 devRequest.update_set_json = JSON.stringify(usObj);
                                                 this.l.logDebug('Update set ' + usObj[currEnv.getValue('name')].local + ' loaded in ' + targetEnv.name + ' as ' + answer.remote_sys_id);
@@ -2663,14 +2669,14 @@ PulseUtilsImpl.prototype = {
         <sys_created_on>2018-08-07 21:43:44</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>910e5311dbf3130089fb2fb748961988</sys_id>
-        <sys_mod_count>439</sys_mod_count>
+        <sys_mod_count>441</sys_mod_count>
         <sys_name>PulseUtilsImpl</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy>read</sys_policy>
         <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_script_include_910e5311dbf3130089fb2fb748961988</sys_update_name>
-        <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2020-04-08 14:26:55</sys_updated_on>
+        <sys_updated_by>marcelo.moreli</sys_updated_by>
+        <sys_updated_on>2020-07-29 00:14:52</sys_updated_on>
     </sys_script_include>
 </record_update>

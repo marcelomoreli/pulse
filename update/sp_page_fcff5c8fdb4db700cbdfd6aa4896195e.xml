@@ -8,6 +8,7 @@
         <internal>false</internal>
         <public>false</public>
         <roles/>
+        <seo_script/>
         <short_description/>
         <sys_class_name>sp_page</sys_class_name>
         <sys_created_by>jgbox</sys_created_by>
@@ -24,6 +25,7 @@
         <sys_updated_by>mmoreli</sys_updated_by>
         <sys_updated_on>2019-06-17 18:46:35</sys_updated_on>
         <title>Pulse Documentation</title>
+        <use_seo_script>false</use_seo_script>
     </sp_page>
     <sys_translated_text action="delete_multiple" query="documentkey=fcff5c8fdb4db700cbdfd6aa4896195e"/>
 </record_update>

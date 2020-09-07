@@ -16,17 +16,17 @@ base_date: what's the base date to get things discarded. This is here so that a 
         <sys_created_on>2020-03-30 16:43:58</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>2a1dd57a1b3f4410b381fcc6cc4bcb55</sys_id>
-        <sys_mod_count>5</sys_mod_count>
+        <sys_mod_count>6</sys_mod_count>
         <sys_name>x_wms_pulse.aged_requests_config</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy/>
         <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_properties_2a1dd57a1b3f4410b381fcc6cc4bcb55</sys_update_name>
-        <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2020-03-31 15:06:45</sys_updated_on>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-04-02 00:30:21</sys_updated_on>
         <type>string</type>
-        <value>{"extend_for": 45,"notify_after": 118, "discard_after" : 150, "base_date" : "2020-03-15 00:00:00"}</value>
+        <value>{"extend_for": 45,"notify_after": 118, "discard_after" : 150, "base_date" : "2020-01-15 00:00:00"}</value>
         <write_roles/>
     </sys_properties>
     <sys_translated_text action="delete_multiple" query="documentkey=2a1dd57a1b3f4410b381fcc6cc4bcb55"/>

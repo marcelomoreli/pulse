@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_ui_policy">
+    <sys_ui_policy action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <conditions table="x_wms_pulse_dev_request">source=JIRA^sync_to_source=true^EQ<item display_value="JIRA" endquery="false" field="source" goto="false" newquery="false" operator="=" or="false" value="JIRA"/>
+            <item endquery="false" field="sync_to_source" goto="false" newquery="false" operator="=" or="false" value="true"/>
+            <item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/>
+        </conditions>
+        <description/>
+        <global>true</global>
+        <inherit>false</inherit>
+        <isolate_script>true</isolate_script>
+        <model_id/>
+        <model_table/>
+        <on_load>true</on_load>
+        <order>100</order>
+        <reverse_if_false>true</reverse_if_false>
+        <run_scripts>false</run_scripts>
+        <script_false><![CDATA[function onCondition() {
+
+}]]></script_false>
+        <script_true><![CDATA[function onCondition() {
+
+}]]></script_true>
+        <set_values/>
+        <short_description>Type is read only when it comes from JIRA</short_description>
+        <sys_class_name>sys_ui_policy</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2020-07-24 15:37:51</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>ea466a481b521890a137eb17ec4bcb6c</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Type is read only when it comes from JIRA</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sys_ui_policy_ea466a481b521890a137eb17ec4bcb6c</sys_update_name>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2020-07-24 15:37:51</sys_updated_on>
+        <table>x_wms_pulse_dev_request</table>
+        <ui_type>0</ui_type>
+        <view/>
+    </sys_ui_policy>
+</record_update>

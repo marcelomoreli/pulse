@@ -12,17 +12,17 @@
         <sys_created_on>2020-03-31 19:56:54</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>06529bcb1bf7c810c54f0fe3cc4bcbc4</sys_id>
-        <sys_mod_count>6</sys_mod_count>
+        <sys_mod_count>101</sys_mod_count>
         <sys_name>x_wms_pulse.JIRAVersionsToday</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy/>
         <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_properties_06529bcb1bf7c810c54f0fe3cc4bcbc4</sys_update_name>
-        <sys_updated_by>j0s039z</sys_updated_by>
-        <sys_updated_on>2020-04-02 19:03:50</sys_updated_on>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-08-18 03:03:22</sys_updated_on>
         <type>string</type>
-        <value>{"optIn":["Stability and Performance","Incident Management","Change Request","Knowledge Management","Reporting and Performance Analytics"],"releases":"Incident Management 2020-04-02"}</value>
+        <value>{"optIn":["Stability and Performance","Incident Management","Change Request","Knowledge Management","Reporting and Performance Analytics"],"releases":"Stability and Performance 2020-08-18Incident Management 2020-08-18"}</value>
         <write_roles>x_wms_pulse.sn_admin,x_wms_pulse.release_manager,x_wms_pulse.manual_creation,x_wms_pulse.developer,x_wms_pulse.cab_member,x_wms_pulse.developer_lead</write_roles>
     </sys_properties>
     <sys_translated_text action="delete_multiple" query="documentkey=06529bcb1bf7c810c54f0fe3cc4bcbc4"/>

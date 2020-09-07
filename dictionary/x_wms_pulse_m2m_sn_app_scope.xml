@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><database>
-    <element label="Application Scope" max_length="40" name="x_wms_pulse_m2m_sn_app_scope" sizeclass="47" type="collection">
+    <element label="Application Scope" max_length="40" name="x_wms_pulse_m2m_sn_app_scope" sizeclass="57" type="collection">
         <element attributes="edge_encryption_enabled=true" label="ServiceNow Application" max_length="32" name="sn_application" reference="x_wms_pulse_sn_application" type="reference"/>
         <element attributes="edge_encryption_enabled=true" label="ServiceNow Scope" max_length="32" name="sn_scope" reference="x_wms_pulse_sn_scope" type="reference"/>
         <index name="index">

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><database>
-    <element label="ServiceNow Scope" max_length="40" name="x_wms_pulse_sn_scope" sizeclass="30" type="collection">
+    <element label="ServiceNow Scope" max_length="40" name="x_wms_pulse_sn_scope" sizeclass="36" type="collection">
         <element attributes="edge_encryption_enabled=true" default="true" label="Active" max_length="40" name="active" type="boolean"/>
         <element label="Name" mandatory="true" max_length="100" name="name" type="string"/>
         <element label="Scope ID" mandatory="true" max_length="32" name="scope_id" type="string"/>

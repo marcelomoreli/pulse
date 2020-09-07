@@ -41,17 +41,6 @@ Details of the setings that can be set on the configuration:&#13;
 * **Code Freeze**: Blocks any development request to be scheduled to this instance while this is checked.&#13;
 * **Requires Testing**: If checked, once it gets to this environment it will be moved to "Ready for Testing", if not it will follow the flow to get to the next environment if any.&#13;
 &#13;
-###Minimum configuration&#13;
-* You need to install everything in at least two environments, one to act as production (that does all orchestration and automation) and another one to act as development environment.&#13;
-* Set the property **x_wms_pulse.production_instance** with your production name (on both environments)&#13;
-* Set up the instances on **x_wms_pulse_sn_instance**. Your PROD environment needs to have all other environments (including prod itself) while in the non-prod environments you just need one record with production (where username and password are not needed).&#13;
-* Create at least 1 scope on **x_wms_pulse_sn_scope**. Suggestion is name 'Global' and Scope ID 'global'. (Prod only)&#13;
-* Create at least 1 application on **x_wms_pulse_sn_application**, for example 'ITSM'. (Prod only)&#13;
-* Correlate the application with the scope (on the related list of one of them). (Prod only)&#13;
-* Correlate the application with the instances and set the flags accordingly to auto-approve and auto-promote or not. (Prod only)&#13;
-* Add the group type **sn_developer** to the groups that does SN Development. (Prod only)&#13;
-* Create a new Pulse Request in your prod environment. Pulse requests should only exist in Prod.&#13;
- &#13;
 ###Additional Configurations&#13;
 Make sure the "Upgrade Source" of your instances are configured correctly. If you already use those instances on a normal update set proccess, you don't need to worry about this.</content>
         <sys_class_name>sp_documentation</sys_class_name>
@@ -59,15 +48,15 @@ Make sure the "Upgrade Source" of your instances are configured correctly. If yo
         <sys_created_on>2019-05-01 17:54:36</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>652a2513db0df700cbdfd6aa48961970</sys_id>
-        <sys_mod_count>32</sys_mod_count>
+        <sys_mod_count>29</sys_mod_count>
         <sys_name>1000|Getting Started|admin</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy/>
         <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sp_documentation_652a2513db0df700cbdfd6aa48961970</sys_update_name>
-        <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-12-04 14:39:27</sys_updated_on>
+        <sys_updated_by>pgmarti</sys_updated_by>
+        <sys_updated_on>2019-08-20 13:31:08</sys_updated_on>
         <title>1000|Getting Started|admin</title>
     </sp_documentation>
 </record_update>
