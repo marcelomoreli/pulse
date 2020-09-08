@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_ui_action">
+    <sys_ui_action action="DELETE">
+        <action_name/>
+        <active>true</active>
+        <client>false</client>
+        <client_script_v2><![CDATA[function onClick(g_form) {
+
+}]]></client_script_v2>
+        <comments/>
+        <condition>condition()</condition>
+        <form_action>true</form_action>
+        <form_button>true</form_button>
+        <form_button_v2>false</form_button_v2>
+        <form_context_menu>false</form_context_menu>
+        <form_link>false</form_link>
+        <form_menu_button_v2>false</form_menu_button_v2>
+        <form_style/>
+        <hint/>
+        <isolate_script>false</isolate_script>
+        <list_action>false</list_action>
+        <list_banner_button>false</list_banner_button>
+        <list_button>false</list_button>
+        <list_choice>false</list_choice>
+        <list_context_menu>false</list_context_menu>
+        <list_link>false</list_link>
+        <list_save_with_form_button>false</list_save_with_form_button>
+        <list_style/>
+        <name>test</name>
+        <onclick/>
+        <order>100</order>
+        <script><![CDATA[
+function condidtion() {
+	gs.addInfoMessage('asdf');
+	return false;
+}]]></script>
+        <show_insert>true</show_insert>
+        <show_multiple_update>false</show_multiple_update>
+        <show_query>false</show_query>
+        <show_update>true</show_update>
+        <sys_class_name>sys_ui_action</sys_class_name>
+        <sys_created_by>j0s039z</sys_created_by>
+        <sys_created_on>2020-09-07 17:01:05</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>a738ea26dbc7d850d3886033ca961927</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>test</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sys_ui_action_a738ea26dbc7d850d3886033ca961927</sys_update_name>
+        <sys_updated_by>j0s039z</sys_updated_by>
+        <sys_updated_on>2020-09-07 17:04:02</sys_updated_on>
+        <table>x_wms_pulse_dev_request</table>
+        <ui11_compatible>true</ui11_compatible>
+        <ui16_compatible>false</ui16_compatible>
+    </sys_ui_action>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</application>
+        <file_path/>
+        <instance_id>e2540116dbc67e40536ad5b0cf96194e</instance_id>
+        <instance_name>walmartglobaldev02</instance_name>
+        <name>sys_ui_action_a738ea26dbc7d850d3886033ca961927</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update sys_domain="global" table="sys_ui_action"&gt;&lt;sys_ui_action action="INSERT_OR_UPDATE"&gt;&lt;action_name/&gt;&lt;active&gt;true&lt;/active&gt;&lt;client&gt;false&lt;/client&gt;&lt;client_script_v2&gt;&lt;![CDATA[function onClick(g_form) {
+
+}]]&gt;&lt;/client_script_v2&gt;&lt;comments/&gt;&lt;condition&gt;condition()&lt;/condition&gt;&lt;form_action&gt;true&lt;/form_action&gt;&lt;form_button&gt;true&lt;/form_button&gt;&lt;form_button_v2&gt;false&lt;/form_button_v2&gt;&lt;form_context_menu&gt;false&lt;/form_context_menu&gt;&lt;form_link&gt;false&lt;/form_link&gt;&lt;form_menu_button_v2&gt;false&lt;/form_menu_button_v2&gt;&lt;form_style/&gt;&lt;hint/&gt;&lt;isolate_script&gt;false&lt;/isolate_script&gt;&lt;list_action&gt;false&lt;/list_action&gt;&lt;list_banner_button&gt;false&lt;/list_banner_button&gt;&lt;list_button&gt;false&lt;/list_button&gt;&lt;list_choice&gt;false&lt;/list_choice&gt;&lt;list_context_menu&gt;false&lt;/list_context_menu&gt;&lt;list_link&gt;false&lt;/list_link&gt;&lt;list_save_with_form_button&gt;false&lt;/list_save_with_form_button&gt;&lt;list_style/&gt;&lt;name&gt;test&lt;/name&gt;&lt;onclick/&gt;&lt;order&gt;100&lt;/order&gt;&lt;script&gt;&lt;![CDATA[
+function condidtion() {
+	gs.addInfoMessage('asdf');
+	return false;
+}]]&gt;&lt;/script&gt;&lt;show_insert&gt;true&lt;/show_insert&gt;&lt;show_multiple_update&gt;false&lt;/show_multiple_update&gt;&lt;show_query&gt;false&lt;/show_query&gt;&lt;show_update&gt;true&lt;/show_update&gt;&lt;sys_class_name&gt;sys_ui_action&lt;/sys_class_name&gt;&lt;sys_created_by&gt;j0s039z&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2020-09-07 17:01:05&lt;/sys_created_on&gt;&lt;sys_customer_update&gt;false&lt;/sys_customer_update&gt;&lt;sys_domain&gt;global&lt;/sys_domain&gt;&lt;sys_domain_path&gt;/&lt;/sys_domain_path&gt;&lt;sys_id&gt;a738ea26dbc7d850d3886033ca961927&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;test&lt;/sys_name&gt;&lt;sys_overrides/&gt;&lt;sys_package display_value="Pulse" source="x_wms_pulse"&gt;e970e883db6bdb0c1f0d322b7c9619a2&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_replace_on_upgrade&gt;false&lt;/sys_replace_on_upgrade&gt;&lt;sys_scope display_value="Pulse"&gt;e970e883db6bdb0c1f0d322b7c9619a2&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_ui_action_a738ea26dbc7d850d3886033ca961927&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;j0s039z&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2020-09-07 17:04:02&lt;/sys_updated_on&gt;&lt;table&gt;x_wms_pulse_dev_request&lt;/table&gt;&lt;ui11_compatible&gt;true&lt;/ui11_compatible&gt;&lt;ui16_compatible&gt;false&lt;/ui16_compatible&gt;&lt;/sys_ui_action&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>666875677</payload_hash>
+        <record_name>test</record_name>
+        <reverted_from/>
+        <source>a6e096a2db8b98505a8d0d0af496194d</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>j0s039z</sys_created_by>
+        <sys_created_on>2020-09-07 17:04:02</sys_created_on>
+        <sys_id>82a96e2edbc7d850d3886033ca9619d7</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>17469864a1c0000001</sys_recorded_at>
+        <sys_updated_by>j0s039z</sys_updated_by>
+        <sys_updated_on>2020-09-07 17:04:02</sys_updated_on>
+        <type>UI Action</type>
+        <update_guid>0aa96e2eadc7d850482d2450ee3a84d6</update_guid>
+        <update_guid_history>0aa96e2eadc7d850482d2450ee3a84d6:666875677,47f8ea6acec7d8504c3d3341fd124c19:-757356177</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete/>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>j0s039z</sys_created_by>
+        <sys_created_on>2020-09-07 17:04:46</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_db_object display_value="" name="sys_ui_action">sys_ui_action</sys_db_object>
+        <sys_id>4c87a4a130724e06a14a002c340fae04</sys_id>
+        <sys_metadata>a738ea26dbc7d850d3886033ca961927</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>test</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_parent display_value="ServiceNow Development Request">385ab003db63130089fb2fb748961962</sys_parent>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_scope_delete display_value="">267924c4d50346b886164c0c8d2d6ca4</sys_scope_delete>
+        <sys_update_name>sys_ui_action_a738ea26dbc7d850d3886033ca961927</sys_update_name>
+        <sys_update_version display_value="sys_ui_action_a738ea26dbc7d850d3886033ca961927">82a96e2edbc7d850d3886033ca9619d7</sys_update_version>
+        <sys_updated_by>j0s039z</sys_updated_by>
+        <sys_updated_on>2020-09-07 17:04:46</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>
