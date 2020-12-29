@@ -384,6 +384,25 @@
             <element>state</element>
             <hint/>
             <inactive>false</inactive>
+            <label>Resuming Restore</label>
+            <language>en</language>
+            <name>x_wms_pulse_dev_request</name>
+            <sequence>61</sequence>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2020-12-16 17:20:03</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>fb4c613e1bc5e450c54f0fe3cc4bcba6</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2020-12-16 17:20:03</sys_updated_on>
+            <value>61</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>state</element>
+            <hint/>
+            <inactive>false</inactive>
             <label>Moving to Ignore</label>
             <language>en</language>
             <name>x_wms_pulse_dev_request</name>
@@ -530,6 +549,25 @@
             <sys_updated_by>mmoreli</sys_updated_by>
             <sys_updated_on>2018-08-07 16:29:18</sys_updated_on>
             <value>101</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>state</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Preview Problems (Restore)</label>
+            <language>en</language>
+            <name>x_wms_pulse_dev_request</name>
+            <sequence>102</sequence>
+            <sys_created_by>mmoreli</sys_created_by>
+            <sys_created_on>2020-12-16 16:35:24</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>3912e9721b85e450c54f0fe3cc4bcb09</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>mmoreli</sys_updated_by>
+            <sys_updated_on>2020-12-16 16:35:24</sys_updated_on>
+            <value>102</value>
         </sys_choice>
     </sys_choice>
 </record_update>

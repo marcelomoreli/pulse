@@ -36,13 +36,13 @@
         <image_width>949</image_width>
         <size_bytes>63608</size_bytes>
         <size_compressed>61439</size_compressed>
-        <state/>
+        <state>available</state>
         <sys_created_by>mmoreli</sys_created_by>
         <sys_created_on>2019-08-19 18:54:33</sys_created_on>
         <sys_id>53d61cb6db1bf348fce87bbb8c961955</sys_id>
-        <sys_mod_count>2</sys_mod_count>
-        <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-08-19 18:54:33</sys_updated_on>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_updated_by>guest</sys_updated_by>
+        <sys_updated_on>2020-08-26 01:32:15</sys_updated_on>
         <table_name>ZZ_YYdb_image</table_name>
         <table_sys_id>f8d658b6db1bf348fce87bbb8c961944</table_sys_id>
     </sys_attachment>

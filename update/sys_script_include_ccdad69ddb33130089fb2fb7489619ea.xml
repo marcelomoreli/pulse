@@ -39,6 +39,7 @@ DevRequestStates.GENERATING_CHANGE      = "50";
 DevRequestStates.SCHEDULED              = "51";
 DevRequestStates.CLOSING_CHANGE         = "52";
 DevRequestStates.RESTORING              = "60";
+DevRequestStates.RESUME_RESTORE         = "61";
 DevRequestStates.MOVING_TO_IGNORE       = "70";
 DevRequestStates.ON_HOLD                = "71";
 DevRequestStates.BACKING_UP             = "72";
@@ -47,6 +48,7 @@ DevRequestStates.DISCARDED              = "81";
 DevRequestStates.MERGED                 = "82";
 DevRequestStates.AUTOMATION_FAILURE     = "100";
 DevRequestStates.PREVIEW_PROBLEMS       = "101";
+DevRequestStates.PREVIEW_PROBLEMS_RESTORE = "102";
 
 
 DevRequestStates.prototype = {
@@ -60,7 +62,7 @@ DevRequestStates.prototype = {
         <sys_created_on>2018-08-07 16:55:49</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>ccdad69ddb33130089fb2fb7489619ea</sys_id>
-        <sys_mod_count>13</sys_mod_count>
+        <sys_mod_count>15</sys_mod_count>
         <sys_name>DevRequestStates</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy>read</sys_policy>
@@ -68,6 +70,6 @@ DevRequestStates.prototype = {
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_script_include_ccdad69ddb33130089fb2fb7489619ea</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-05-23 21:52:43</sys_updated_on>
+        <sys_updated_on>2020-12-16 17:19:10</sys_updated_on>
     </sys_script_include>
 </record_update>

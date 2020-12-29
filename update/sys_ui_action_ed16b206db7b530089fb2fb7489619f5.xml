@@ -7,7 +7,7 @@
 
 }]]></client_script_v2>
         <comments/>
-        <condition>gs.hasRole('x_wms_pulse.developer') &amp;&amp; current.state == DevRequestStates.ON_HOLD &amp;&amp; current.dev_instance == current.current_instance</condition>
+        <condition>gs.hasRole('x_wms_pulse.developer') &amp;&amp; current.state == DevRequestStates.ON_HOLD &amp;&amp; current.current_instance.type == 'dev'</condition>
         <form_action>true</form_action>
         <form_button>true</form_button>
         <form_button_v2>false</form_button_v2>
@@ -51,7 +51,7 @@ function restoreBackup() {
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>ed16b206db7b530089fb2fb7489619f5</sys_id>
-        <sys_mod_count>4</sys_mod_count>
+        <sys_mod_count>5</sys_mod_count>
         <sys_name>Restore to Dev</sys_name>
         <sys_overrides/>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
@@ -60,7 +60,7 @@ function restoreBackup() {
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_ui_action_ed16b206db7b530089fb2fb7489619f5</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2020-03-26 17:55:52</sys_updated_on>
+        <sys_updated_on>2020-12-16 17:15:14</sys_updated_on>
         <table>x_wms_pulse_dev_request</table>
         <ui11_compatible>true</ui11_compatible>
         <ui16_compatible>false</ui16_compatible>

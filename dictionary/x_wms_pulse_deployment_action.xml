@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><database>
-    <element label="ServiceNow Deployment Action" max_length="40" name="x_wms_pulse_deployment_action" sizeclass="385" type="collection">
+    <element label="ServiceNow Deployment Action" max_length="40" name="x_wms_pulse_deployment_action" sizeclass="480" type="collection">
         <element label="Developer Comments" max_length="4000" name="developer_comments" type="string_full_utf8"/>
         <element attributes="edge_encryption_enabled=true" label="Development Request" mandatory="true" max_length="32" name="dev_request" reference="x_wms_pulse_dev_request" type="reference"/>
         <element attributes="edge_encryption_enabled=true" label="Instance" mandatory="true" max_length="32" name="instance" reference="x_wms_pulse_sn_instance" type="reference"/>

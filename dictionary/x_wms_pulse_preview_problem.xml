@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><database>
-    <element label="ServiceNow Preview Problem" max_length="40" name="x_wms_pulse_preview_problem" sizeclass="0" type="collection">
+    <element attributes="hasLabels=true" label="ServiceNow Preview Problem" max_length="40" name="x_wms_pulse_preview_problem" sizeclass="0" type="collection">
         <element label="Available Actions" max_length="320" name="available_actions" type="string"/>
         <element label="Description" max_length="2048" name="description" type="string"/>
         <element label="Developer Comments" max_length="4000" name="developer_comments" type="string"/>

@@ -2,12 +2,12 @@
     <sys_ui_action action="INSERT_OR_UPDATE">
         <action_name/>
         <active>true</active>
-        <client>true</client>
+        <client>false</client>
         <client_script_v2><![CDATA[function onClick(g_form) {
 
 }]]></client_script_v2>
         <comments/>
-        <condition>current.state == DevRequestStates.TEST_FAILED</condition>
+        <condition>current.state == DevRequestStates.TEST_FAILED || current.state == DevRequestStates.TEST_PASSED || current.state == DevRequestStates.AWAITING_PARENT || current.state == DevRequestStates.PENDING_SCHEDULE</condition>
         <form_action>true</form_action>
         <form_button>true</form_button>
         <form_button_v2>false</form_button_v2>
@@ -28,16 +28,76 @@
         <name>Retest</name>
         <onclick>retest()</onclick>
         <order>110</order>
-        <script><![CDATA[function retest() {
-    var devRequestStates = g_scratchpad.devRequestStates;
-    var state = g_form.getValue('state');
-    if (state == devRequestStates.TEST_FAILED) {
-        g_form.setValue('state', devRequestStates.READY_FOR_TESTING);
-        g_form.save();
+        <script><![CDATA[(function() {
+	if (!current.comments) {
+		gs.addErrorMessage('You must provide a comment first');
+		return;
+	}
+    if (current.state == DevRequestStates.TEST_FAILED || current.state == DevRequestStates.TEST_PASSED || current.state == DevRequestStates.AWAITING_PARENT || current.state == DevRequestStates.PENDING_SCHEDULE) {
+        var children = [],
+            parents = [],
+            a = new GlideRecord('x_wms_pulse_dev_request');
+        //get all parents
+        if (current.remediation_for) {
+            a.get(current.remediation_for);
+            do {
+                parents.push(a);
+                a = new GlideRecord('x_wms_pulse_dev_request');
+            } while (parents[parents.length - 1].remediation_for && a.get(parents[parents.length - 1].remediation_for + ''));
+        }
+        if (current.state == DevRequestStates.AWAITING_PARENT && parents[parents.length - 1].state != DevRequestStates.PENDING_SCHEDULE) {
+            if (parents[parents.length - 1].state == DevRequestStates.SCHEDULED)
+                gs.addErrorMessage('Unschedule the the <a href="/nav_to.do?uri=x_wms_pulse_dev_request.do%3Fsys_id=' + parents[parents.length - 1].sys_id + '">v1 development</a> first.');
+            else
+                gs.addErrorMessage('The top parent request is not pending schedule.');
+            return;
+        }
+        //update all children
+        a.addQuery('remediation_for', current.sys_id + '');
+        a.query();
+        while (a.next()) {
+            children.push(a);
+            a = new GlideRecord('x_wms_pulse_dev_request');
+            a.addQuery('remediation_for', children[children.length - 1].sys_id);
+            a.query();
+        }
+        //the most recent request is not test failed, passed, or awaiting parent (to be scheduled)
+        if (children.length !== 0) {
+            if (children[children.length - 1].state == DevRequestStates.TEST_FAILED || children[children.length - 1].state == DevRequestStates.TEST_PASSED || children[children.length - 1].state == DevRequestStates.AWAITING_PARENT) {
+                for (var v in children) {
+                    //this part may be unecessary if BRs are allowed to run, also, I may need setWorkflow(false)
+                    if (v < children.length - 1)
+                        children[v].state = DevRequestStates.AWAITING_REMEDIATION;
+                    else {
+                        children[v].state = DevRequestStates.READY_FOR_TESTING;
+                        gs.addInfoMessage('<a href="/nav_to.do?uri=x_wms_pulse_dev_request.do%3Fsys_id=' + children[v].sys_id + '">' + children[v].number + '</a> is ready for testing');
+                    }
+                    children[v].due_date = '';
+                    children[v].setWorkflow(false);
+                    children[v].update();
+                }
+            } else {
+                gs.addErrorMessage('The latest request is not test failed or test passed');
+                return;
+            }
+            current.state = DevRequestStates.AWAITING_REMEDIATION;
+        } else {
+            current.state = DevRequestStates.READY_FOR_TESTING;
+            //gs.addInfoMessage('<a href="/nav_to.do?uri=x_wms_pulse_dev_request.do%3Fsys_id=' + current.sys_id + '">' + current.number + '</a> is ready for testing');//probably just annoying
+        }
+        for (v in parents) {
+            parents[v].state = DevRequestStates.AWAITING_REMEDIATION;
+            parents[v].due_date = '';
+            parents[v].setWorkflow(false);
+            parents[v].update();
+        }
+        current.due_date = '';
+        current.update();
     } else {
-        g_form.addErrorMessage('Pulse Request in wrong state for this action. Refresh your form.');
+        gs.addErrorMessage('Pulse Request in wrong state for this action. Refresh your form.');
     }
-}]]></script>
+})();
+action.setRedirectURL(current);]]></script>
         <show_insert>true</show_insert>
         <show_multiple_update>false</show_multiple_update>
         <show_query>false</show_query>
@@ -49,7 +109,7 @@
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>9c8c57b7db870450fc9e5c77dc9619de</sys_id>
-        <sys_mod_count>2</sys_mod_count>
+        <sys_mod_count>75</sys_mod_count>
         <sys_name>Retest</sys_name>
         <sys_overrides/>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
@@ -57,8 +117,8 @@
         <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_ui_action_9c8c57b7db870450fc9e5c77dc9619de</sys_update_name>
-        <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2020-03-26 17:52:16</sys_updated_on>
+        <sys_updated_by>j0s039z</sys_updated_by>
+        <sys_updated_on>2020-12-29 17:39:40</sys_updated_on>
         <table>x_wms_pulse_dev_request</table>
         <ui11_compatible>true</ui11_compatible>
         <ui16_compatible>true</ui16_compatible>

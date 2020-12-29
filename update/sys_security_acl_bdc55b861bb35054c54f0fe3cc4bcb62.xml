@@ -4,22 +4,22 @@
         <admin_overrides>false</admin_overrides>
         <advanced>false</advanced>
         <condition/>
-        <description>Allow write for expected_start in x_wms_pulse_dev_request, for users with role x_wms_pulse.sn_admin.</description>
-        <name>x_wms_pulse_dev_request.expected_start</name>
-        <operation display_value="write">write</operation>
+        <description>Allow delete for records in x_wms_pulse_m2m_sn_app_scope, for users with role x_wms_pulse.sn_admin.</description>
+        <name>x_wms_pulse_m2m_sn_app_scope</name>
+        <operation display_value="delete">delete</operation>
         <script/>
         <sys_class_name>sys_security_acl</sys_class_name>
         <sys_created_by>mmoreli</sys_created_by>
-        <sys_created_on>2020-03-30 15:39:08</sys_created_on>
+        <sys_created_on>2020-10-13 13:46:56</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
-        <sys_id>b04e4dbe1b7b4410b381fcc6cc4bcb78</sys_id>
+        <sys_id>bdc55b861bb35054c54f0fe3cc4bcb62</sys_id>
         <sys_mod_count>1</sys_mod_count>
-        <sys_name>x_wms_pulse_dev_request.expected_start</sys_name>
+        <sys_name>x_wms_pulse_m2m_sn_app_scope</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy/>
         <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
-        <sys_update_name>sys_security_acl_b04e4dbe1b7b4410b381fcc6cc4bcb78</sys_update_name>
+        <sys_update_name>sys_security_acl_bdc55b861bb35054c54f0fe3cc4bcb62</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
         <sys_updated_on>2020-10-13 13:52:09</sys_updated_on>
         <type display_value="record">record</type>

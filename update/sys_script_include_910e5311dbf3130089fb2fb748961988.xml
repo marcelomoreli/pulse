@@ -166,6 +166,10 @@ PulseUtilsImpl.prototype = {
             // Once a Development is backed up and have a file attached, you can restore it
             answer = this.remoteRestoreBackup(devRequest);
             break;
+        case DevRequestStates.RESUME_RESTORE:
+            // Once a Development is backed up and have a file attached, you can restore it
+            answer = this.remoteResumeRestore(devRequest);
+            break;
         case DevRequestStates.MOVING_TO_IGNORE:
             // Called in order to discard a development request
             gs.eventQueue('x_wms_pulse.moving_to_ignore', devRequest, gs.getUserID(), devRequest.getValue('application'));
@@ -426,7 +430,7 @@ PulseUtilsImpl.prototype = {
                                                         retrieved: '',
                                                     };
                                                 }
-												if (!usObj[currEnv.name]) {
+                                                if (!usObj[currEnv.name]) {
                                                     usObj[currEnv.name] = {
                                                         local: '',
                                                         retrieved: '',
@@ -443,8 +447,8 @@ PulseUtilsImpl.prototype = {
                                             }
                                                 
                                             /*
-                                                 *    END OF LOAD - START of PREVIEW
-                                                 */
+                                             *    END OF LOAD - START of PREVIEW
+                                             */
                                                 
                                             this.l.logDebug('Previewing update set (root_sys_id): ' + devRequest.root_sys_id + ' in ' + targetEnv.name);
                                             path = '/api/x_wms_pulse/pulse/updateset/preview/' + answer.remote_sys_id;
@@ -1103,7 +1107,7 @@ PulseUtilsImpl.prototype = {
             message : ''
         };
                         
-        var restoringBackup = devRequest.getValue('state') == DevRequestStates.RESTORING;
+        var restoringBackup = devRequest.getValue('state') == DevRequestStates.RESTORING || devRequest.getValue('state') == DevRequestStates.RESUME_RESTORE;
         if (this.isProduction()) {
             var targetEnv = this.getTargetEnvironment(devRequest);
             if (restoringBackup) {
@@ -2057,7 +2061,9 @@ PulseUtilsImpl.prototype = {
             //    --- If no  - Sync the sys_id of the dev request and re-open the update set (if it's not alreayd opened)
             //  -- If no
             //   - Create the new update set as retrieved
-            //   - Preview and Commit, update the sys_id of the dev request to the local copy, open the us and done
+            //   - Preview
+            //    --- If preview problems, post link to developer and move to "Preview Problems (Restore)"
+            //   - Commit, update the sys_id of the dev request to the local copy, open the us and done
                                 
             var usObj = JSON.parse(devRequest.getValue('update_set_json'));
                                 
@@ -2132,6 +2138,15 @@ PulseUtilsImpl.prototype = {
                                                                 devRequest.setValue('state', DevRequestStates.REVIEW_ACTIONS);
                                                                 devRequest.update();
                                                             }
+                                                        } else {
+                                                            // preview problems?
+                                                            if (answer.previewProblemsCount > 0) {
+                                                                answer.success = true; // No need to go to automation failure
+                                                                var link = devRequest.dev_instance.url + '/nav_to.do?uri=%2Fsys_remote_update_set.do%3Fsys_id%3D' + usObjRemoteSysId;
+                                                                devRequest.work_notes = 'Restore found preview problems, please take action on the preview problems before continuing.\nOnce you\'re done with all of the preview problems, click "Resume Restoration".\nClick [code]<a href="' + link + '">HERE</a>[/code] to see the preview problems';
+                                                                devRequest.setValue('state', DevRequestStates.PREVIEW_PROBLEMS_RESTORE);
+                                                                devRequest.update();
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -2184,6 +2199,25 @@ PulseUtilsImpl.prototype = {
             answer.message = 'You can only perform this action in Production!';
         }
         this.l.logDebug('Answer from remoteRestoreBackup: ' + JSON.stringify(answer));
+        return answer;
+    },
+
+    remoteResumeRestore: function(devRequest) {
+        this.l.logDebug('Starting remoteResumeRestore - DevRequest [' + devRequest.getValue('number') + ']');
+        var answer = {
+            success : false,
+            message : 'Request could not be completed. Contact your system administrator.'
+        };
+
+        answer = this.remoteCommitUpdateSet(devRequest);
+        if (answer.success) {
+            gs.eventQueue('x_wms_pulse.restoring', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            devRequest.work_notes = 'Development restored.';
+            devRequest.setValue('state', DevRequestStates.REVIEW_ACTIONS);
+            devRequest.update();
+        }
+
+        this.l.logDebug('Answer from remoteResumeRestore: ' + JSON.stringify(answer));
         return answer;
     },
                             
@@ -2669,14 +2703,14 @@ PulseUtilsImpl.prototype = {
         <sys_created_on>2018-08-07 21:43:44</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>910e5311dbf3130089fb2fb748961988</sys_id>
-        <sys_mod_count>441</sys_mod_count>
+        <sys_mod_count>445</sys_mod_count>
         <sys_name>PulseUtilsImpl</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy>read</sys_policy>
         <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_script_include_910e5311dbf3130089fb2fb748961988</sys_update_name>
-        <sys_updated_by>marcelo.moreli</sys_updated_by>
-        <sys_updated_on>2020-07-29 00:14:52</sys_updated_on>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2020-12-16 17:25:30</sys_updated_on>
     </sys_script_include>
 </record_update>
