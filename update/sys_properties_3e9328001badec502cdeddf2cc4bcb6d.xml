@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
+    <sys_properties action="INSERT_OR_UPDATE">
+        <choices/>
+        <description>Group(sys_id) that approves dev requests that are scheduled during a Blackout window</description>
+        <ignore_cache>true</ignore_cache>
+        <is_private>false</is_private>
+        <name>x_wms_pulse.blackout_approvers</name>
+        <read_roles>x_wms_pulse.reader</read_roles>
+        <suffix>blackout_approvers</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>mmoreli</sys_created_by>
+        <sys_created_on>2021-01-01 19:30:30</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>3e9328001badec502cdeddf2cc4bcb6d</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>x_wms_pulse.blackout_approvers</sys_name>
+        <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
+        <sys_update_name>sys_properties_3e9328001badec502cdeddf2cc4bcb6d</sys_update_name>
+        <sys_updated_by>mmoreli</sys_updated_by>
+        <sys_updated_on>2021-01-01 19:31:49</sys_updated_on>
+        <type>string</type>
+        <value>3b0d8c80db0bbb04315d32ad7c9619d4</value>
+        <write_roles>x_wms_pulse.sn_admin</write_roles>
+    </sys_properties>
+    <sys_translated_text action="delete_multiple" query="documentkey=3e9328001badec502cdeddf2cc4bcb6d"/>
+</record_update>

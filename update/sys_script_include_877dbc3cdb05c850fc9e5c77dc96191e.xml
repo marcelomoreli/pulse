@@ -9,24 +9,42 @@
         <name>PulseAjax</name>
         <script><![CDATA[var PulseAjax = Class.create();
 PulseAjax.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
-    /* global Class, global */
+    /* global Class, global, GlideRecord, x_wms_pulse, gs, GlideDateTime, GlideSchedule */
     getReviewLink: function(sys_id) {
-		var returnURL = '';
+        var returnURL = '';
         var devID = sys_id || this.getParameter('sysparm_sys_id');
-		if (devID != '') {
-			var devReq = new GlideRecord('x_wms_pulse_dev_request');
-			devReq.addQuery('sys_id', devID);
-			devReq.query();
-			if (devReq.next()) {
-				var pulseUtil = new x_wms_pulse.PulseUtils();
-				var targetEnv = pulseUtil.getTargetEnvironment(devReq);
-				var usObj = JSON.parse(devReq.update_set_json + '');
-				if (usObj && usObj[targetEnv.name] && usObj[targetEnv.name].retrieved && usObj[targetEnv.name].retrieved != '') {
-					returnURL = targetEnv.url + '/nav_to.do?uri=%2Fsys_remote_update_set.do%3Fsys_id%3D' + usObj[targetEnv.name].retrieved;
-				}
-			}
-		}
+        if (devID != '') {
+            var devReq = new GlideRecord('x_wms_pulse_dev_request');
+            devReq.addQuery('sys_id', devID);
+            devReq.query();
+            if (devReq.next()) {
+                var pulseUtil = new x_wms_pulse.PulseUtils();
+                var targetEnv = pulseUtil.getTargetEnvironment(devReq);
+                var usObj = JSON.parse(devReq.update_set_json + '');
+                if (usObj && usObj[targetEnv.name] && usObj[targetEnv.name].retrieved && usObj[targetEnv.name].retrieved != '') {
+                    returnURL = targetEnv.url + '/nav_to.do?uri=%2Fsys_remote_update_set.do%3Fsys_id%3D' + usObj[targetEnv.name].retrieved;
+                }
+            }
+        }
         return returnURL;
+    },
+	
+    isDateInBlackout: function(release_date) {
+        var releaseDate = release_date || this.getParameter('sysparm_release_date');
+        var blackOutSchedules = gs.getProperty('x_wms_pulse.blackout_schedules');
+        var schedules = blackOutSchedules.split(',');
+        var plannedDateTime = new GlideDateTime();
+        plannedDateTime.setDisplayValue(releaseDate);
+
+        for (var x = 0; x < schedules.length; x++) {
+            var schedule = new GlideSchedule(schedules[x]);
+            if (schedule.isInSchedule(plannedDateTime)) {
+                // This means it's schedule inside of a blackout schedule!
+                return true;
+            }
+        }
+
+        return false;
     },
 	
     type: 'PulseAjax'
@@ -36,7 +54,7 @@ PulseAjax.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
         <sys_created_on>2019-11-08 16:26:25</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>877dbc3cdb05c850fc9e5c77dc96191e</sys_id>
-        <sys_mod_count>6</sys_mod_count>
+        <sys_mod_count>11</sys_mod_count>
         <sys_name>PulseAjax</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy>read</sys_policy>
@@ -44,6 +62,6 @@ PulseAjax.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_script_include_877dbc3cdb05c850fc9e5c77dc96191e</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-11-08 19:17:34</sys_updated_on>
+        <sys_updated_on>2021-01-01 21:36:31</sys_updated_on>
     </sys_script_include>
 </record_update>

@@ -18,7 +18,7 @@ PulseUtilsImpl.prototype = {
         this.pulseGlobal = new global.PulseGlobal();
     },
     // Initializing globals for lint
-    /* global global, gs, sn_ws, Class, DevRequestStates, GlideRecord, GlideRemoteGlideRecord, GlideSysAttachment, GlideDateTime, GlideScopedEvaluator  */
+    /* global global, gs, sn_ws, Class, DevRequestStates, GlideRecord, GlideRemoteGlideRecord, GlideSysAttachment, GlideDateTime, GlideSchedule, GlideScopedEvaluator  */
     
     // Called from an ASYNC business rule (With high priority) when the state change on a Dev Request
     // Basically calculates what to do on the state it got to
@@ -142,6 +142,11 @@ PulseUtilsImpl.prototype = {
             // Once the parent moves to another environment, move this one too
             // State is updated by the parent
             gs.eventQueue('x_wms_pulse.awaiting_parent', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            break;
+        case DevRequestStates.ECAB_APPROVAL:
+            // eCAB Approval needed in case Dev Request was scheduled during a blackout window
+            gs.eventQueue('x_wms_pulse.ecab_approval', devRequest, gs.getUserID(), devRequest.getValue('application'));
+            answer = this.restartApprovalWorkflow(devRequest);
             break;
         case DevRequestStates.GENERATING_CHANGE:
             // Generate a change if it doesn't already have one and it needs it
@@ -680,50 +685,52 @@ PulseUtilsImpl.prototype = {
         };
         
         // Make sure first the devRequest is in a state that it can be approved
-        if (devRequest.getValue('state') == DevRequestStates.IN_REVIEW || devRequest.getValue('state') == DevRequestStates.IN_REVIEW_PROBLEMS) {
+        if (devRequest.getValue('state') == DevRequestStates.IN_REVIEW || devRequest.getValue('state') == DevRequestStates.IN_REVIEW_PROBLEMS || devRequest.getValue('state') == DevRequestStates.ECAB_APPROVAL) {
             var targetEnv = this.getTargetEnvironment(devRequest);
             if (targetEnv) {
                 // First do a check to see if it was really approved or if we had some manipulation
                 // Basically if one of the groups approve and all others are manually removed, it will go to the approved path on the workflow
-                // This piece of code in here will prevent it from happening, it will move to Automation Failure instead so it is manually checked.
+                // This piece of code in here will prevent it from happening, it will move to Automation Failure instead so it is manually checked.  
                 var appInstanceConfig = this.getInstanceApplication(devRequest, targetEnv.sys_id);
                 if (appInstanceConfig) {
-                    if (this.requiresTechnicalReview(devRequest) && appInstanceConfig.tech_approvers != '') {
-                        for (var grpIdx1 in appInstanceConfig.tech_approvers.split(',')) {
-                            var grp1 = appInstanceConfig.tech_approvers.split(',')[grpIdx1];
-                            // Has this group approved?
-                            var grp1Approved = new GlideRecord('sysapproval_approver');
-                            grp1Approved.addQuery('state', 'approved');
-                            grp1Approved.addQuery('sysapproval', devRequest.sys_id + '');
-                            grp1Approved.addQuery('group.assignment_group', grp1);
-                            grp1Approved.addNotNullQuery('wf_activity');
-                            grp1Approved.query();
-                            if (!grp1Approved.hasNext()) {
-                                // Group didn't approve
-                                answer.message = 'Group ' + grp1 + ' was supposed to approve it, but we have no approvals. Moving to automation failed.';
-                                return answer;
+                    if (devRequest.getValue('state') != DevRequestStates.ECAB_APPROVAL) {
+                        if (this.requiresTechnicalReview(devRequest) && appInstanceConfig.tech_approvers != '') {
+                            for (var grpIdx1 in appInstanceConfig.tech_approvers.split(',')) {
+                                var grp1 = appInstanceConfig.tech_approvers.split(',')[grpIdx1];
+                                // Has this group approved?
+                                var grp1Approved = new GlideRecord('sysapproval_approver');
+                                grp1Approved.addQuery('state', 'approved');
+                                grp1Approved.addQuery('sysapproval', devRequest.sys_id + '');
+                                grp1Approved.addQuery('group.assignment_group', grp1);
+                                grp1Approved.addNotNullQuery('wf_activity');
+                                grp1Approved.query();
+                                if (!grp1Approved.hasNext()) {
+                                    // Group didn't approve
+                                    answer.message = 'Group ' + grp1 + ' was supposed to approve it, but we have no approvals. Moving to automation failed.';
+                                    return answer;
+                                }
+                            }
+                        }
+                            
+                        if (appInstanceConfig.additional_approvers != '') {
+                            for (var grpIdx2 in appInstanceConfig.additional_approvers.split(',')) {
+                                var grp2 = appInstanceConfig.additional_approvers.split(',')[grpIdx2];
+                                // Has this group approved?
+                                var grp2Approved = new GlideRecord('sysapproval_approver');
+                                grp2Approved.addQuery('state', 'approved');
+                                grp2Approved.addQuery('sysapproval', devRequest.sys_id + '');
+                                grp2Approved.addQuery('group.assignment_group', grp2);
+                                grp2Approved.addNotNullQuery('wf_activity');
+                                grp2Approved.query();
+                                if (!grp2Approved.hasNext()) {
+                                    // Group didn't approve
+                                    answer.message = 'Group ' + grp2 + ' was supposed to approve it, but we have no approvals. Moving to automation failed.';
+                                    return answer;
+                                }
                             }
                         }
                     }
-                        
-                    if (appInstanceConfig.additional_approvers != '') {
-                        for (var grpIdx2 in appInstanceConfig.additional_approvers.split(',')) {
-                            var grp2 = appInstanceConfig.additional_approvers.split(',')[grpIdx2];
-                            // Has this group approved?
-                            var grp2Approved = new GlideRecord('sysapproval_approver');
-                            grp2Approved.addQuery('state', 'approved');
-                            grp2Approved.addQuery('sysapproval', devRequest.sys_id + '');
-                            grp2Approved.addQuery('group.assignment_group', grp2);
-                            grp2Approved.addNotNullQuery('wf_activity');
-                            grp2Approved.query();
-                            if (!grp2Approved.hasNext()) {
-                                // Group didn't approve
-                                answer.message = 'Group ' + grp2 + ' was supposed to approve it, but we have no approvals. Moving to automation failed.';
-                                return answer;
-                            }
-                        }
-                    }
-                        
+
                     // Approvals were completed - Untie it from the WF to keep history
                     // Approval tables can be written by scope apps
                     var currApprovals = new GlideRecord('sysapproval_approver');
@@ -766,9 +773,27 @@ PulseUtilsImpl.prototype = {
                         }
                         answer.success = true;
                     } else {
-                        // This is not considered a failure - request was manually manipulated.
-                        answer.message = 'Development Request in wrong state: ' + devRequest.getValue('state');
-                        answer.success = true;
+                        if (devRequest.getValue('state') == DevRequestStates.ECAB_APPROVAL) {
+                            // Put into the JSON that eCAB approved
+                            var usObj2 = JSON.parse(devRequest.getValue('update_set_json'));
+                            if (!usObj2[targetEnv.name]) {
+                                usObj2[targetEnv.name] = {
+                                    local: '',
+                                    retrieved: '',
+                                    ecab: true
+                                };
+                            } else {
+                                usObj2[targetEnv.name].ecab = true;
+                            }
+                            devRequest.update_set_json = JSON.stringify(usObj2);
+                            devRequest.setValue('state', DevRequestStates.PENDING_SCHEDULE); // Pending schedule should deal with it
+                            devRequest.update();
+                            answer.success = true;
+                        } else {
+                            // This is not considered a failure - request was manually manipulated.
+                            answer.message = 'Development Request in wrong state: ' + devRequest.getValue('state');
+                            answer.success = true;
+                        }
                     }
                 } else {
                     answer.message = 'Instance doesn\'t have configuration for the next environment: ';
@@ -806,9 +831,16 @@ PulseUtilsImpl.prototype = {
             devRequest.setValue('state', DevRequestStates.REVIEW_ACTIONS);
             answer.success = true;
         } else {
-            // This is not considered a failure - request was manually manipulated.
-            answer.message = 'Development Request in wrong state: ' + devRequest.getValue('state');
-            answer.success = true;
+            if (devRequest.getValue('state') == DevRequestStates.ECAB_APPROVAL) {
+                devRequest.setValue('state', DevRequestStates.PENDING_SCHEDULE);
+                devRequest.setValue('due_date', '');
+                answer.message = 'Your schedule was rejected by eCAB. Please pick a different time to schedule the release.';
+                answer.success = true;
+            } else {
+                // This is not considered a failure - request was manually manipulated.
+                answer.message = 'Development Request in wrong state: ' + devRequest.getValue('state');
+                answer.success = true;
+            }
         }
 
         // Approvals were completed - Untie it from the WF to keep history
@@ -843,40 +875,56 @@ PulseUtilsImpl.prototype = {
             success : false,
         };
             
-        if (devRequest.getValue('state') == DevRequestStates.IN_REVIEW || devRequest.getValue('state') == DevRequestStates.IN_REVIEW_PROBLEMS) {
+        if (devRequest.getValue('state') == DevRequestStates.IN_REVIEW || devRequest.getValue('state') == DevRequestStates.IN_REVIEW_PROBLEMS || devRequest.getValue('state') == DevRequestStates.ECAB_APPROVAL) {
             var targetEnv = this.getTargetEnvironment(devRequest);
             if (targetEnv) {
                 var appInstanceConfig = this.getInstanceApplication(devRequest, targetEnv.sys_id);
                 if (appInstanceConfig) {
                     var usObj = JSON.parse(devRequest.getValue('update_set_json'));
                     // Check if it's set to auto_approve or if it's already approved
-                    if (appInstanceConfig.auto_approve || (usObj[targetEnv.name] && usObj[targetEnv.name].approved)) {
-                        if ((appInstanceConfig.auto_promote && devRequest.auto_promote) || devRequest.remediation_for != '') {
-                            devRequest.setValue('state', DevRequestStates.PROMOTING);
-                        } else {
-                            devRequest.setValue('state', DevRequestStates.PENDING_SCHEDULE);
-                        }
-                        answer.success = true;
-                    } else {
-                        var shouldApprove = '';
-                        if (this.requiresTechnicalReview(devRequest)) {
-                            shouldApprove = appInstanceConfig.tech_approvers.toString();
-                        }
-                        if (appInstanceConfig.additional_approvers != '' ) {
-                            if (shouldApprove != '') {
-                                shouldApprove += ',';
+                    if (devRequest.getValue('state') != DevRequestStates.ECAB_APPROVAL) {
+                        if (appInstanceConfig.auto_approve || (usObj[targetEnv.name] && usObj[targetEnv.name].approved)) {
+                            if ((appInstanceConfig.auto_promote && devRequest.auto_promote) || devRequest.remediation_for != '') {
+                                devRequest.setValue('state', DevRequestStates.PROMOTING);
+                            } else {
+                                devRequest.setValue('state', DevRequestStates.PENDING_SCHEDULE);
                             }
-                            shouldApprove += appInstanceConfig.additional_approvers;
+                            answer.success = true;
+                        } else {
+                            var shouldApprove = '';
+                            if (this.requiresTechnicalReview(devRequest)) {
+                                shouldApprove = appInstanceConfig.tech_approvers.toString();
+                            }
+                            if (appInstanceConfig.additional_approvers != '' ) {
+                                if (shouldApprove != '') {
+                                    shouldApprove += ',';
+                                }
+                                shouldApprove += appInstanceConfig.additional_approvers;
+                            }
+                            // If no one is supposed to approve this, error out! Its not set to auto approve
+                            if (shouldApprove == '') {
+                                this.l.logDebug('Didn\'t find approvers for ' + appInstanceConfig.getDisplayValue('sn_instance') + ':' + appInstanceConfig.getDisplayValue('sn_application'));
+                                answer.message = 'Instance x Application doesn\'t have configuration for the approvers and also doesn\'t have the "Auto Approve" flag checked.';
+                                devRequest.setValue('state', DevRequestStates.AUTOMATION_FAILURE);
+                                devRequest.update();
+                            } else {
+                                // This is probably a workflow running when it shouldn't
+                                // Ignore it
+                            }
                         }
-                        // If no one is supposed to approve this, error out! Its not set to auto approve
-                        if (shouldApprove == '') {
-                            this.l.logDebug('Didn\'t find approvers for ' + appInstanceConfig.getDisplayValue('sn_instance') + ':' + appInstanceConfig.getDisplayValue('sn_application'));
-                            answer.message = 'Instance x Application doesn\'t have configuration for the approvers and also doesn\'t have the "Auto Approve" flag checked.';
+                    } else {
+                        // See if eCAB was supposed to approve
+                        // If property is not empty, eCAB should have approved it
+                        var eCABApprover = gs.getProperty('x_wms_pulse.blackout_approvers');
+                        if (eCABApprover == '' || (usObj[targetEnv.name] && usObj[targetEnv.name].ecab)) {
+                            // Already approved or don't need approval
+                            devRequest.setValue('state', DevRequestStates.PENDING_SCHEDULE);
+                            answer.success = true;
+                        } else {
+                            this.l.logDebug('Didn\'t find approvers for ECAB (Group sys_id: ' + eCABApprover + ')');
+                            answer.message = 'Didn\'t find approvers for ECAB (Group sys_id: ' + eCABApprover + ') and Developer Request is on BLACKOUT Schedule.';
                             devRequest.setValue('state', DevRequestStates.AUTOMATION_FAILURE);
                             devRequest.update();
-                        } else {
-                            // This is probably a workflow running when it shouldn't
-                            // Ignore it
                         }
                     }
                 } else {
@@ -1683,22 +1731,83 @@ PulseUtilsImpl.prototype = {
                     
     handleSchedule: function(devRequest) {
         this.l.logDebug('Starting handleSchedule[' + devRequest.getValue('number') + ']');
+        // Implement solution to include blackout schedules needing additional approval
         var answer = {
             success : false,
             message : ''
         };
-                        
-        answer = this.pulseGlobal.scheduleInstallation(this.l, devRequest);
-                        
-        if (answer.success) {
-            if (answer.remove_rfc) {
-                devRequest.setValue('change_request', '');
+
+        if (devRequest.due_date == '') {
+            // When date is cleared, clear as well the ecab approval
+            var targetEnv2 = this.getTargetEnvironment(devRequest);
+            var usObj2 = JSON.parse(devRequest.getValue('update_set_json'));
+            if (!usObj2[targetEnv2.name]) {
+                usObj2[targetEnv2.name] = {
+                    local: '',
+                    retrieved: '',
+                    ecab: false
+                };
+            } else {
+                usObj2[targetEnv2.name].ecab = false;
             }
-            if (answer.time) {
-                devRequest.setValue('due_date', answer.time);
+            devRequest.update_set_json = JSON.stringify(usObj2);
+            if (devRequest.getValue('state') == DevRequestStates.ECAB_APPROVAL) {
+                // It was pending eCAB approval but release date was cleared
+                // Go back to pending schedule
+                devRequest.setValue('state', DevRequestStates.PENDING_SCHEDULE);
+                this.cancelApprovals(devRequest);
             }
-            if (answer.final_state && devRequest.getValue('state') != answer.final_state) {
-                devRequest.setValue('state', answer.final_state);
+        } else {
+            var blackOutSchedules = gs.getProperty('x_wms_pulse.blackout_schedules');
+            this.l.logDebug('Blackout schedules[' + blackOutSchedules + ']');
+            var schedules = blackOutSchedules.split(',');
+            var isInBlackout = false;
+            var plannedDateTime = new GlideDateTime();
+            plannedDateTime.setDisplayValue(devRequest.due_date.getDisplayValue());
+            for (var x = 0; x < schedules.length; x++) {
+                var schedule = new GlideSchedule(schedules[x]);
+                if (schedule.isInSchedule(plannedDateTime)) {
+                    // This means it's schedule inside of a blackout schedule!
+                    this.l.logDebug(devRequest.getValue('number') + ' is inside of blackout schedule. Scheduled date: ' + plannedDateTime.getDisplayValue());
+                    isInBlackout = true;
+                    break;
+                }
+            }
+
+            var blackoutApproved = false;
+            if (isInBlackout) {
+                // If it is in a blackout schedule, check if it was already approved
+                var targetEnv = this.getTargetEnvironment(devRequest);
+                var usObj = JSON.parse(devRequest.getValue('update_set_json'));
+                var eCABApprover = gs.getProperty('x_wms_pulse.blackout_approvers');
+                if (eCABApprover == '' || (usObj[targetEnv.name] && usObj[targetEnv.name].ecab)) {
+                    // Already approved or don't need approval
+                    blackoutApproved = true;
+                    this.l.logDebug(devRequest.getValue('number') + ' is already approved by eCAB (or it\'s not needed)');
+                } else {
+                    this.l.logDebug(devRequest.getValue('number') + '  requires new approval from eCAB.');
+                    if (devRequest.getValue('state') != DevRequestStates.ECAB_APPROVAL) {
+                        devRequest.setValue('state', DevRequestStates.ECAB_APPROVAL);
+                    }
+                    answer.message = 'Development request scheduled during BLACKOUT SCHEDULE. ECAB approval is needed.';
+                    answer.success = false;
+                }
+
+            }
+        }
+
+        if (devRequest.due_date == '' || (!isInBlackout || blackoutApproved)) {
+            answer = this.pulseGlobal.scheduleInstallation(this.l, devRequest);
+            if (answer.success) {
+                if (answer.remove_rfc) {
+                    devRequest.setValue('change_request', '');
+                }
+                if (answer.time) {
+                    devRequest.setValue('due_date', answer.time);
+                }
+                if (answer.final_state && devRequest.getValue('state') != answer.final_state) {
+                    devRequest.setValue('state', answer.final_state);
+                }
             }
         }
     },
@@ -1928,7 +2037,22 @@ PulseUtilsImpl.prototype = {
         prodInstance.addQuery('active', 'true');
         prodInstance.query();
         if (prodInstance.next()) {
-            // Check for timeouts first
+            // Check for Dev Requests that eCAB didn't approve but it's already time to run
+            // It should move them back to pending Schedule (by removing the release date)
+            var gdt = new GlideDateTime(); // Right now
+            var ecabPast  = new GlideRecord('x_wms_pulse_dev_request');
+            ecabPast.addQuery('active', 'true');
+            ecabPast.addQuery('state', DevRequestStates.ECAB_APPROVAL);
+            ecabPast.addQuery('due_date', '<', gdt);
+            ecabPast.query();
+            while (ecabPast.next()) {
+                //this.handleStateChange(timeouts);
+                ecabPast.setValue('due_date', '');
+                ecabPast.comments = 'Release date reached and eCAB approval not done. Please reschedule.';
+                ecabPast.update();
+            }
+
+            // Check for timeouts now
             // Only commit timeouts, preview timeouts to be treated on a later version
                                 
             var timeouts = new GlideRecord('x_wms_pulse_dev_request');
@@ -1941,7 +2065,6 @@ PulseUtilsImpl.prototype = {
                 this.handleStateChange(timeouts);
             } else {
                 // No timeouts to treat
-                var gdt = new GlideDateTime(); // Right now
                 var nextDev = new GlideRecord('x_wms_pulse_dev_request');
                 nextDev.addQuery('active', 'true');
                 nextDev.addQuery('state', DevRequestStates.SCHEDULED);
@@ -2476,6 +2599,11 @@ PulseUtilsImpl.prototype = {
 
     getApprovers: function(devRequest) {
         var answer = '';
+        // In case it's a blackout approval, get approvers from system property
+        if (devRequest.getValue('state') == DevRequestStates.ECAB_APPROVAL) {
+            return gs.getProperty('x_wms_pulse.blackout_approvers');
+        }
+
         var targetEnv = this.getTargetEnvironment(devRequest);
         var usObj = JSON.parse(devRequest.update_set_json + '');
         if (!usObj[targetEnv.name] || !usObj[targetEnv.name].approved) {
@@ -2714,7 +2842,7 @@ PulseUtilsImpl.prototype = {
         <sys_created_on>2018-08-07 21:43:44</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>910e5311dbf3130089fb2fb748961988</sys_id>
-        <sys_mod_count>446</sys_mod_count>
+        <sys_mod_count>460</sys_mod_count>
         <sys_name>PulseUtilsImpl</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy>read</sys_policy>
@@ -2722,6 +2850,6 @@ PulseUtilsImpl.prototype = {
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>sys_script_include_910e5311dbf3130089fb2fb748961988</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2020-12-29 17:47:48</sys_updated_on>
+        <sys_updated_on>2021-01-04 16:22:01</sys_updated_on>
     </sys_script_include>
 </record_update>

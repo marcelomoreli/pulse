@@ -3,6 +3,7 @@
         <buttons>1c6fa1917f0013007f005212bdfa91bd,c66fa1917f0013007f005212bdfa91c7</buttons>
         <fields/>
         <message>${sysapproval.URI_REF}&#13;
+State: ${sysapproval.state}&#13;
 Approver: ${approver}&#13;
 Approver group: ${group.assignment_group}&#13;
 Short Description: ${sysapproval.short_description}&#13;
@@ -64,7 +65,7 @@ Developer: ${sysapproval.assigned_to}</message>
         <sys_created_on>2019-11-06 19:48:35</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>63575344db49c450fc9e5c77dc9619d9</sys_id>
-        <sys_mod_count>2</sys_mod_count>
+        <sys_mod_count>3</sys_mod_count>
         <sys_name>Dev: Approval Request</sys_name>
         <sys_package display_value="Pulse" source="x_wms_pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_package>
         <sys_policy/>
@@ -72,7 +73,7 @@ Developer: ${sysapproval.assigned_to}</message>
         <sys_scope display_value="Pulse">e970e883db6bdb0c1f0d322b7c9619a2</sys_scope>
         <sys_update_name>messaging_content_63575344db49c450fc9e5c77dc9619d9</sys_update_name>
         <sys_updated_by>mmoreli</sys_updated_by>
-        <sys_updated_on>2019-11-13 15:49:34</sys_updated_on>
+        <sys_updated_on>2021-01-01 18:04:40</sys_updated_on>
         <target_table>sysapproval_approver</target_table>
         <type>buttons</type>
     </messaging_content>
